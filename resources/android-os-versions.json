@@ -2,13 +2,13 @@
   {
     "api_level": "1",
     "version": "1.0",
-    "code_name": "Alpha",
+    "code_name": "(no codename)",
     "release_date": "2008-09-23"
   },
   {
     "api_level": "2",
     "version": "1.1",
-    "code_name": "Beta",
+    "code_name": "(no codename)",
     "release_date": "2009-02-09"
   },
   {
@@ -408,9 +408,9 @@
     "release_date": "2022-08-15"
   },
   {
-    "api_level": "?",
+    "api_level": "34",
     "version": "14",
     "code_name": "UpDownCake",
-    "release_date": "2023-?"
+    "release_date": "2023-Q3"
   }
 ]
