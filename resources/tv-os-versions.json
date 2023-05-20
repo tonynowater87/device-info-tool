@@ -1,0 +1,50 @@
+[
+  {
+    "version": "9",
+    "release_date": "2015-10-29",
+    "latest_version": "9.2.2",
+    "latest_date": "2016-07-18"
+  },
+  {
+    "version": "10",
+    "release_date": "2016-09-13",
+    "latest_version": "10.2.2",
+    "latest_date": "2017-07-19"
+  },
+  {
+    "version": "11",
+    "release_date": "2017-09-19",
+    "latest_version": "11.4.1",
+    "latest_date": "2018-07-09"
+  },
+  {
+    "version": "12",
+    "release_date": "2018-09-17",
+    "latest_version": "12.4.1",
+    "latest_date": "2019-08-26"
+  },
+  {
+    "version": "13",
+    "release_date": "2019-09-24",
+    "latest_version": "13.4.8",
+    "latest_date": "2020-07-15"
+  },
+  {
+    "version": "14",
+    "release_date": "2020-09-16",
+    "latest_version": "14.7",
+    "latest_date": "2021-07-19"
+  },
+  {
+    "version": "15",
+    "release_date": "2021-09-20",
+    "latest_version": "15.6",
+    "latest_date": "2022-07-20"
+  },
+  {
+    "version": "16",
+    "release_date": "2022-09-12",
+    "latest_version": "16.5",
+    "latest_date": "2023-05-18"
+  }
+]

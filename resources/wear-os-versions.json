@@ -1,0 +1,170 @@
+[
+  {
+    "version": "1.0",
+    "os-name": "Android Wear",
+    "android-os": "5.0.1 Lollipop",
+    "release-date": "2014 Dec",
+    "order": "1"
+  },
+  {
+    "version": "1.1",
+    "os-name": "Android Wear",
+    "android-os": "5.1.1 Lollipop",
+    "release-date": "2014 May",
+    "order": "2"
+  },
+  {
+    "version": "1.3",
+    "os-name": "Android Wear",
+    "android-os": "5.1.1 Lollipop",
+    "release-date": "2015 Aug",
+    "order": "3"
+  },
+  {
+    "version": "1.4",
+    "os-name": "Android Wear",
+    "android-os": "6.0.1 Marshmallow",
+    "release-date": "2016 Feb",
+    "order": "4"
+  },
+  {
+    "version": "1.5",
+    "os-name": "Android Wear",
+    "android-os": "6.0.1 Marshmallow",
+    "release-date": "2016 Jun",
+    "order": "5"
+  },
+  {
+    "version": "2.0",
+    "os-name": "Android Wear",
+    "android-os": "7.1.1 Nougat",
+    "release-date": "2017 Feb",
+    "order": "6"
+  },
+  {
+    "version": "2.6",
+    "os-name": "Android Wear",
+    "android-os": "7.1.1 Nougat",
+    "release-date": "2017 Nov",
+    "order": "7"
+  },
+  {
+    "version": "2.7",
+    "os-name": "Android Wear",
+    "android-os": "8.0 Oreo",
+    "release-date": "2017 Dec",
+    "order": "8"
+  },
+  {
+    "version": "2.8",
+    "os-name": "Android Wear",
+    "android-os": "8.0 Oreo",
+    "release-date": "2018 Jan",
+    "order": "9"
+  },
+  {
+    "version": "2.9",
+    "os-name": "Android Wear",
+    "android-os": "8.0 Oreo",
+    "release-date": "2018 Feb",
+    "order": "10"
+  },
+  {
+    "version": "2.9",
+    "os-name": "Android Wear",
+    "android-os": "8.0 Oreo",
+    "release-date": "2018 Feb",
+    "order": "11"
+  },
+  {
+    "version": "1.0",
+    "os-name": "Wear OS",
+    "android-os": "8.0 Oreo",
+    "release-date": "2018 Mar",
+    "order": "12"
+  },
+  {
+    "version": "1.4",
+    "os-name": "Wear OS",
+    "android-os": "8.0 Oreo",
+    "release-date": "2018 Jul",
+    "order": "13"
+  },
+  {
+    "version": "2.0",
+    "os-name": "Wear OS",
+    "android-os": "8.0 Oreo",
+    "release-date": "2018 Sep",
+    "order": "14"
+  },
+  {
+    "version": "2.2",
+    "os-name": "Wear OS",
+    "android-os": "9.0 Pie",
+    "release-date": "2018 Nov",
+    "order": "15"
+  },
+  {
+    "version": "2.6",
+    "os-name": "Wear OS",
+    "android-os": "9.0 Pie",
+    "release-date": "2019 May",
+    "order": "16"
+  },
+  {
+    "version": "2.7",
+    "os-name": "Wear OS",
+    "android-os": "9.0 Pie",
+    "release-date": "2019 Jun",
+    "order": "17"
+  },
+  {
+    "version": "2.9",
+    "os-name": "Wear OS",
+    "android-os": "9.0 Pie",
+    "release-date": "2019 Jul",
+    "order": "18"
+  },
+  {
+    "version": "2.17",
+    "os-name": "Wear OS",
+    "android-os": "9.0 Pie",
+    "release-date": "2020 Apr",
+    "order": "19"
+  },
+  {
+    "version": "2.23",
+    "os-name": "Wear OS",
+    "android-os": "9.0 Pie",
+    "release-date": "2020 Dec",
+    "order": "20"
+  },
+  {
+    "version": "3.0",
+    "os-name": "Wear OS",
+    "android-os": "11.0 R",
+    "release-date": "2021 Aug",
+    "order": "21"
+  },
+  {
+    "version": "3.2",
+    "os-name": "Wear OS",
+    "android-os": "11.0 R",
+    "release-date": "2022 Feb",
+    "order": "22"
+  },
+  {
+    "version": "3.5",
+    "os-name": "Wear OS",
+    "android-os": "11.0 R",
+    "release-date": "2022 Oct",
+    "order": "23"
+  },
+  {
+    "version": "4.0",
+    "os-name": "Wear OS",
+    "android-os": "13.0 Tiramisu",
+    "release-date": "2023 Q2",
+    "order": "24"
+  }
+]

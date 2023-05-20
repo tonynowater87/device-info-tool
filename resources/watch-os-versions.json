@@ -1,0 +1,65 @@
+[
+  {
+    "version": "1.0",
+    "release_date": "2015-04-24",
+    "latest_version": "1.0.1",
+    "latest_release_date": "2015-07-25",
+    "based_on_ios_version": "8.3"
+  },
+  {
+    "version": "2.0",
+    "release_date": "2015-09-21",
+    "latest_version": "2.2.2",
+    "latest_release_date": "2016-07-18",
+    "based_on_ios_version": "9.3.3"
+  },
+  {
+    "version": "3.0",
+    "release_date": "2016-09-13",
+    "latest_version": "3.2.3",
+    "latest_release_date": "2017-07-19",
+    "based_on_ios_version": "10.3.3"
+  },
+  {
+    "version": "4.0",
+    "release_date": "2017-09-19",
+    "latest_version": "4.3.2",
+    "latest_release_date": "2018-07-09",
+    "based_on_ios_version": "11.4.1"
+  },
+  {
+    "version": "5.0",
+    "release_date": "2018-09-17",
+    "latest_version": "5.3.9",
+    "latest_release_date": "2020-11-05",
+    "based_on_ios_version": "12.4.9"
+  },
+  {
+    "version": "6.0",
+    "release_date": "2019-09-19",
+    "latest_version": "6.3.0",
+    "latest_release_date": "2020-12-14",
+    "based_on_ios_version": "13.7.0"
+  },
+  {
+    "version": "7.0",
+    "release_date": "2020-09-16",
+    "latest_version": "7.6.2",
+    "latest_release_date": "2021-09-13",
+    "based_on_ios_version": "14.8.0"
+  },
+  {
+    "version": "8.0",
+    "release_date": "2021-09-20",
+    "latest_version": "8.7.1",
+    "latest_release_date": "2022-08-17",
+    "based_on_ios_version": "15.6.1"
+  },
+  {
+    "version": "9.0",
+    "release_date": "2022-09-12",
+    "latest_version": "9.5.0",
+    "latest_release_date": "2023-05-18",
+    "based_on_ios_version": "16.5.0"
+  }
+]
