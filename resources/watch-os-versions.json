@@ -58,8 +58,8 @@
   {
     "version": "9.0",
     "release_date": "2022-09-12",
-    "latest_version": "9.5.0",
-    "latest_release_date": "2023-05-18",
+    "latest_version": "9.5.1",
+    "latest_release_date": "2023-05-30",
     "based_on_ios_version": "16.5.0"
   }
 ]
