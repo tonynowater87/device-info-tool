@@ -21,12 +21,31 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+def admobIdDebug = localProperties.getProperty("admob.debug.id")
+def admobIdRelease = localProperties.getProperty("admob.release.id")
+println("admobIdDebug: " + admobIdDebug)
+println("admobIdRelease: " + admobIdRelease)
+
+def releaseKeyAlias = localProperties.getProperty("release.key.alias")
+def releaseKeyPassword = localProperties.getProperty("release.key.password")
+def releaseFilePath = localProperties.getProperty("release.key.file.path")
+def releaseKeyStorePassword = localProperties.getProperty("release.key.store.password")
+
+
+println("releaseKeyAlias:" + releaseKeyAlias)
+println("releaseKeyPassword:" + releaseKeyPassword)
+println("releaseFilePath:" + releaseFilePath)
+println("releaseKeyStorePassword:" + releaseKeyStorePassword)
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 33
+
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -47,17 +66,30 @@ android {
         applicationId "com.tonynowater.mobileosversions.mobile_os_versions"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
+        minSdkVersion 21
+        targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
 
+    signingConfigs {
+        release {
+            keyAlias releaseKeyAlias
+            keyPassword releaseKeyPassword
+            storeFile file(releaseFilePath)
+            storePassword releaseKeyStorePassword
+        }
+    }
+
     buildTypes {
+        debug {
+            manifestPlaceholders = [admobId: admobIdDebug]
+        }
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
+            manifestPlaceholders = [admobId: admobIdRelease]
         }
     }
 }
@@ -67,5 +99,9 @@ flutter {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation platform('com.google.firebase:firebase-bom:32.0.0')
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 }
+

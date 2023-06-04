@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tonynowater.mobileosversions.mobile_os_versions">
    <application
-        android:label="mobile_os_versions"
+        android:label="Device Info Tool"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -30,5 +30,10 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+       <!-- Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713 -->
+       <meta-data
+           android:name="com.google.android.gms.ads.APPLICATION_ID"
+           android:value="${admobId}"/>
     </application>
 </manifest>

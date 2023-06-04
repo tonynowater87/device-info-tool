@@ -1,0 +1,203 @@
+import 'dart:async';
+import 'dart:io';
+import 'dart:math';
+
+import 'package:advertising_id/advertising_id.dart';
+import 'package:battery_info/battery_info_plugin.dart';
+import 'package:bloc/bloc.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_android_developer_mode/flutter_android_developer_mode.dart';
+import 'package:flutter_fgbg/flutter_fgbg.dart';
+import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_model.dart';
+import 'package:storage_space/storage_space.dart';
+import 'package:system_info2/system_info2.dart';
+
+part 'android_device_info_state.dart';
+
+class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
+  final _deviceInfoPlugin = DeviceInfoPlugin();
+  final _batteryInfo = BatteryInfoPlugin();
+
+  Timer? _timerFetchBattery;
+  StreamSubscription? _streamBatteryState;
+  StreamSubscription<FGBGType>? _foregroundEventStream;
+
+  AndroidDeviceInfoCubit() : super(AndroidDeviceInfoInitial());
+
+  Future<void> load() async {
+    final deviceInfo = await _getDeviceInfo();
+    final adId = await _getAdvertisingId();
+    final isDeveloper = await _getIsDeveloper();
+    final totalMemory = _getMemoryInfo();
+    final cpu = _getCpuInfo();
+    final cpuCores = _getCpuCore();
+    emit(AndroidDeviceInfoLoaded(
+        deviceInfoModel: deviceInfo,
+        cpu: cpu,
+        cpuCores: cpuCores,
+        totalMemory: totalMemory,
+        advertisingId: adId,
+        isDeveloper: isDeveloper,
+        batteryInfoModel: null));
+  }
+
+  void copyAdvertisingId(BuildContext context, GlobalKey containerKey) {
+    if (state is AndroidDeviceInfoLoaded) {
+      Clipboard.setData(ClipboardData(
+          text: (state as AndroidDeviceInfoLoaded).advertisingId));
+
+      RenderBox renderBox =
+          (containerKey.currentContext!.findRenderObject() as RenderBox);
+      Offset position = renderBox.localToGlobal(Offset.zero);
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        padding: EdgeInsets.zero,
+        content: const Padding(
+          padding: EdgeInsets.all(12.0),
+          child: Text('Copy Advertising Id Successfully'),
+        ),
+        behavior: SnackBarBehavior.floating,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8))),
+        dismissDirection: DismissDirection.horizontal,
+        backgroundColor: CupertinoColors.activeBlue.withAlpha(200),
+        margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height - position.dy - 40 - 8,
+            right: 8,
+            left: 8),
+      ));
+    }
+  }
+
+  void release() {
+    _timerFetchBattery?.cancel();
+    _streamBatteryState?.cancel();
+    _foregroundEventStream?.cancel();
+  }
+
+  @override
+  void onChange(Change<AndroidDeviceInfoState> change) {
+    super.onChange(change);
+    _foregroundEventStream ??= FGBGEvents.stream.listen((event) {
+      if (state is AndroidDeviceInfoInitial) return;
+      _getIsDeveloper().then((isDeveloper) {
+        emit((state as AndroidDeviceInfoLoaded)
+            .copyWith(isDeveloper: isDeveloper));
+      });
+    });
+
+    _streamBatteryState ??=
+        _batteryInfo.androidBatteryInfoStream.listen((batteryState) {
+      if (state is AndroidDeviceInfoInitial) return;
+      const unknown = 'unknown';
+      String capacityMaH;
+      if (batteryState?.batteryCapacity == null) {
+        capacityMaH = 'unknown';
+      } else {
+        capacityMaH = "${batteryState!.batteryCapacity! ~/ pow(2, 10)} mAh";
+      }
+
+      emit((state as AndroidDeviceInfoLoaded).copyWith(
+          batteryInfoModel: AndroidBatteryInfoModel(
+              batteryLevel: '${batteryState?.batteryLevel} %' ?? unknown,
+              // Remaining battery capacity as an integer percentage of total capacity (with no fractional part).
+              chargingStatus: batteryState?.chargingStatus?.name ?? unknown,
+              // charging, full, discharging
+              capacity: capacityMaH,
+              // Battery capacity in microampere-hours, as an integer. (mAh / 2 ^ 10)
+              technology: batteryState?.technology ?? unknown,
+              // String describing the technology of the current battery. e.g. Li-ion
+              temperature: "${batteryState?.temperature} °C" ?? unknown,
+              // integer containing the current battery temperature.
+              health: batteryState?.health?.toString().replaceAll('_', ' ') ??
+                  unknown))); // health_good, dead, over_heat, over_voltage, cold, unspecified_failure
+    }, onError: (error) {
+      if (state is AndroidDeviceInfoInitial) return;
+      FirebaseCrashlytics.instance
+          .recordError(Exception("listen battery info error: $error"), null);
+    }, onDone: () {}, cancelOnError: true);
+  }
+
+  String _getMemoryInfo() {
+    // bytes to megabytes
+    var totalPhysicMem = SysInfo.getTotalPhysicalMemory() / (1024 * 1024);
+    return "${totalPhysicMem.toStringAsFixed(1)} MB";
+  }
+
+  String _getCpuInfo() {
+    var kernelName = SysInfo.kernelName;
+    var kernelVersion = SysInfo.kernelVersion;
+    var cpuArch = SysInfo.kernelArchitecture.name;
+    var cores = SysInfo.cores.length;
+    var core1 = SysInfo.cores.first;
+    var vendor = SysInfo.cores.first.vendor;
+    var bits = SysInfo.userSpaceBitness;
+    return "$vendor $cpuArch";
+  }
+
+  Future<bool> _getIsDeveloper() async {
+    return await FlutterAndroidDeveloperMode.isAndroidDeveloperModeEnabled;
+  }
+
+  String _getCpuCore() {
+    return SysInfo.cores.length.toString();
+  }
+
+  Future<String> _getAdvertisingId() async {
+    String? advertisingId;
+    bool? isLimitAdTrackingEnabled;
+
+    try {
+      advertisingId = await AdvertisingId.id(true);
+    } on PlatformException {
+      FirebaseCrashlytics.instance
+          .recordError(Exception("PlatformException 1"), null);
+    }
+
+    try {
+      isLimitAdTrackingEnabled = await AdvertisingId.isLimitAdTrackingEnabled;
+    } on PlatformException {
+      isLimitAdTrackingEnabled = false;
+      FirebaseCrashlytics.instance
+          .recordError(Exception("PlatformException 2"), null);
+    }
+
+    return advertisingId ?? 'Failed to get advertisingId.';
+  }
+
+  Future<AndroidDeviceInfoModel> _getDeviceInfo() async {
+    StorageSpace storageSpace = await getStorageSpace(
+      lowOnSpaceThreshold: 10 * 1024 * 1024 * 1024, // 2GB
+      fractionDigits: 2, // How many digits to use for the human-readable values
+    );
+
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidDeviceInfo = await _deviceInfoPlugin.androidInfo;
+      var deviceModel = androidDeviceInfo.model;
+      var deviceBrand = androidDeviceInfo.manufacturer;
+      var screenInch =
+          "${androidDeviceInfo.displayMetrics.sizeInches.toStringAsPrecision(2)} inches";
+      var screenResolution =
+          '${androidDeviceInfo.displayMetrics.widthPx.toInt()} x ${androidDeviceInfo.displayMetrics.heightPx.toInt()}';
+      return AndroidDeviceInfoModel(
+          deviceModel: deviceModel,
+          screenInch: screenInch,
+          screenResolution: screenResolution,
+          totalSpace: storageSpace.totalSize,
+          usedSpace: storageSpace.usedSize,
+          freeSpace: storageSpace.freeSize,
+          androidVersion: androidDeviceInfo.version.release,
+          androidSDKInt: androidDeviceInfo.version.sdkInt.toString(),
+          securityPatch: androidDeviceInfo.version.securityPatch ?? "",
+          deviceBrand: deviceBrand,
+          ydpi: androidDeviceInfo.displayMetrics.yDpi.toInt().toString(),
+          xdpi: androidDeviceInfo.displayMetrics.xDpi.toInt().toString());
+    } else {
+      throw Exception("no expected device");
+    }
+  }
+}
