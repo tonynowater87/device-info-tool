@@ -45,31 +45,10 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
         batteryInfoModel: null));
   }
 
-  void copyAdvertisingId(BuildContext context, GlobalKey containerKey) {
+  void copyAdvertisingId() {
     if (state is AndroidDeviceInfoLoaded) {
       Clipboard.setData(ClipboardData(
           text: (state as AndroidDeviceInfoLoaded).advertisingId));
-
-      RenderBox renderBox =
-          (containerKey.currentContext!.findRenderObject() as RenderBox);
-      Offset position = renderBox.localToGlobal(Offset.zero);
-
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        padding: EdgeInsets.zero,
-        content: const Padding(
-          padding: EdgeInsets.all(12.0),
-          child: Text('Copy Advertising Id Successfully'),
-        ),
-        behavior: SnackBarBehavior.floating,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(8))),
-        dismissDirection: DismissDirection.horizontal,
-        backgroundColor: CupertinoColors.activeBlue.withAlpha(200),
-        margin: EdgeInsets.only(
-            bottom: MediaQuery.of(context).size.height - position.dy - 40 - 8,
-            right: 8,
-            left: 8),
-      ));
     }
   }
 

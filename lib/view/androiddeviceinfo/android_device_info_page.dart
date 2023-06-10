@@ -1,8 +1,8 @@
+import 'package:device_info_tool/view/androiddeviceinfo/action_buttons_view.dart';
+import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_cubit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:device_info_tool/view/androiddeviceinfo/action_buttons_view.dart';
-import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_cubit.dart';
 import 'package:rotated_corner_decoration/rotated_corner_decoration.dart';
 
 class AndroidDeviceInfoPage extends StatefulWidget {
@@ -12,19 +12,42 @@ class AndroidDeviceInfoPage extends StatefulWidget {
   State<AndroidDeviceInfoPage> createState() => _AndroidDeviceInfoPageState();
 }
 
-class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage> {
+class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
+    with SingleTickerProviderStateMixin {
   final containerKey = GlobalKey();
+  AnimationController? _animationController;
+  Animation<double>? _animation;
+  OverlayEntry? overlayEntry;
+  VoidCallback? snackbarAnimationProgressListener;
+  AnimationStatusListener? snackbarAnimationStatusListener;
 
   @override
   void initState() {
     super.initState();
+    snackbarAnimationProgressListener = () {
+      Overlay.of(context).setState(() {});
+    };
+    snackbarAnimationStatusListener = (status) {
+      if (status == AnimationStatus.completed) {
+        _animationController?.reverse();
+      }
+    };
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1500));
+    _animation = CurveTween(curve: Curves.fastLinearToSlowEaseIn)
+        .animate(_animationController!);
     context.read<AndroidDeviceInfoCubit>().load();
   }
 
   @override
   void deactivate() {
-    super.deactivate();
+    _animationController
+      ?..removeListener(snackbarAnimationProgressListener!)
+      ..removeStatusListener(snackbarAnimationStatusListener!)
+      ..dispose();
+    overlayEntry?.remove();
     context.read<AndroidDeviceInfoCubit>().release();
+    super.deactivate();
   }
 
   @override
@@ -194,7 +217,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage> {
                           width: 10,
                         ),
                         Expanded(
-                          flex: 2,
+                          flex: 4,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,9 +231,10 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage> {
                         ),
                         OutlinedButton(
                           onPressed: () {
+                            showCopyToast();
                             context
                                 .read<AndroidDeviceInfoCubit>()
-                                .copyAdvertisingId(context, containerKey);
+                                .copyAdvertisingId();
                           },
                           child: const Text('Copy'),
                         ),
@@ -345,4 +369,48 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage> {
         text: text,
         style: const TextStyle(fontSize: 12),
       ));
+
+  showCopyToast() async {
+    _animationController?.removeListener(snackbarAnimationProgressListener!);
+    _animationController
+        ?.removeStatusListener(snackbarAnimationStatusListener!);
+    _animationController?.reset();
+    overlayEntry?.remove();
+
+    RenderBox renderBox =
+        (containerKey.currentContext!.findRenderObject() as RenderBox);
+    Offset position = renderBox.localToGlobal(Offset.zero);
+
+    overlayEntry = OverlayEntry(builder: (context) {
+      return Positioned(
+        left: position.dx + 8,
+        top: position.dy + 8,
+        child: FadeTransition(
+          opacity: _animation!,
+          child: Container(
+            width: MediaQuery.of(context).size.width - 16,
+            decoration: BoxDecoration(
+                color: CupertinoColors.activeBlue.withOpacity(0.8),
+                borderRadius: BorderRadius.circular(8)),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 16.0),
+              child: Center(
+                child: Text('Copy Advertising ID Successfully',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(color: CupertinoColors.white)),
+              ),
+            ),
+          ),
+        ),
+      );
+    });
+
+    Overlay.of(context).insert(overlayEntry!);
+
+    _animationController?.addListener(snackbarAnimationProgressListener!);
+    _animationController?.addStatusListener(snackbarAnimationStatusListener!);
+    _animationController?.forward();
+  }
 }
