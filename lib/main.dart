@@ -1,13 +1,6 @@
 import 'dart:io';
 
 import 'package:buttons_tabbar/buttons_tabbar.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:device_info_tool/data/AppVersionProvider.dart';
 import 'package:device_info_tool/data/AppVersionProviderImpl.dart';
 import 'package:device_info_tool/data/DeviceVersionProvider.dart';
@@ -15,17 +8,26 @@ import 'package:device_info_tool/data/DeviceVersionProviderImpl.dart';
 import 'package:device_info_tool/data/NetworkProvider.dart';
 import 'package:device_info_tool/data/NetworkProviderGithub.dart';
 import 'package:device_info_tool/firebase_options.dart';
+import 'package:device_info_tool/theme.dart';
 import 'package:device_info_tool/view/ad/banner_ad_cubit.dart';
 import 'package:device_info_tool/view/ad/banner_page.dart';
 import 'package:device_info_tool/view/android/android_version_page.dart';
-import 'package:device_info_tool/view/appinfo/appinfo_cubit.dart';
-import 'package:device_info_tool/view/appinfo/appinfo_page.dart';
 import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_cubit.dart';
 import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_page.dart';
+import 'package:device_info_tool/view/appinfo/appinfo_cubit.dart';
+import 'package:device_info_tool/view/appinfo/appinfo_page.dart';
 import 'package:device_info_tool/view/ios/ios_version_page.dart';
 import 'package:device_info_tool/view/ios/ios_version_page_cubit.dart';
 import 'package:device_info_tool/view/wearOS/android_wear_os_version_page.dart';
 import 'package:device_info_tool/view/wearOS/android_wear_os_version_page_cubit.dart';
+import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'view/android/android_version_page_cubit.dart';
 
@@ -52,9 +54,16 @@ Future<void> main() async {
       RepositoryProvider<AppVersionProvider>(
           create: (context) => AppVersionProviderImpl()),
     ],
-    child: const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MyApp(),
+    child: EasyDynamicThemeWidget(
+      child: Builder(builder: (context) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: lightThemeData,
+          darkTheme: darkThemeData,
+          themeMode: EasyDynamicTheme.of(context).themeMode,
+          home: const MyApp(),
+        );
+      }),
     ),
   ));
 }
@@ -80,7 +89,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     var androidDeviceInfoScreen = BlocProvider(
-        create: (context) => AndroidDeviceInfoCubit(), child: const AndroidDeviceInfoPage());
+        create: (context) => AndroidDeviceInfoCubit(),
+        child: const AndroidDeviceInfoPage());
 
     var androidScreen = BlocProvider(
       create: (context) => AndroidVersionPageCubit(
@@ -173,7 +183,8 @@ class _MyAppState extends State<MyApp> {
                   MaterialPageRoute<void>(
                       builder: (BuildContext context) => BlocProvider(
                           create: (context) {
-                            return AppInfoCubit(context.read<AppVersionProvider>());
+                            return AppInfoCubit(
+                                context.read<AppVersionProvider>());
                           },
                           child: const AppInfoPage())),
                 );
@@ -209,17 +220,19 @@ class _MyAppState extends State<MyApp> {
                           ButtonsTabBar(
                             radius: 12,
                             contentPadding:
-                                EdgeInsets.symmetric(horizontal: 12),
-                            backgroundColor: CupertinoColors.activeBlue,
-                            unselectedBackgroundColor: CupertinoColors.white,
+                                const EdgeInsets.symmetric(horizontal: 12),
+                            backgroundColor:
+                                Theme.of(context).selectedBackgroundColor(),
+                            unselectedBackgroundColor:
+                                Theme.of(context).unselectedBackgroundColor(),
                             borderWidth: 1,
                             unselectedBorderColor:
                                 CupertinoColors.activeBlue.withAlpha(200),
                             borderColor: Colors.transparent,
                             center: false,
                             unselectedLabelStyle:
-                                TextStyle(color: CupertinoColors.activeBlue),
-                            labelStyle: TextStyle(color: CupertinoColors.white),
+                                Theme.of(context).unselectedTextStyle(),
+                            labelStyle: Theme.of(context).selectedTextStyle(),
                             height: 56,
                             tabs: bottomNavBarItems,
                           )

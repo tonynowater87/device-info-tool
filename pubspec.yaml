@@ -55,6 +55,7 @@ dependencies:
   flutter_fgbg: 0.2.2
   url_launcher: 6.1.11
   material_dialogs: 1.1.4
+  easy_dynamic_theme: ^2.3.1
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +68,8 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: 2.0.0
   flutter_launcher_icons: 0.12.0
+
+  # flutter pub run flutter_oss_licenses:generate.dart
   flutter_oss_licenses: 2.0.1
 
 # For information on the generic Dart part of this file, see the
@@ -116,7 +119,7 @@ flutter:
 flutter_icons:
   # flutter pub run flutter_launcher_icons
   android: true
-  image_path_android: "assets/launch-icon/smartphone-tablet-launch-icon.png"
+  image_path_android: "assets/launch-icon/launch-icon-light.png"
   min_sdk_android: 21
   ios: true
-  image_path_ios: "assets/launch-icon/smartphone-tablet-launch-icon.png"
+  image_path_ios: "assets/launch-icon/launch-icon-light.png"

@@ -34,12 +34,10 @@ class _IOSVersionPageState extends State<IOSVersionPage>
 
     if (state is IosVersionPageInitial) {
       return Container(
-        color: CupertinoColors.systemBackground,
         child: const Center(child: CircularProgressIndicator()),
       );
     } else if (state is IosVersionPageFailure) {
       return Container(
-        color: CupertinoColors.systemBackground,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

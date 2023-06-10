@@ -41,12 +41,10 @@ class _AndroidVersionPageState extends State<AndroidVersionPage>
     final state = context.watch<AndroidVersionPageCubit>().state;
     if (state is AndroidVersionPageInitial) {
       return Container(
-        color: CupertinoColors.systemBackground,
         child: const Center(child: CircularProgressIndicator()),
       );
     } else if (state is AndroidVersionPageFailure) {
       return Container(
-        color: CupertinoColors.systemBackground,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

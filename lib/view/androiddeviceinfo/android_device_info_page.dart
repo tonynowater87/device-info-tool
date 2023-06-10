@@ -55,13 +55,11 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
     final state = context.watch<AndroidDeviceInfoCubit>().state;
     if (state is AndroidDeviceInfoInitial) {
       return Container(
-        color: CupertinoColors.systemBackground,
         child: const Center(child: CircularProgressIndicator()),
       );
     } else if (state is AndroidDeviceInfoLoaded) {
       return Container(
         key: containerKey,
-        color: CupertinoColors.systemBackground,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

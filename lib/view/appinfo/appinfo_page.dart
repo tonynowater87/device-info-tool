@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
+import 'package:device_info_tool/theme.dart';
+import 'package:device_info_tool/view/appinfo/appinfo_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_dialogs/material_dialogs.dart';
 import 'package:material_dialogs/widgets/buttons/icon_button.dart';
 import 'package:material_dialogs/widgets/buttons/icon_outline_button.dart';
-import 'package:device_info_tool/view/appinfo/appinfo_cubit.dart';
 
 class AppInfoPage extends StatefulWidget {
   const AppInfoPage({Key? key}) : super(key: key);
@@ -25,6 +25,13 @@ class _AppInfoPageState extends State<AppInfoPage> {
     final state = context.watch<AppInfoCubit>().state;
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
+    final dialogBackgroundColor =
+        Theme.of(context).dialogTheme.backgroundColor!;
+    final dialogCancelTextStyle = Theme.of(context).dialogCancelTextStyle();
+    final dialogCancelIconColor = Theme.of(context).dialogCancelIconColor();
+    final dialogConfirmTextStyle = Theme.of(context).dialogConfirmTextStyle();
+    final dialogConfirmIconColor = Theme.of(context).dialogConfirmIconColor();
+    final dialogConfirmButtonBackgroundColor = Theme.of(context).dialogConfirmButtonBackgroundColor();
 
     String appName = "";
     String appVersion = "";
@@ -34,6 +41,13 @@ class _AppInfoPageState extends State<AppInfoPage> {
       appName = state.appName;
       appVersion = state.appVersion;
       githubLink = state.githubLink;
+    }
+
+    String appIconAssetPath;
+    if (Theme.of(context).brightness == Brightness.dark) {
+      appIconAssetPath = 'assets/images/launch-icon-dark.png';
+    } else {
+      appIconAssetPath = 'assets/images/launch-icon-light.png';
     }
 
     return Scaffold(
@@ -47,8 +61,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                Image.asset(
-                    'assets/launch-icon/smartphone-tablet-launch-icon.png'),
+                Image.asset(appIconAssetPath),
                 const SizedBox(height: 20),
                 Visibility(
                     visible: appName.isNotEmpty && appVersion.isNotEmpty,
@@ -66,6 +79,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
               OutlinedButton(
                 onPressed: () {
                   Dialogs.materialDialog(
+                      color: dialogBackgroundColor,
                       context: context,
                       msg: 'Are you sure to show an interstitial ad?',
                       actions: [
@@ -74,9 +88,9 @@ class _AppInfoPageState extends State<AppInfoPage> {
                             Navigator.of(context).pop();
                           },
                           text: 'Cancel',
+                          textStyle: dialogCancelTextStyle,
+                          iconColor: dialogCancelIconColor,
                           iconData: Icons.cancel_outlined,
-                          textStyle: const TextStyle(color: Colors.grey),
-                          iconColor: Colors.grey,
                         ),
                         IconsButton(
                           onPressed: () {
@@ -84,10 +98,10 @@ class _AppInfoPageState extends State<AppInfoPage> {
                             context.read<AppInfoCubit>().loadAdAndShow();
                           },
                           text: 'Yes',
+                          color: dialogConfirmButtonBackgroundColor,
+                          textStyle: dialogConfirmTextStyle,
+                          iconColor: dialogConfirmIconColor,
                           iconData: Icons.monetization_on,
-                          color: CupertinoColors.activeBlue,
-                          textStyle: const TextStyle(color: Colors.white),
-                          iconColor: Colors.white,
                         ),
                       ]);
                 },
@@ -96,6 +110,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
               OutlinedButton(
                 onPressed: () {
                   Dialogs.materialDialog(
+                      color: dialogBackgroundColor,
                       context: context,
                       msg: 'Are you sure to open the web-link?\n\n$githubLink',
                       actions: [
@@ -105,8 +120,8 @@ class _AppInfoPageState extends State<AppInfoPage> {
                           },
                           text: 'Cancel',
                           iconData: Icons.cancel_outlined,
-                          textStyle: const TextStyle(color: Colors.grey),
-                          iconColor: Colors.grey,
+                          textStyle: dialogCancelTextStyle,
+                          iconColor: dialogCancelIconColor,
                         ),
                         IconsButton(
                           onPressed: () {
@@ -115,9 +130,9 @@ class _AppInfoPageState extends State<AppInfoPage> {
                           },
                           text: 'Yes',
                           iconData: Icons.open_in_browser_outlined,
-                          color: CupertinoColors.activeBlue,
-                          textStyle: const TextStyle(color: Colors.white),
-                          iconColor: Colors.white,
+                          color: dialogConfirmButtonBackgroundColor,
+                          textStyle: dialogConfirmTextStyle,
+                          iconColor: dialogConfirmIconColor,
                         ),
                       ]);
                 },
@@ -133,6 +148,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
                       await context.read<AppInfoCubit>().filterLicense();
 
                   Dialogs.bottomMaterialDialog(
+                      color: dialogBackgroundColor,
                       context: context,
                       customView: SizedBox(
                         width: screenWidth,
@@ -158,8 +174,8 @@ class _AppInfoPageState extends State<AppInfoPage> {
                           },
                           text: 'Dismiss',
                           iconData: Icons.cancel_outlined,
-                          textStyle: const TextStyle(color: Colors.grey),
-                          iconColor: Colors.grey,
+                          textStyle: dialogCancelTextStyle,
+                          iconColor: dialogCancelIconColor,
                         )
                       ]);
                 },

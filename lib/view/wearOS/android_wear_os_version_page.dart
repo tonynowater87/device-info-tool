@@ -33,12 +33,10 @@ class _AndroidWearOSVersionPageState extends State<AndroidWearOSVersionPage>
     final state = context.watch<AndroidWearOSVersionPageCubit>().state;
     if (state is AndroidWearVersionPageInitial) {
       return Container(
-        color: CupertinoColors.systemBackground,
         child: const Center(child: CircularProgressIndicator()),
       );
     } else if (state is AndroidWearVersionPageFailure) {
       return Container(
-        color: CupertinoColors.systemBackground,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
