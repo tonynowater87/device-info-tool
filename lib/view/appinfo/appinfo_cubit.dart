@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:meta/meta.dart';
 import 'package:device_info_tool/constants.dart';
@@ -38,7 +39,7 @@ class AppInfoCubit extends Cubit<AppInfoState> {
           adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (ad) {
             ad.show();
           }, onAdFailedToLoad: (error) {
-            print('[DEBUG] load ad error: $error');
+            debugPrint('[DEBUG] load ad error: $error');
           }));
     }
   }

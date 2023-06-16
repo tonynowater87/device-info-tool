@@ -17,19 +17,18 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
   final containerKey = GlobalKey();
   AnimationController? _animationController;
   Animation<double>? _animation;
-  OverlayEntry? overlayEntry;
-  VoidCallback? snackbarAnimationProgressListener;
+  OverlayEntry? _overlayEntry;
   AnimationStatusListener? snackbarAnimationStatusListener;
 
   @override
   void initState() {
     super.initState();
-    snackbarAnimationProgressListener = () {
-      Overlay.of(context).setState(() {});
-    };
     snackbarAnimationStatusListener = (status) {
       if (status == AnimationStatus.completed) {
         _animationController?.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        _overlayEntry?.remove();
+        _overlayEntry = null;
       }
     };
     _animationController = AnimationController(
@@ -42,10 +41,9 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
   @override
   void deactivate() {
     _animationController
-      ?..removeListener(snackbarAnimationProgressListener!)
-      ..removeStatusListener(snackbarAnimationStatusListener!)
+      ?..removeStatusListener(snackbarAnimationStatusListener!)
       ..dispose();
-    overlayEntry?.remove();
+    _overlayEntry?.remove();
     context.read<AndroidDeviceInfoCubit>().release();
     super.deactivate();
   }
@@ -59,7 +57,6 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
       );
     } else if (state is AndroidDeviceInfoLoaded) {
       return Container(
-        key: containerKey,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,6 +187,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   padding:
                       const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
                   child: Container(
+                    key: containerKey,
                     height: 50,
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -229,7 +227,11 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                         ),
                         OutlinedButton(
                           onPressed: () {
-                            showCopyToast();
+                            RenderBox renderBox = (containerKey.currentContext!
+                                .findRenderObject() as RenderBox);
+                            Offset position =
+                                renderBox.localToGlobal(Offset.zero);
+                            showCopyToast(position);
                             context
                                 .read<AndroidDeviceInfoCubit>()
                                 .copyAdvertisingId();
@@ -368,21 +370,16 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
         style: const TextStyle(fontSize: 12),
       ));
 
-  showCopyToast() async {
-    _animationController?.removeListener(snackbarAnimationProgressListener!);
+  showCopyToast(Offset positionAnchor) {
     _animationController
         ?.removeStatusListener(snackbarAnimationStatusListener!);
     _animationController?.reset();
-    overlayEntry?.remove();
+    _overlayEntry?.remove();
 
-    RenderBox renderBox =
-        (containerKey.currentContext!.findRenderObject() as RenderBox);
-    Offset position = renderBox.localToGlobal(Offset.zero);
-
-    overlayEntry = OverlayEntry(builder: (context) {
+    _overlayEntry = OverlayEntry(builder: (context) {
       return Positioned(
-        left: position.dx + 8,
-        top: position.dy + 8,
+        left: positionAnchor.dx,
+        top: positionAnchor.dy + 0.75,
         child: FadeTransition(
           opacity: _animation!,
           child: Container(
@@ -405,9 +402,8 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
       );
     });
 
-    Overlay.of(context).insert(overlayEntry!);
+    Overlay.of(context).insert(_overlayEntry!);
 
-    _animationController?.addListener(snackbarAnimationProgressListener!);
     _animationController?.addStatusListener(snackbarAnimationStatusListener!);
     _animationController?.forward();
   }

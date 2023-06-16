@@ -55,7 +55,9 @@ dependencies:
   flutter_fgbg: 0.2.2
   url_launcher: 6.1.11
   material_dialogs: 1.1.4
-  easy_dynamic_theme: ^2.3.1
+  easy_dynamic_theme: 2.3.1
+  sqflite: 2.2.8+4
+  fluttertoast: 8.2.2
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +73,9 @@ dev_dependencies:
 
   # flutter pub run flutter_oss_licenses:generate.dart
   flutter_oss_licenses: 2.0.1
+
+  # unit test for sqflite:
+  sqflite_common_ffi: 2.2.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

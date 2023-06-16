@@ -7,6 +7,7 @@ import 'package:device_info_tool/data/DeviceVersionProvider.dart';
 import 'package:device_info_tool/data/DeviceVersionProviderImpl.dart';
 import 'package:device_info_tool/data/NetworkProvider.dart';
 import 'package:device_info_tool/data/NetworkProviderGithub.dart';
+import 'package:device_info_tool/data/database_provider.dart';
 import 'package:device_info_tool/firebase_options.dart';
 import 'package:device_info_tool/theme.dart';
 import 'package:device_info_tool/view/ad/banner_ad_cubit.dart';
@@ -16,6 +17,8 @@ import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_cubi
 import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_page.dart';
 import 'package:device_info_tool/view/appinfo/appinfo_cubit.dart';
 import 'package:device_info_tool/view/appinfo/appinfo_page.dart';
+import 'package:device_info_tool/view/deeplink/deep_link_cubit.dart';
+import 'package:device_info_tool/view/deeplink/deep_link_page.dart';
 import 'package:device_info_tool/view/ios/ios_version_page.dart';
 import 'package:device_info_tool/view/ios/ios_version_page_cubit.dart';
 import 'package:device_info_tool/view/wearOS/android_wear_os_version_page.dart';
@@ -53,6 +56,8 @@ Future<void> main() async {
           create: (context) => DeviceVersionProviderImpl()),
       RepositoryProvider<AppVersionProvider>(
           create: (context) => AppVersionProviderImpl()),
+      RepositoryProvider<DatabaseProvider>(
+          create: (context) => DatabaseProviderImpl(isUnitTest: false)),
     ],
     child: EasyDynamicThemeWidget(
       child: Builder(builder: (context) {
@@ -91,6 +96,10 @@ class _MyAppState extends State<MyApp> {
     var androidDeviceInfoScreen = BlocProvider(
         create: (context) => AndroidDeviceInfoCubit(),
         child: const AndroidDeviceInfoPage());
+
+    var deepLinkScreen = BlocProvider(
+        create: (context) => DeepLinkCubit(context.read<DatabaseProvider>()),
+        child: const DeepLinkPage());
 
     var androidScreen = BlocProvider(
       create: (context) => AndroidVersionPageCubit(
@@ -138,6 +147,7 @@ class _MyAppState extends State<MyApp> {
     if (Platform.isAndroid) {
       bottomNavBarItems = [
         _getDeviceInfoNavBarItem(),
+        _getDeepLinkNavBarItem(),
         _getAndroidNavBarItem(),
         _getAndroidWearOSNavBarItem(),
         _getIOSNavBarItem(),
@@ -148,6 +158,7 @@ class _MyAppState extends State<MyApp> {
       ];
       screens = [
         androidDeviceInfoScreen,
+        deepLinkScreen,
         androidScreen,
         androidWearOSScreen,
         iOSScreen,
@@ -261,6 +272,8 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       if (tabIndex == 0) {
         appTitle = DefaultTitle;
+      } else if (tabIndex == 1) {
+        appTitle = bottomNavBarItems[tabIndex].text!;
       } else {
         var tabText = bottomNavBarItems[tabIndex].text;
         appTitle = tabText == null ? "" : "$tabText Version List";
@@ -276,6 +289,10 @@ class _MyAppState extends State<MyApp> {
                 : 'assets/images/iphone-device-icon.png',
             fit: BoxFit.contain),
         text: "Device Info");
+  }
+
+  Tab _getDeepLinkNavBarItem() {
+    return Tab(icon: Icon(Icons.link), text: "Test Deep Link");
   }
 
   Tab _getAndroidNavBarItem() {
