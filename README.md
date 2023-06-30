@@ -5,7 +5,9 @@ a simple tool app to for android app developer
 ### features
 1. Shortcut buttons to open "About", "Developer Options", "Language", and "All App" Pages for developer conveniences.
 
-2. Provide the device information:
+2. Test your deep link.
+
+3. Provide the device information:
 - Version
 - AdvertisingId
 - Brand
@@ -16,7 +18,7 @@ a simple tool app to for android app developer
 - CPU Architecture
 - Battery Status
 
-3. List the timeline with all Android OS, WearOS, iOS, watchOS, macOS version released.
+4List the timeline with all Android OS, WearOS, iOS, watchOS, macOS version released.
 
 
 ## Screenshots
@@ -27,3 +29,4 @@ a simple tool app to for android app developer
 <img src="screenshots/screenshot 5.png" width="20%" align="left">
 <img src="screenshots/screenshot 6.png" width="20%" align="left">
 <img src="screenshots/screenshot 7.png" width="20%" align="left">
+<img src="screenshots/screenshot 8.png" width="20%" align="left">
