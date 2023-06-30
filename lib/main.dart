@@ -6,6 +6,7 @@ import 'package:device_info_tool/data/AppVersionProviderImpl.dart';
 import 'package:device_info_tool/data/DeviceVersionProvider.dart';
 import 'package:device_info_tool/data/DeviceVersionProviderImpl.dart';
 import 'package:device_info_tool/data/NetworkProvider.dart';
+import 'package:device_info_tool/data/NetworkProviderDebug.dart';
 import 'package:device_info_tool/data/NetworkProviderGithub.dart';
 import 'package:device_info_tool/data/database_provider.dart';
 import 'package:device_info_tool/firebase_options.dart';
@@ -51,7 +52,9 @@ Future<void> main() async {
   runApp(MultiRepositoryProvider(
     providers: [
       RepositoryProvider<NetworkProvider>(
-          create: (context) => NetworkProviderGithub(httpClient: HttpClient())),
+          create: (context) => kDebugMode
+              ? NetworkProviderDebug()
+              : NetworkProviderGithub(httpClient: HttpClient())),
       RepositoryProvider<DeviceVersionProvider>(
           create: (context) => DeviceVersionProviderImpl()),
       RepositoryProvider<AppVersionProvider>(

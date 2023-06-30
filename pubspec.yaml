@@ -121,6 +121,7 @@ flutter:
   assets:
     - assets/images/
     - assets/launch-icon/
+    - resources/
 flutter_icons:
   # flutter pub run flutter_launcher_icons
   android: true

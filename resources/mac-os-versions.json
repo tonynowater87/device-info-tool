@@ -115,21 +115,21 @@
     "version": "11",
     "version_name": "Big Sur",
     "initial_release_date": "2020-11-12",
-    "latest_version": "11.7.7",
-    "latest_release_date": "2023-05-18"
+    "latest_version": "11.7.8",
+    "latest_release_date": "2023-06-21"
   },
   {
     "version": "12",
     "version_name": "Monterey",
     "initial_release_date": "2021-10-25",
-    "latest_version": "12.6.6",
-    "latest_release_date": "2023-05-18"
+    "latest_version": "12.6.7",
+    "latest_release_date": "2023-06-21"
   },
   {
     "version": "13",
     "version_name": "Ventura",
     "initial_release_date": "2022-10-24",
-    "latest_version": "13.4",
-    "latest_release_date": "2023-05-18"
+    "latest_version": "13.4.1",
+    "latest_release_date": "2023-06-21"
   }
 ]
