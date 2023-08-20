@@ -287,7 +287,7 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       if (tabIndex == 0) {
         appTitle = DefaultTitle;
-      } else if (tabIndex == 1) {
+      } else if (tabIndex == 1 || tabIndex == 2) {
         appTitle = bottomNavBarItems[tabIndex].text!;
       } else {
         var tabText = bottomNavBarItems[tabIndex].text;

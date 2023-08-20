@@ -109,20 +109,38 @@ class _DeepLinkPageState extends State<DeepLinkPage>
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: OutlinedButton(
-                              onPressed: () {
-                                _openUrl();
-                              },
-                              child: const Text('Open'),
-                            ),
-                          ),
                         ],
                       ),
                       border: const OutlineInputBorder()),
                 )
               ]),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Container(
+                width: double.infinity,
+                height: 50,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    width: 1,
+                    color: Colors.grey,
+                  ),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    _openUrl();
+                  },
+                  child: Text('OPEN',
+                      style: TextStyle(
+                          fontWeight: state.isTextFieldEmpty
+                              ? FontWeight.normal
+                              : FontWeight.bold,
+                          color: state.isTextFieldEmpty
+                              ? Colors.grey
+                              : Colors.blue)),
+                ),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
