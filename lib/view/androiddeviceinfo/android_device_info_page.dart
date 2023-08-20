@@ -1,4 +1,5 @@
-import 'package:device_info_tool/view/androiddeviceinfo/action_buttons_view.dart';
+import 'package:device_info_tool/common/miscellaneous.dart';
+import 'package:device_info_tool/view/intentbuttons/action_buttons_view.dart';
 import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_cubit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -65,25 +66,9 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   padding:
                       const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
                   child: Container(
-                      height: 112.5,
-                      width: double.infinity,
-                      alignment: Alignment.centerRight,
-                      foregroundDecoration: _getDecoration("Actions"),
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(8)),
-                        border: Border.all(
-                            width: 1.5,
-                            color: CupertinoColors.activeBlue.withAlpha(100)),
-                      ),
-                      child: const ActionButtonsView())),
-              Padding(
-                  padding:
-                      const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
-                  child: Container(
                     height: 187.5,
                     width: double.infinity,
-                    foregroundDecoration: _getDecoration("Device"),
+                    foregroundDecoration: getDecoration("Device"),
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                       border: Border.all(
@@ -139,7 +124,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   child: Container(
                     height: 187.5,
                     width: double.infinity,
-                    foregroundDecoration: _getDecoration("Display"),
+                    foregroundDecoration: getDecoration("Display"),
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                       border: Border.all(
@@ -250,7 +235,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   child: Container(
                     height: 225,
                     width: double.infinity,
-                    foregroundDecoration: _getDecoration("System"),
+                    foregroundDecoration: getDecoration("System"),
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                       border: Border.all(
@@ -300,7 +285,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   child: Container(
                     height: 187.5,
                     width: double.infinity,
-                    foregroundDecoration: _getDecoration("Battery"),
+                    foregroundDecoration: getDecoration("Battery"),
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                       border: Border.all(
@@ -357,18 +342,6 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
       throw Exception("invalid state=$state");
     }
   }
-
-  Decoration _getDecoration(String text) => RotatedCornerDecoration.withColor(
-      color: CupertinoColors.activeBlue,
-      badgePosition: BadgePosition.topStart,
-      badgeSize: const Size(56, 56),
-      badgeCornerRadius: const Radius.circular(8),
-      badgeShadow:
-          const BadgeShadow(color: CupertinoColors.activeBlue, elevation: 2),
-      textSpan: TextSpan(
-        text: text,
-        style: const TextStyle(fontSize: 12),
-      ));
 
   showCopyToast(Offset positionAnchor) {
     _animationController

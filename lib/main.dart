@@ -20,6 +20,7 @@ import 'package:device_info_tool/view/appinfo/appinfo_cubit.dart';
 import 'package:device_info_tool/view/appinfo/appinfo_page.dart';
 import 'package:device_info_tool/view/deeplink/deep_link_cubit.dart';
 import 'package:device_info_tool/view/deeplink/deep_link_page.dart';
+import 'package:device_info_tool/view/intentbuttons/intent_buttons_page.dart';
 import 'package:device_info_tool/view/ios/ios_version_page.dart';
 import 'package:device_info_tool/view/ios/ios_version_page_cubit.dart';
 import 'package:device_info_tool/view/wearOS/android_wear_os_version_page.dart';
@@ -69,6 +70,13 @@ Future<void> main() async {
           theme: lightThemeData,
           darkTheme: darkThemeData,
           themeMode: EasyDynamicTheme.of(context).themeMode,
+          builder: (context, child) {
+            final mediaQueryData = MediaQuery.of(context);
+            final scale = mediaQueryData.textScaleFactor.clamp(1.0, 1.0);
+            return MediaQuery(
+                data: MediaQuery.of(context).copyWith(textScaleFactor: scale),
+                child: child!);
+          },
           home: const MyApp(),
         );
       }),
@@ -99,6 +107,8 @@ class _MyAppState extends State<MyApp> {
     var androidDeviceInfoScreen = BlocProvider(
         create: (context) => AndroidDeviceInfoCubit(),
         child: const AndroidDeviceInfoPage());
+
+    var androidIntentButtonScreen = IntentButtonsPage();
 
     var deepLinkScreen = BlocProvider(
         create: (context) => DeepLinkCubit(context.read<DatabaseProvider>()),
@@ -150,6 +160,7 @@ class _MyAppState extends State<MyApp> {
     if (Platform.isAndroid) {
       bottomNavBarItems = [
         _getDeviceInfoNavBarItem(),
+        _getIntentButtonsItem(),
         _getDeepLinkNavBarItem(),
         _getAndroidNavBarItem(),
         _getAndroidWearOSNavBarItem(),
@@ -161,6 +172,7 @@ class _MyAppState extends State<MyApp> {
       ];
       screens = [
         androidDeviceInfoScreen,
+        androidIntentButtonScreen,
         deepLinkScreen,
         androidScreen,
         androidWearOSScreen,
@@ -294,8 +306,13 @@ class _MyAppState extends State<MyApp> {
         text: "Device Info");
   }
 
+  Tab _getIntentButtonsItem() {
+    return const Tab(
+        icon: Icon(Icons.open_in_new_rounded), text: "Intent Actions");
+  }
+
   Tab _getDeepLinkNavBarItem() {
-    return Tab(icon: Icon(Icons.link), text: "Test Deep Link");
+    return const Tab(icon: Icon(Icons.link), text: "Test Deep Link");
   }
 
   Tab _getAndroidNavBarItem() {
