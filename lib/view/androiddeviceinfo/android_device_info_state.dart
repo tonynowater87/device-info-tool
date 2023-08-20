@@ -12,6 +12,7 @@ class AndroidDeviceInfoLoaded extends AndroidDeviceInfoState {
   final String cpuCores;
   final String totalMemory;
   final String advertisingId;
+  final String androidId;
   final bool isDeveloper;
   final AndroidBatteryInfoModel? batteryInfoModel;
 
@@ -21,6 +22,7 @@ class AndroidDeviceInfoLoaded extends AndroidDeviceInfoState {
     required this.cpuCores,
     required this.totalMemory,
     required this.advertisingId,
+    required this.androidId,
     required this.isDeveloper,
     required this.batteryInfoModel,
   });
@@ -32,6 +34,7 @@ class AndroidDeviceInfoLoaded extends AndroidDeviceInfoState {
           cpuCores: cpuCores,
           totalMemory: totalMemory,
           advertisingId: advertisingId,
+          androidId: androidId,
           isDeveloper: isDeveloper ?? this.isDeveloper,
           batteryInfoModel: batteryInfoModel ?? this.batteryInfoModel);
 }

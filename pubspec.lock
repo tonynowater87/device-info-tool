@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.0"
+  android_id:
+    dependency: "direct main"
+    description:
+      name: android_id
+      sha256: fb30a8511627d158f6e19265c999698a4cae9e9ebc064bbfd1ffadbde5f330eb
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.4"
   android_intent_plus:
     dependency: "direct main"
     description:

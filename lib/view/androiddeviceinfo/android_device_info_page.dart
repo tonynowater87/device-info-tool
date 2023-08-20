@@ -1,10 +1,8 @@
 import 'package:device_info_tool/common/miscellaneous.dart';
-import 'package:device_info_tool/view/intentbuttons/action_buttons_view.dart';
 import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_cubit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rotated_corner_decoration/rotated_corner_decoration.dart';
 
 class AndroidDeviceInfoPage extends StatefulWidget {
   const AndroidDeviceInfoPage({Key? key}) : super(key: key);
@@ -15,7 +13,8 @@ class AndroidDeviceInfoPage extends StatefulWidget {
 
 class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
     with SingleTickerProviderStateMixin {
-  final containerKey = GlobalKey();
+  final adidContainerKey = GlobalKey();
+  final androidIdContainerKey = GlobalKey();
   AnimationController? _animationController;
   Animation<double>? _animation;
   OverlayEntry? _overlayEntry;
@@ -172,7 +171,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   padding:
                       const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
                   child: Container(
-                    key: containerKey,
+                    key: adidContainerKey,
                     height: 50,
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -190,7 +189,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: const <Widget>[
-                              Text('Advertising ID'),
+                              Text('AD ID'),
                             ],
                           ),
                         ),
@@ -212,14 +211,75 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                         ),
                         OutlinedButton(
                           onPressed: () {
-                            RenderBox renderBox = (containerKey.currentContext!
+                            RenderBox renderBox = (adidContainerKey.currentContext!
                                 .findRenderObject() as RenderBox);
                             Offset position =
                                 renderBox.localToGlobal(Offset.zero);
-                            showCopyToast(position);
+                            showCopyToast(position, 'Copy Advertising ID Successfully');
                             context
                                 .read<AndroidDeviceInfoCubit>()
                                 .copyAdvertisingId();
+                          },
+                          child: const Text('Copy'),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                      ],
+                    ),
+                  )),
+              Padding(
+                  padding:
+                  const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
+                  child: Container(
+                    key: androidIdContainerKey,
+                    height: 50,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(8)),
+                      border: Border.all(
+                          width: 1.5,
+                          color: CupertinoColors.activeBlue.withAlpha(100)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Expanded(
+                          flex: 2,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: const <Widget>[
+                              Text('Android ID'),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          flex: 4,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              FittedBox(child: Text(state.androidId)),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        OutlinedButton(
+                          onPressed: () {
+                            RenderBox renderBox = (androidIdContainerKey.currentContext!
+                                .findRenderObject() as RenderBox);
+                            Offset position =
+                            renderBox.localToGlobal(Offset.zero);
+                            showCopyToast(position, 'Copy Android ID Successfully');
+                            context
+                                .read<AndroidDeviceInfoCubit>()
+                                .copyAndroidId();
                           },
                           child: const Text('Copy'),
                         ),
@@ -343,7 +403,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
     }
   }
 
-  showCopyToast(Offset positionAnchor) {
+  showCopyToast(Offset positionAnchor, String text) {
     _animationController
         ?.removeStatusListener(snackbarAnimationStatusListener!);
     _animationController?.reset();
@@ -363,7 +423,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
             child: Padding(
               padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 16.0),
               child: Center(
-                child: Text('Copy Advertising ID Successfully',
+                child: Text(text,
                     style: Theme.of(context)
                         .textTheme
                         .bodyLarge!

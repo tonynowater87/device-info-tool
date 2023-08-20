@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:advertising_id/advertising_id.dart';
+import 'package:android_id/android_id.dart';
 import 'package:battery_info/battery_info_plugin.dart';
 import 'package:bloc/bloc.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -31,6 +32,7 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
   Future<void> load() async {
     final deviceInfo = await _getDeviceInfo();
     final adId = await _getAdvertisingId();
+    final androidId = await _getAndroidId();
     final isDeveloper = await _getIsDeveloper();
     final totalMemory = _getMemoryInfo();
     final cpu = _getCpuInfo();
@@ -41,6 +43,7 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
         cpuCores: cpuCores,
         totalMemory: totalMemory,
         advertisingId: adId,
+        androidId: androidId,
         isDeveloper: isDeveloper,
         batteryInfoModel: null));
   }
@@ -49,6 +52,13 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
     if (state is AndroidDeviceInfoLoaded) {
       Clipboard.setData(ClipboardData(
           text: (state as AndroidDeviceInfoLoaded).advertisingId));
+    }
+  }
+
+  void copyAndroidId() {
+    if (state is AndroidDeviceInfoLoaded) {
+      Clipboard.setData(ClipboardData(
+          text: (state as AndroidDeviceInfoLoaded).androidId));
     }
   }
 
@@ -126,6 +136,17 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
     return SysInfo.cores.length.toString();
   }
 
+  Future<String> _getAndroidId() async {
+    String? androidId;
+    try {
+      androidId = await const AndroidId().getId();
+    } on PlatformException {
+      FirebaseCrashlytics.instance
+          .recordError(Exception("getAndroidId PlatformException 1"), null);
+    }
+    return androidId ?? 'Failed to get androidId.';
+  }
+
   Future<String> _getAdvertisingId() async {
     String? advertisingId;
     bool? isLimitAdTrackingEnabled;
@@ -134,7 +155,7 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
       advertisingId = await AdvertisingId.id(true);
     } on PlatformException {
       FirebaseCrashlytics.instance
-          .recordError(Exception("PlatformException 1"), null);
+          .recordError(Exception("getAdvertisingId PlatformException 1"), null);
     }
 
     try {
@@ -142,7 +163,7 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
     } on PlatformException {
       isLimitAdTrackingEnabled = false;
       FirebaseCrashlytics.instance
-          .recordError(Exception("PlatformException 2"), null);
+          .recordError(Exception("getAdvertisingId PlatformException 2"), null);
     }
 
     return advertisingId ?? 'Failed to get advertisingId.';
