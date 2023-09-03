@@ -68,8 +68,7 @@ class DeepLinkCubit extends Cubit<DeepLinkState> {
   }
 
   bool _isValidUrl(String url) {
-    const pattern =
-        r'^(\w+:\/\/)+[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$';
+    const pattern = r'^(\w+)://[^/\s?#]+(?:/[^?\s#]*)?(?:\?[^#\s]*)?(?:#[^\s]*)?$';
     final regex = RegExp(pattern);
     return regex.hasMatch(url);
   }
