@@ -94,5 +94,11 @@
     "latest_version": "16.6.1",
     "release_date": "2022-09-12",
     "latest_date": "2023-09-07"
+  },
+  {
+    "version": "17",
+    "latest_version": "17.0",
+    "release_date": "2023-09-18",
+    "latest_date": "2023-09-18"
   }
 ]
