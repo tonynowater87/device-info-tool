@@ -122,14 +122,14 @@
     "version": "12",
     "version_name": "Monterey",
     "initial_release_date": "2021-10-25",
-    "latest_version": "12.6.8",
-    "latest_release_date": "2023-07-24"
+    "latest_version": "12.7",
+    "latest_release_date": "2023-09-21"
   },
   {
     "version": "13",
     "version_name": "Ventura",
     "initial_release_date": "2022-10-24",
-    "latest_version": "13.5.2",
-    "latest_release_date": "2023-09-07"
+    "latest_version": "13.6",
+    "latest_release_date": "2023-09-21"
   }
 ]
