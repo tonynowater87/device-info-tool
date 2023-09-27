@@ -65,8 +65,8 @@
   {
     "version": "10.0",
     "release_date": "2023-09-18",
-    "latest_version": "10.0.1",
-    "latest_release_date": "2023-09-21",
+    "latest_version": "10.0.2",
+    "latest_release_date": "2023-09-26",
     "based_on_ios_version": "17.0"
   }
 ]
