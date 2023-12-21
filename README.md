@@ -2,7 +2,7 @@
 
 a simple tool app to for android app developer
 
-### features
+### App Features
 1. Shortcut buttons to open "About", "Developer Options", "Language", and "All App" Pages for developer conveniences.
 
 2. Test your deep link.
@@ -18,7 +18,15 @@ a simple tool app to for android app developer
 - CPU Architecture
 - Battery Status
 
-4List the timeline with all Android OS, WearOS, iOS, watchOS, macOS version released.
+4. List the timeline with all Android OS, WearOS, iOS, watchOS, macOS version released.
+5. support dark theme
+
+### Implement Details
+1. Use `Bloc` as State Management 
+2. Use `sqflite` as Local Database to do CRUD with deeplink testing history
+3. Use `http` to fetch the versions resources from GitHub
+4. Use `google_mobile_ads` to display banner advertisement
+5. Use third-party libraries via Method Channel to retrieve android device informations
 
 
 ## Screenshots
