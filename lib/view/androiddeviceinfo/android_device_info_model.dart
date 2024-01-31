@@ -20,6 +20,7 @@ class AndroidDeviceInfoModel {
   String deviceModel;
   String screenInch;
   String screenResolution;
+  String screenDpSize;
   String ydpi;
   String xdpi;
   String totalSpace;
@@ -34,6 +35,7 @@ class AndroidDeviceInfoModel {
     required this.deviceModel,
     required this.screenInch,
     required this.screenResolution,
+    required this.screenDpSize,
     required this.ydpi,
     required this.xdpi,
     required this.totalSpace,

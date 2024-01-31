@@ -183,10 +183,14 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
           "${androidDeviceInfo.displayMetrics.sizeInches.toStringAsPrecision(2)} inches";
       var screenResolution =
           '${androidDeviceInfo.displayMetrics.widthPx.toInt()} x ${androidDeviceInfo.displayMetrics.heightPx.toInt()}';
+      var density = androidDeviceInfo.displayMetrics.density;
+      var dpInWidth = androidDeviceInfo.displayMetrics.widthPx / density;
+      var dpInHeight = androidDeviceInfo.displayMetrics.heightPx / density;
       return AndroidDeviceInfoModel(
           deviceModel: deviceModel,
           screenInch: screenInch,
           screenResolution: screenResolution,
+          screenDpSize: "${dpInWidth.toInt()} x ${dpInHeight.toInt()}",
           totalSpace: storageSpace.totalSize,
           usedSpace: storageSpace.usedSize,
           freeSpace: storageSpace.freeSize,

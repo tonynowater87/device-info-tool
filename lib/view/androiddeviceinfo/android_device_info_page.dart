@@ -138,8 +138,9 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: const <Widget>[
-                              Text('Resolution'),
-                              Text('Size'),
+                              Text('Screen Resolution'),
+                              Text('Width x Height In DP'),
+                              Text('Screen Size'),
                               Text('xdpi'),
                               Text('ydpi'),
                               Text('Screen Density'),
@@ -155,6 +156,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(state.deviceInfoModel.screenResolution),
+                              Text(state.deviceInfoModel.screenDpSize),
                               Text(state.deviceInfoModel.screenInch),
                               Text(state.deviceInfoModel.xdpi),
                               Text(state.deviceInfoModel.ydpi),
