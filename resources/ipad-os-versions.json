@@ -1,9 +1,9 @@
 [
   {
     "version": "13",
-    "latest_version": "13.7",
+    "latest_version": "13.6",
     "release_date": "2019-09-24",
-    "latest_date": "2020-09-01"
+    "latest_date": "2020-07-15"
   },
   {
     "version": "14",
@@ -13,20 +13,20 @@
   },
   {
     "version": "15",
-    "latest_version": "15.7.8",
+    "latest_version": "15.8.1",
     "release_date": "2021-09-20",
-    "latest_date": "2023-07-24"
+    "latest_date": "2024-01-22"
   },
   {
     "version": "16",
-    "latest_version": "16.6.1",
+    "latest_version": "16.7.5",
     "release_date": "2022-10-24",
-    "latest_date": "2023-09-07"
+    "latest_date": "2024-01-22"
   },
   {
     "version": "17",
-    "latest_version": "17.0.3",
+    "latest_version": "17.3",
     "release_date": "2023-09-18",
-    "latest_date": "2023-10-04"
+    "latest_date": "2024-01-22"
   }
 ]
