@@ -7,7 +7,56 @@ from time import strptime
 
 
 baseDir = 'crawler/resources'
-baseUrl = 'https://raw.githubusercontent.com/tonynowater87/mobile-os-versions/main/resources/'
+
+def parseWatchOS(data):
+    try:
+        # 解析版本
+        versionSplit = data[0].split(" ")
+        platforms = [versionSplit[0]]
+        version = versionSplit[1].split("\n")[0]
+            
+        # 解析发布日期
+        release_date_parts = data[2].split(" ")
+        release_date = f"{release_date_parts[2]}-{strptime(release_date_parts[1],'%b').tm_mon:02d}-{release_date_parts[0]}"
+
+        # 构建JSON结构
+        json_data = {
+            "platform": platforms,
+            "version": version,
+            "release_date": release_date
+        }
+        # 转换为JSON字符串
+        json_str = json.dumps(json_data, ensure_ascii=False)
+        print(json_str)
+
+        return json_data
+    except Exception as error:
+        print(f'something error on {data}, error={error}')
+
+def parseTvOS(data):
+    try:
+        # 解析版本
+        versionSplit = data[0].split(" ")
+        platforms = [versionSplit[0]]
+        version = versionSplit[1].split("\n")[0]
+            
+        # 解析发布日期
+        release_date_parts = data[2].split(" ")
+        release_date = f"{release_date_parts[2]}-{strptime(release_date_parts[1],'%b').tm_mon:02d}-{release_date_parts[0]}"
+
+        # 构建JSON结构
+        json_data = {
+            "platform": platforms,
+            "version": version,
+            "release_date": release_date
+        }
+        # 转换为JSON字符串
+        json_str = json.dumps(json_data, ensure_ascii=False)
+        print(json_str)
+
+        return json_data
+    except Exception as error:
+        print(f'something error on {data}, error={error}')
 
 def parseMacOS(data):
     try:
@@ -96,12 +145,19 @@ for row in rows:
         # 将当前行的数据添加到数据列表中
 
         try:
-            if "iOS" in row_data[0] and " and " in row_data[0]:
+            if iOS in row_data[0] and " and " in row_data[0]:
                 data = parseiOS(row_data)
                 data_list.append(data)
-            elif "macOS" in row_data[0]:
+            elif macOS in row_data[0]:
                 data = parseMacOS(row_data)
                 data_list.append(data)
+            elif tvOS in row_data[0]:
+                data = parseTvOS(row_data)
+                data_list.append(data)  
+            elif watchOS in row_data[0]:
+                data = parseWatchOS(row_data)
+                data_list.append(data)      
+            
         except error as error:
             print("{row_data} error={error}")
 
@@ -120,7 +176,7 @@ with open('crawler/resources/apple_support_response.json', 'r') as file:
 # Filter out only the latest version for each major version
 filtered_data = []
 
-filtered_ios_list = [item for item in data if item is not None and item['platform'][0] == 'iOS']
+filtered_ios_list = [item for item in data if item is not None and item['platform'][0] == iOS]
 
 latest_versions = {}
 for item in filtered_ios_list:
@@ -136,7 +192,7 @@ for item in filtered_ios_list:
         print("error item = {item}")                
 filtered_data.append(list(latest_versions.values()))
 
-filtered_mac_list = [item for item in data if item is not None and 'macOS' in item['platform'][0]]
+filtered_mac_list = [item for item in data if item is not None and macOS in item['platform'][0]]
 latest_versions = {}
 for item in filtered_mac_list:
     try:
@@ -150,6 +206,38 @@ for item in filtered_mac_list:
     except:
         print("error item = {item}") 
 filtered_data.append(list(latest_versions.values()))
+
+
+filtered_tv_os_list = [item for item in data if item is not None and tvOS in item['platform'][0]]
+latest_versions = {}
+for item in filtered_tv_os_list:
+    try:
+        version_major = item['version'].split('.')[0]   # Get the major version number
+        if version_major not in latest_versions:
+            latest_versions[version_major] = item
+        else:
+            existing_version = latest_versions[version_major]['version']
+            if item['version'] > existing_version:
+                latest_versions[version_major] = item
+    except:
+        print("error item = {item}") 
+filtered_data.append(list(latest_versions.values()))
+
+filtered_watch_os_list = [item for item in data if item is not None and watchOS in item['platform'][0]]
+latest_versions = {}
+for item in filtered_watch_os_list:
+    try:
+        version_major = item['version'].split('.')[0]   # Get the major version number
+        if version_major not in latest_versions:
+            latest_versions[version_major] = item
+        else:
+            existing_version = latest_versions[version_major]['version']
+            if item['version'] > existing_version:
+                latest_versions[version_major] = item
+    except:
+        print("error item = {item}") 
+filtered_data.append(list(latest_versions.values()))
+
 
 # Save the filtered data back to the file (or another file if preferred)
 with open('crawler/resources/apple_support_response_filtered.json', 'w') as file:
