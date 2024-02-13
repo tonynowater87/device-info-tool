@@ -15,7 +15,7 @@ def parseMacOS(data):
         versionSplit = data[0].split(" ")
         platforms = [versionSplit[0] + " " + versionSplit[1]]
         version = versionSplit[2].split("\n")[0]
-        if version.isdigit() == False:
+        if '.' in version == False:
             version = versionSplit[3].split("\n")[0]
             
         # 解析发布日期
