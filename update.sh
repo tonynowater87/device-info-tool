@@ -1,0 +1,1 @@
+python crawler/apple-website-crawler.py && python crawler/update-version.py
