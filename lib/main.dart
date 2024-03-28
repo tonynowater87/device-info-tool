@@ -16,6 +16,7 @@ import 'package:device_info_tool/view/ad/banner_page.dart';
 import 'package:device_info_tool/view/android/android_version_page.dart';
 import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_cubit.dart';
 import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_page.dart';
+import 'package:device_info_tool/view/androiddistribution/android_distribution_cubit.dart';
 import 'package:device_info_tool/view/androiddistribution/android_distribution_page.dart';
 import 'package:device_info_tool/view/appinfo/appinfo_cubit.dart';
 import 'package:device_info_tool/view/appinfo/appinfo_page.dart';
@@ -159,9 +160,8 @@ class _MyAppState extends State<MyApp> {
     );
 
     var androidDistributionScreen = BlocProvider(
-      create: (context) => AndroidVersionPageCubit(
-          networkProvider: context.read<NetworkProvider>(),
-          deviceVersionProvider: context.read<DeviceVersionProvider>()),
+      create: (context) => AndroidDistributionCubit(
+          networkProvider: context.read<NetworkProvider>()),
       child: const AndroidDistributionPage(),
     );
 

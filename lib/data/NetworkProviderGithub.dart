@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info_tool/data/NetworkProvider.dart';
+import 'package:device_info_tool/data/model/AndroidDistribution.dart';
 import 'package:device_info_tool/data/model/VersionModelAndroid.dart';
 import 'package:device_info_tool/data/model/VersionModelAndroidWearOS.dart';
 import 'package:device_info_tool/data/model/VersionModelIOS.dart';
@@ -117,5 +118,19 @@ class NetworkProviderGithub extends NetworkProvider {
       httpClient.close();
     }
     return Future.value(models);
+  }
+
+  @override
+  Future<AndroidDistribution?> getAndroidDistribution() async {
+    AndroidDistribution model;
+    try {
+      final response =
+      await http.get(Uri.parse("$baseUrl/android-distribution.json"));
+      final List<Map<String, dynamic>> entities = json.decode(response.body);
+      model = AndroidDistribution.fromJson(entities);
+    } finally {
+      httpClient.close();
+    }
+    return Future.value(model);
   }
 }

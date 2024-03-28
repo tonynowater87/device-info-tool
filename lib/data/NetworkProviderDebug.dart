@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:device_info_tool/data/NetworkProvider.dart';
+import 'package:device_info_tool/data/model/AndroidDistribution.dart';
 import 'package:device_info_tool/data/model/VersionModelAndroid.dart';
 import 'package:device_info_tool/data/model/VersionModelAndroidWearOS.dart';
 import 'package:device_info_tool/data/model/VersionModelIOS.dart';
@@ -79,5 +80,14 @@ class NetworkProviderDebug extends NetworkProvider {
     final List<dynamic> entities = json.decode(response);
     models = entities.map((e) => VersionModelWatchOs.fromJson(e)).toList();
     return Future.value(models);
+  }
+
+  @override
+  Future<AndroidDistribution?> getAndroidDistribution() async {
+    final response =
+        await rootBundle.loadString('resources/android-distribution.json');
+    // TODO I/flutter (27761): [Tony] error = type 'List<dynamic>' is not a subtype of type 'List<Map<String, dynamic>>'
+    List<Map<String, dynamic>> entities = json.decode(response);
+    return Future.value(AndroidDistribution.fromJson(entities));
   }
 }
