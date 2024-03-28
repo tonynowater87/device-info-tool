@@ -16,6 +16,7 @@ import 'package:device_info_tool/view/ad/banner_page.dart';
 import 'package:device_info_tool/view/android/android_version_page.dart';
 import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_cubit.dart';
 import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_page.dart';
+import 'package:device_info_tool/view/androiddistribution/android_distribution_page.dart';
 import 'package:device_info_tool/view/appinfo/appinfo_cubit.dart';
 import 'package:device_info_tool/view/appinfo/appinfo_page.dart';
 import 'package:device_info_tool/view/deeplink/deep_link_cubit.dart';
@@ -157,6 +158,13 @@ class _MyAppState extends State<MyApp> {
       child: const IOSVersionPage(deviceType: DeviceType.mac),
     );
 
+    var androidDistributionScreen = BlocProvider(
+      create: (context) => AndroidVersionPageCubit(
+          networkProvider: context.read<NetworkProvider>(),
+          deviceVersionProvider: context.read<DeviceVersionProvider>()),
+      child: const AndroidDistributionPage(),
+    );
+
     if (Platform.isAndroid) {
       bottomNavBarItems = [
         _getDeviceInfoNavBarItem(),
@@ -168,7 +176,8 @@ class _MyAppState extends State<MyApp> {
         _getIPadOSNavBarItem(),
         _getTvOSNavBarItem(),
         _getWatchOSNavBarItem(),
-        _getMacOSNavBarItem()
+        _getMacOSNavBarItem(),
+        _getAndroidDistributionNavBarItem()
       ];
       screens = [
         androidDeviceInfoScreen,
@@ -180,7 +189,8 @@ class _MyAppState extends State<MyApp> {
         iPadOSScreen,
         tvOSScreen,
         watchOSScreen,
-        macOSScreen
+        macOSScreen,
+        androidDistributionScreen
       ];
     } else if (Platform.isIOS) {
       bottomNavBarItems = [
@@ -188,7 +198,8 @@ class _MyAppState extends State<MyApp> {
         _getIPadOSNavBarItem(),
         _getTvOSNavBarItem(),
         _getWatchOSNavBarItem(),
-        _getMacOSNavBarItem()
+        _getMacOSNavBarItem(),
+        _getAndroidDistributionNavBarItem()
       ];
       screens = [
         iOSScreen,
@@ -381,5 +392,14 @@ class _MyAppState extends State<MyApp> {
       ),
       text: "macOS",
     );
+  }
+
+  Tab _getAndroidDistributionNavBarItem() {
+    return Tab(
+        icon: Image.asset(
+          'assets/images/android-device-icon.png',
+          fit: BoxFit.contain,
+        ),
+        text: "Android OS Distribution");
   }
 }
