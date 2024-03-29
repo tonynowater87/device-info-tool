@@ -16,4 +16,9 @@ class Distribution {
       percentage: json[2],
     );
   }
+
+  @override
+  String toString() {
+    return 'Distribution{versionName: $versionName, versionCode: $versionCode, percentage: $percentage}';
+  }
 }

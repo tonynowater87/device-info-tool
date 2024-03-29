@@ -1,4 +1,3 @@
-
 import 'package:device_info_tool/data/model/Distribution.dart';
 
 class AndroidDistribution {
@@ -15,10 +14,17 @@ class AndroidDistribution {
   factory AndroidDistribution.fromJson(List<Map<String, dynamic>> json) {
     return AndroidDistribution(
       lastUpdated: json[0]['最後更新'],
-      versionDistribution:
-          (json[1]['版本分佈'] as List).map((e) => Distribution.fromJson(e)).toList(),
-      cumulativeDistribution:
-          (json[2]['累積分佈'] as List).map((e) => Distribution.fromJson(e)).toList(),
+      versionDistribution: (json[1]['版本分佈'] as List)
+          .map((e) => Distribution.fromJson(e))
+          .toList(),
+      cumulativeDistribution: (json[2]['累積分佈'] as List)
+          .map((e) => Distribution.fromJson(e))
+          .toList(),
     );
+  }
+
+  @override
+  String toString() {
+    return 'AndroidDistribution{lastUpdated: $lastUpdated, versionDistribution: ${versionDistribution.length}, cumulativeDistribution: ${cumulativeDistribution.length}}';
   }
 }

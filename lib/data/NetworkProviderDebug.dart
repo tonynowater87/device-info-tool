@@ -86,8 +86,10 @@ class NetworkProviderDebug extends NetworkProvider {
   Future<AndroidDistribution?> getAndroidDistribution() async {
     final response =
         await rootBundle.loadString('resources/android-distribution.json');
-    // TODO I/flutter (27761): [Tony] error = type 'List<dynamic>' is not a subtype of type 'List<Map<String, dynamic>>'
-    List<Map<String, dynamic>> entities = json.decode(response);
-    return Future.value(AndroidDistribution.fromJson(entities));
+    List<dynamic> entities = json.decode(response);
+    entities[0] = {'最後更新': entities[0]['最後更新']};
+    entities[1] = {'版本分佈': entities[1]['版本分佈']};
+    entities[2] = {'累積分佈': entities[2]['累積分佈']};
+    return Future.value(AndroidDistribution.fromJson(entities.cast<Map<String, dynamic>>()));
   }
 }

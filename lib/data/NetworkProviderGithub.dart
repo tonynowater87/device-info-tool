@@ -125,9 +125,13 @@ class NetworkProviderGithub extends NetworkProvider {
     AndroidDistribution model;
     try {
       final response =
-      await http.get(Uri.parse("$baseUrl/android-distribution.json"));
-      final List<Map<String, dynamic>> entities = json.decode(response.body);
-      model = AndroidDistribution.fromJson(entities);
+          await http.get(Uri.parse("$baseUrl/android-distribution.json"));
+      List<dynamic> entities = jsonDecode(response.body);
+      entities[0] = {'最後更新': entities[0]['最後更新']};
+      entities[1] = {'版本分佈': entities[1]['版本分佈']};
+      entities[2] = {'累積分佈': entities[2]['累積分佈']};
+      model =
+          AndroidDistribution.fromJson(entities.cast<Map<String, dynamic>>());
     } finally {
       httpClient.close();
     }
