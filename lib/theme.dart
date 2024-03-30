@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 var lightThemeData = ThemeData(
     primaryColor: CupertinoColors.activeBlue,
     textTheme: TextTheme(
-        button: TextStyle(color: CupertinoColors.systemGrey6.darkColor)),
+        button: TextStyle(color: CupertinoColors.systemGrey6.darkColor),
+        bodyText1: const TextStyle(color: CupertinoColors.systemGrey6)),
     brightness: Brightness.light,
     dialogTheme: const DialogTheme(
         backgroundColor: CupertinoColors.secondarySystemBackground),
@@ -13,7 +14,8 @@ var lightThemeData = ThemeData(
 var darkThemeData = ThemeData(
     primaryColor: CupertinoColors.activeBlue,
     textTheme: TextTheme(
-        button: TextStyle(color: CupertinoColors.systemGrey6.darkColor)),
+        button: TextStyle(color: CupertinoColors.systemGrey6.darkColor),
+        bodyText1: const TextStyle(color: CupertinoColors.systemGrey6)),
     brightness: Brightness.dark,
     dialogTheme: DialogTheme(
       backgroundColor: CupertinoColors.secondarySystemBackground.darkColor,
