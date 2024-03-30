@@ -2,25 +2,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 var lightThemeData = ThemeData(
-    primaryColor: CupertinoColors.activeBlue,
+    colorSchemeSeed: CupertinoColors.activeBlue,
     textTheme: TextTheme(
         button: TextStyle(color: CupertinoColors.systemGrey6.darkColor),
-        bodyText1: const TextStyle(color: CupertinoColors.systemGrey6)),
+        bodyText1: const TextStyle(color: CupertinoColors.systemGrey6),
+        bodyText2: TextStyle(color: CupertinoColors.systemGrey6.darkColor)),
     brightness: Brightness.light,
     dialogTheme: const DialogTheme(
-        backgroundColor: CupertinoColors.secondarySystemBackground),
-    accentColor: CupertinoColors.systemBlue);
+        backgroundColor: CupertinoColors.secondarySystemBackground));
 
 var darkThemeData = ThemeData(
-    primaryColor: CupertinoColors.activeBlue,
-    textTheme: TextTheme(
+  colorSchemeSeed: CupertinoColors.activeBlue,
+  textTheme: TextTheme(
         button: TextStyle(color: CupertinoColors.systemGrey6.darkColor),
-        bodyText1: const TextStyle(color: CupertinoColors.systemGrey6)),
+        bodyText1: const TextStyle(color: CupertinoColors.systemGrey6),
+        bodyText2: const TextStyle(color: CupertinoColors.systemGrey6)),
     brightness: Brightness.dark,
     dialogTheme: DialogTheme(
       backgroundColor: CupertinoColors.secondarySystemBackground.darkColor,
-    ),
-    accentColor: CupertinoColors.systemBlue);
+    ),);
 
 extension CustomColor on ThemeData {
   Color unselectedBackgroundColor() {

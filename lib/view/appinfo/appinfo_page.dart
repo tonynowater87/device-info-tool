@@ -31,7 +31,8 @@ class _AppInfoPageState extends State<AppInfoPage> {
     final dialogCancelIconColor = Theme.of(context).dialogCancelIconColor();
     final dialogConfirmTextStyle = Theme.of(context).dialogConfirmTextStyle();
     final dialogConfirmIconColor = Theme.of(context).dialogConfirmIconColor();
-    final dialogConfirmButtonBackgroundColor = Theme.of(context).dialogConfirmButtonBackgroundColor();
+    final dialogConfirmButtonBackgroundColor =
+        Theme.of(context).dialogConfirmButtonBackgroundColor();
 
     String appName = "";
     String appVersion = "";
@@ -73,115 +74,122 @@ class _AppInfoPageState extends State<AppInfoPage> {
             )),
         Align(
           alignment: Alignment.bottomCenter,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              OutlinedButton(
-                onPressed: () {
-                  Dialogs.materialDialog(
-                      color: dialogBackgroundColor,
-                      context: context,
-                      msg: 'Are you sure to show an interstitial ad?',
-                      actions: [
-                        IconsOutlineButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          text: 'Cancel',
-                          textStyle: dialogCancelTextStyle,
-                          iconColor: dialogCancelIconColor,
-                          iconData: Icons.cancel_outlined,
-                        ),
-                        IconsButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            context.read<AppInfoCubit>().loadAdAndShow();
-                          },
-                          text: 'Yes',
-                          color: dialogConfirmButtonBackgroundColor,
-                          textStyle: dialogConfirmTextStyle,
-                          iconColor: dialogConfirmIconColor,
-                          iconData: Icons.monetization_on,
-                        ),
-                      ]);
-                },
-                child: const Text('Donate'),
-              ),
-              OutlinedButton(
-                onPressed: () {
-                  Dialogs.materialDialog(
-                      color: dialogBackgroundColor,
-                      context: context,
-                      msg: 'Are you sure to open the web-link?\n\n$githubLink',
-                      actions: [
-                        IconsOutlineButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          text: 'Cancel',
-                          iconData: Icons.cancel_outlined,
-                          textStyle: dialogCancelTextStyle,
-                          iconColor: dialogCancelIconColor,
-                        ),
-                        IconsButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            context.read<AppInfoCubit>().openGithubUrl();
-                          },
-                          text: 'Yes',
-                          iconData: Icons.open_in_browser_outlined,
-                          color: dialogConfirmButtonBackgroundColor,
-                          textStyle: dialogConfirmTextStyle,
-                          iconColor: dialogConfirmIconColor,
-                        ),
-                      ]);
-                },
-                child: const Text('Github'),
-              ),
-              OutlinedButton(
-                onPressed: () async {
-                  if (!mounted) {
-                    return;
-                  }
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                OutlinedButton(
+                  onPressed: () {
+                    Dialogs.materialDialog(
+                        color: dialogBackgroundColor,
+                        context: context,
+                        msg:
+                            'Are you sure to open the web-link?\n\n$githubLink',
+                        actions: [
+                          IconsOutlineButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            text: 'Cancel',
+                            iconData: Icons.cancel_outlined,
+                            textStyle: dialogCancelTextStyle,
+                            iconColor: dialogCancelIconColor,
+                          ),
+                          IconsButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              context.read<AppInfoCubit>().openGithubUrl();
+                            },
+                            text: 'Yes',
+                            iconData: Icons.open_in_browser_outlined,
+                            color: dialogConfirmButtonBackgroundColor,
+                            textStyle: dialogConfirmTextStyle,
+                            iconColor: dialogConfirmIconColor,
+                          ),
+                        ]);
+                  },
+                  child: const Text('Github'),
+                ),
+                const SizedBox(width: 10),
+                OutlinedButton(
+                  onPressed: () async {
+                    if (!mounted) {
+                      return;
+                    }
 
-                  final thirdPartyLibs =
-                      await context.read<AppInfoCubit>().filterLicense();
+                    final thirdPartyLibs =
+                        await context.read<AppInfoCubit>().filterLicense();
 
-                  Dialogs.bottomMaterialDialog(
-                      color: dialogBackgroundColor,
-                      context: context,
-                      customView: SizedBox(
-                        width: screenWidth,
-                        height: screenHeight / 3,
-                        child: ListView.builder(
-                          itemBuilder: (context, position) {
-                            return AboutListTile(
-                              applicationLegalese:
-                                  thirdPartyLibs[position].description,
-                              applicationName: thirdPartyLibs[position].name,
-                              applicationVersion:
-                                  thirdPartyLibs[position].version,
-                              child: Text(thirdPartyLibs[position].name ?? ''),
-                            );
-                          },
-                          itemCount: thirdPartyLibs.length,
+                    Dialogs.bottomMaterialDialog(
+                        color: dialogBackgroundColor,
+                        context: context,
+                        customView: SizedBox(
+                          width: screenWidth,
+                          height: screenHeight / 3,
+                          child: ListView.builder(
+                            itemBuilder: (context, position) {
+                              return AboutListTile(
+                                applicationLegalese:
+                                    thirdPartyLibs[position].description,
+                                applicationName: thirdPartyLibs[position].name,
+                                applicationVersion:
+                                    thirdPartyLibs[position].version,
+                                child:
+                                    Text(thirdPartyLibs[position].name ?? ''),
+                              );
+                            },
+                            itemCount: thirdPartyLibs.length,
+                          ),
                         ),
-                      ),
-                      actions: [
-                        IconsOutlineButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          text: 'Dismiss',
-                          iconData: Icons.cancel_outlined,
-                          textStyle: dialogCancelTextStyle,
-                          iconColor: dialogCancelIconColor,
-                        )
-                      ]);
-                },
-                child: const Text('Used Third-Party Packages'),
-              )
-            ],
+                        actions: [
+                          IconsOutlineButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            text: 'Dismiss',
+                            iconData: Icons.cancel_outlined,
+                            textStyle: dialogCancelTextStyle,
+                            iconColor: dialogCancelIconColor,
+                          )
+                        ]);
+                  },
+                  child: const Text('Used Third-Party Packages'),
+                ),
+                const SizedBox(width: 10),
+                OutlinedButton(
+                  onPressed: () {
+                    Dialogs.materialDialog(
+                        color: dialogBackgroundColor,
+                        context: context,
+                        msg: 'Are you sure to show an interstitial ad?',
+                        actions: [
+                          IconsOutlineButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            text: 'Cancel',
+                            textStyle: dialogCancelTextStyle,
+                            iconColor: dialogCancelIconColor,
+                            iconData: Icons.cancel_outlined,
+                          ),
+                          IconsButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              context.read<AppInfoCubit>().loadAdAndShow();
+                            },
+                            text: 'Yes',
+                            color: dialogConfirmButtonBackgroundColor,
+                            textStyle: dialogConfirmTextStyle,
+                            iconColor: dialogConfirmIconColor,
+                            iconData: Icons.monetization_on,
+                          ),
+                        ]);
+                  },
+                  child: const Text('Donate'),
+                ),
+              ],
+            ),
           ),
         )
       ]),

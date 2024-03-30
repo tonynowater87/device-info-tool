@@ -213,16 +213,19 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                         ),
                         OutlinedButton(
                           onPressed: () {
-                            RenderBox renderBox = (adidContainerKey.currentContext!
+                            RenderBox renderBox = (adidContainerKey
+                                .currentContext!
                                 .findRenderObject() as RenderBox);
                             Offset position =
                                 renderBox.localToGlobal(Offset.zero);
-                            showCopyToast(position, 'Copy Advertising ID Successfully');
+                            showCopyToast(
+                                position, 'Copy Advertising ID Successfully');
                             context
                                 .read<AndroidDeviceInfoCubit>()
                                 .copyAdvertisingId();
                           },
-                          child: const Text('Copy'),
+                          child: Text('Copy',
+                              style: Theme.of(context).textTheme.bodyText2),
                         ),
                         const SizedBox(
                           width: 10,
@@ -232,7 +235,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   )),
               Padding(
                   padding:
-                  const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
+                      const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
                   child: Container(
                     key: androidIdContainerKey,
                     height: 50,
@@ -274,16 +277,19 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                         ),
                         OutlinedButton(
                           onPressed: () {
-                            RenderBox renderBox = (androidIdContainerKey.currentContext!
+                            RenderBox renderBox = (androidIdContainerKey
+                                .currentContext!
                                 .findRenderObject() as RenderBox);
                             Offset position =
-                            renderBox.localToGlobal(Offset.zero);
-                            showCopyToast(position, 'Copy Android ID Successfully');
+                                renderBox.localToGlobal(Offset.zero);
+                            showCopyToast(
+                                position, 'Copy Android ID Successfully');
                             context
                                 .read<AndroidDeviceInfoCubit>()
                                 .copyAndroidId();
                           },
-                          child: const Text('Copy'),
+                          child: Text('Copy',
+                              style: Theme.of(context).textTheme.bodyText2),
                         ),
                         const SizedBox(
                           width: 10,
