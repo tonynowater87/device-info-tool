@@ -36,12 +36,11 @@ class AndroidDistributionCubit extends Cubit<AndroidDistributionState> {
                 Distribution(
                     versionName: "Others",
                     versionCode: "",
-                    percentage: 100 - cumulativePercentage));
+                    percentage: double.parse((100.0 - cumulativePercentage)
+                        .toStringAsPrecision(1))));
             max = data.versionDistribution
-                    .map((e) => e.percentage)
-                    .reduce((curr, next) => curr > next ? curr : next) +
-                5;
-            // TODO close to 10's multiple
+                .map((e) => e.percentage)
+                .reduce((curr, next) => curr > next ? curr : next);
             break;
         }
         emit(AndroidDistributionLoaded(

@@ -35,22 +35,25 @@ class _AndroidDistributionPageState extends State<AndroidDistributionPage> {
         return Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            SegmentedButton(
-                segments: const [
-                  ButtonSegment(
-                      value: ChartType.cumulative, label: Text('Cumulative')),
-                  ButtonSegment(
-                      value: ChartType.individual, label: Text('Individual')),
-                ],
-                selected: {
-                  _selectedSegment
-                },
-                onSelectionChanged: (value) {
-                  _selectedSegment = value.first;
-                  context
-                      .read<AndroidDistributionCubit>()
-                      .load(_selectedSegment);
-                }),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              width: double.infinity,
+              child: SegmentedButton(
+                  showSelectedIcon: false,
+                  segments: const [
+                    ButtonSegment(
+                        value: ChartType.cumulative, label: Text('Cumulative')),
+                    ButtonSegment(
+                        value: ChartType.individual, label: Text('Individual')),
+                  ],
+                  selected: {_selectedSegment},
+                  onSelectionChanged: (value) {
+                    _selectedSegment = value.first;
+                    context
+                        .read<AndroidDistributionCubit>()
+                        .load(_selectedSegment);
+                  }),
+            ),
             Expanded(
               child: Stack(
                 children: [
@@ -58,24 +61,36 @@ class _AndroidDistributionPageState extends State<AndroidDistributionPage> {
                     padding: const EdgeInsets.only(
                         left: 4, top: 4, right: 4, bottom: 30),
                     child: SfCartesianChart(
-                      primaryXAxis: const CategoryAxis(),
+                      primaryXAxis: const CategoryAxis(
+                          majorGridLines: MajorGridLines(width: 0)),
                       primaryYAxis: NumericAxis(
-                        minimum: 0,
-                        maximum: state.maxX,
-                        interval: 10,
-                      ),
-                      tooltipBehavior: TooltipBehavior(
-                          enable: true,
-                          format: 'point.y%' /*僅顯示數值*/,
-                          header: '' /*隱藏Series 0*/),
+                          minimum: 0,
+                          maximum: state.maxX,
+                          interval: _selectedSegment == ChartType.cumulative
+                              ? 25
+                              : 10,
+                          majorGridLines: const MajorGridLines(width: 0)),
                       series: <CartesianSeries<Distribution, String>>[
                         BarSeries(
+                          color: Theme.of(context).colorScheme.primary,
+                          borderRadius: const BorderRadius.only(
+                              topRight: Radius.circular(20),
+                              bottomRight: Radius.circular(20)),
+                          animationDuration: 600,
+                          isTrackVisible: true,
+                          dataLabelMapper: (Distribution data, _) =>
+                              '${data.percentage}%',
+                          dataLabelSettings: const DataLabelSettings(
+                              labelPosition: ChartDataLabelPosition.outside,
+                              isVisible: true,
+                              labelAlignment: ChartDataLabelAlignment.top),
                           dataSource: _selectedSegment == ChartType.cumulative
                               ? data.cumulativeDistribution
                               : data.versionDistribution,
                           xValueMapper: (Distribution data, _) =>
                               data.versionName,
-                          yValueMapper: (Distribution data, _) => data.percentage,
+                          yValueMapper: (Distribution data, _) =>
+                              data.percentage,
                         ),
                       ],
                     ),
