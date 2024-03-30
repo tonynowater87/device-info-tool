@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:device_info_tool/data/NetworkProvider.dart';
 import 'package:device_info_tool/data/model/AndroidDistribution.dart';
+import 'package:device_info_tool/data/model/Distribution.dart';
+import 'package:device_info_tool/view/androiddistribution/chart_type.dart';
 import 'package:flutter/foundation.dart';
 
 part 'android_distribution_state.dart';
@@ -12,12 +14,38 @@ class AndroidDistributionCubit extends Cubit<AndroidDistributionState> {
       : _networkProvider = networkProvider,
         super(AndroidDistributionInitial());
 
-  void load() async {
+  void load(ChartType chartType) async {
     emit(AndroidDistributionInitial());
     try {
       final data = await _networkProvider.getAndroidDistribution();
+      double max;
       if (data != null) {
-        emit(AndroidDistributionLoaded(androidDistributionModel: data));
+        switch (chartType) {
+          case ChartType.cumulative:
+            data.cumulativeDistribution.insert(
+                0,
+                Distribution(
+                    versionName: "Others", versionCode: "", percentage: 100.0));
+            max = 100.0;
+            break;
+          case ChartType.individual:
+            var cumulativePercentage = data.versionDistribution.fold(0.0,
+                (previousValue, element) => element.percentage + previousValue);
+            data.versionDistribution.insert(
+                0,
+                Distribution(
+                    versionName: "Others",
+                    versionCode: "",
+                    percentage: 100 - cumulativePercentage));
+            max = data.versionDistribution
+                    .map((e) => e.percentage)
+                    .reduce((curr, next) => curr > next ? curr : next) +
+                5;
+            // TODO close to 10's multiple
+            break;
+        }
+        emit(AndroidDistributionLoaded(
+            androidDistributionModel: data, maxX: max));
       } else {
         emit(AndroidDistributionFailure());
       }

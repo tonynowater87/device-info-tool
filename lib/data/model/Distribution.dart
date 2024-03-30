@@ -1,7 +1,7 @@
 class Distribution {
   String versionName;
   String versionCode;
-  String percentage;
+  double percentage;
 
   Distribution({
     required this.versionName,
@@ -13,7 +13,7 @@ class Distribution {
     return Distribution(
       versionName: json[0],
       versionCode: json[1],
-      percentage: json[2],
+      percentage: double.parse((json[2].replaceAll('%', '')))
     );
   }
 

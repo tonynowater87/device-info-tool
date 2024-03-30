@@ -169,6 +169,7 @@ class _MyAppState extends State<MyApp> {
       bottomNavBarItems = [
         _getDeviceInfoNavBarItem(),
         _getIntentButtonsItem(),
+        _getAndroidDistributionNavBarItem(),
         _getDeepLinkNavBarItem(),
         _getAndroidNavBarItem(),
         _getAndroidWearOSNavBarItem(),
@@ -177,11 +178,11 @@ class _MyAppState extends State<MyApp> {
         _getTvOSNavBarItem(),
         _getWatchOSNavBarItem(),
         _getMacOSNavBarItem(),
-        _getAndroidDistributionNavBarItem()
       ];
       screens = [
         androidDeviceInfoScreen,
         androidIntentButtonScreen,
+        androidDistributionScreen,
         deepLinkScreen,
         androidScreen,
         androidWearOSScreen,
@@ -190,7 +191,6 @@ class _MyAppState extends State<MyApp> {
         tvOSScreen,
         watchOSScreen,
         macOSScreen,
-        androidDistributionScreen
       ];
     } else if (Platform.isIOS) {
       bottomNavBarItems = [
@@ -298,7 +298,7 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       if (tabIndex == 0) {
         appTitle = DefaultTitle;
-      } else if (tabIndex == 1 || tabIndex == 2) {
+      } else if (tabIndex == 1 || tabIndex == 2 || tabIndex == 3) {
         appTitle = bottomNavBarItems[tabIndex].text!;
       } else {
         var tabText = bottomNavBarItems[tabIndex].text;

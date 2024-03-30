@@ -1,7 +1,10 @@
+import 'package:device_info_tool/data/model/Distribution.dart';
 import 'package:device_info_tool/view/androiddistribution/android_distribution_cubit.dart';
+import 'package:device_info_tool/view/androiddistribution/chart_type.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class AndroidDistributionPage extends StatefulWidget {
   const AndroidDistributionPage({super.key});
@@ -12,10 +15,12 @@ class AndroidDistributionPage extends StatefulWidget {
 }
 
 class _AndroidDistributionPageState extends State<AndroidDistributionPage> {
+  ChartType _selectedSegment = ChartType.cumulative;
+
   @override
   void initState() {
     super.initState();
-    context.read<AndroidDistributionCubit>().load();
+    context.read<AndroidDistributionCubit>().load(_selectedSegment);
   }
 
   @override
@@ -27,27 +32,67 @@ class _AndroidDistributionPageState extends State<AndroidDistributionPage> {
       case AndroidDistributionLoaded:
         final data =
             (state as AndroidDistributionLoaded).androidDistributionModel;
-        return Stack(
+        return Column(
+          mainAxisSize: MainAxisSize.max,
           children: [
-            ListView.builder(
-              padding: const EdgeInsets.only(bottom: 30),
-              itemCount: data.versionDistribution.length,
-              itemBuilder: (context, index) {
-                final item = data.versionDistribution[index];
-                return ListTile(
-                  title: Text('${item.versionName} ${item.versionCode}'),
-                  subtitle: Text(item.percentage),
-                );
-              },
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                height: 30,
-                color: CupertinoColors.systemBlue,
-                child: Center(child: Text('Last updated: ${data.lastUpdated}', style: Theme.of(context).textTheme.bodyText1)),
+            SegmentedButton(
+                segments: const [
+                  ButtonSegment(
+                      value: ChartType.cumulative, label: Text('Cumulative')),
+                  ButtonSegment(
+                      value: ChartType.individual, label: Text('Individual')),
+                ],
+                selected: {
+                  _selectedSegment
+                },
+                onSelectionChanged: (value) {
+                  _selectedSegment = value.first;
+                  context
+                      .read<AndroidDistributionCubit>()
+                      .load(_selectedSegment);
+                }),
+            Expanded(
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 4, top: 4, right: 4, bottom: 30),
+                    child: SfCartesianChart(
+                      primaryXAxis: const CategoryAxis(),
+                      primaryYAxis: NumericAxis(
+                        minimum: 0,
+                        maximum: state.maxX,
+                        interval: 10,
+                      ),
+                      tooltipBehavior: TooltipBehavior(
+                          enable: true,
+                          format: 'point.y%' /*僅顯示數值*/,
+                          header: '' /*隱藏Series 0*/),
+                      series: <CartesianSeries<Distribution, String>>[
+                        BarSeries(
+                          dataSource: _selectedSegment == ChartType.cumulative
+                              ? data.cumulativeDistribution
+                              : data.versionDistribution,
+                          xValueMapper: (Distribution data, _) =>
+                              data.versionName,
+                          yValueMapper: (Distribution data, _) => data.percentage,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 30,
+                      color: CupertinoColors.systemBlue,
+                      child: Center(
+                          child: Text('Last updated: ${data.lastUpdated}',
+                              style: Theme.of(context).textTheme.bodyText1)),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -60,7 +105,7 @@ class _AndroidDistributionPageState extends State<AndroidDistributionPage> {
             OutlinedButton(
               child: const Text('Retry'),
               onPressed: () {
-                context.read<AndroidDistributionCubit>().load();
+                context.read<AndroidDistributionCubit>().load(_selectedSegment);
               },
             ),
           ],

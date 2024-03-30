@@ -60,6 +60,7 @@ dependencies:
   sqflite: 2.2.8+4
   fluttertoast: 8.2.2
   android_id: 0.3.4
+  syncfusion_flutter_charts: 25.1.37
 
 dev_dependencies:
   flutter_test:

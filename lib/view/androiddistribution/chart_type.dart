@@ -1,0 +1,3 @@
+enum ChartType {
+  cumulative, individual
+}
