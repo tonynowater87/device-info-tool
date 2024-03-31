@@ -13,7 +13,7 @@ class Distribution {
     return Distribution(
       versionName: json[0],
       versionCode: json[1],
-      percentage: double.parse((json[2].replaceAll('%', '')))
+      percentage: double.parse(json[2])
     );
   }
 

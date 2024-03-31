@@ -27,22 +27,9 @@ class AndroidDistributionCubit extends Cubit<AndroidDistributionState> {
       if (data != null) {
         switch (chartType) {
           case ChartType.cumulative:
-            data.cumulativeDistribution.insert(
-                0,
-                Distribution(
-                    versionName: "Others", versionCode: "", percentage: 100.0));
             max = 100.0;
             break;
           case ChartType.individual:
-            var cumulativePercentage = data.versionDistribution.fold(0.0,
-                (previousValue, element) => element.percentage + previousValue);
-            data.versionDistribution.insert(
-                0,
-                Distribution(
-                    versionName: "Others",
-                    versionCode: "",
-                    percentage: double.parse((100.0 - cumulativePercentage)
-                        .toStringAsPrecision(1))));
             max = data.versionDistribution
                 .map((e) => e.percentage)
                 .reduce((curr, next) => curr > next ? curr : next);

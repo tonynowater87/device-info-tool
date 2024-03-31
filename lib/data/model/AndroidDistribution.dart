@@ -16,9 +16,13 @@ class AndroidDistribution {
       lastUpdated: json[0]['最後更新'],
       versionDistribution: (json[1]['版本分佈'] as List)
           .map((e) => Distribution.fromJson(e))
+          .toList()
+          .reversed
           .toList(),
       cumulativeDistribution: (json[2]['累積分佈'] as List)
           .map((e) => Distribution.fromJson(e))
+          .toList()
+          .reversed
           .toList(),
     );
   }
