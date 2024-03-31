@@ -121,8 +121,8 @@ class NetworkProviderGithub extends NetworkProvider {
   }
 
   @override
-  Future<AndroidDistribution?> getAndroidDistribution() async {
-    AndroidDistribution model;
+  Future<MobileDistribution?> getAndroidDistribution() async {
+    MobileDistribution model;
     try {
       final response =
           await http.get(Uri.parse("$baseUrl/android-distribution.json"));
@@ -131,7 +131,25 @@ class NetworkProviderGithub extends NetworkProvider {
       entities[1] = {'版本分佈': entities[1]['版本分佈']};
       entities[2] = {'累積分佈': entities[2]['累積分佈']};
       model =
-          AndroidDistribution.fromJson(entities.cast<Map<String, dynamic>>());
+          MobileDistribution.fromJson(entities.cast<Map<String, dynamic>>());
+    } finally {
+      httpClient.close();
+    }
+    return Future.value(model);
+  }
+
+  @override
+  Future<MobileDistribution?> getIOSDistribution() async {
+    MobileDistribution model;
+    try {
+      final response =
+          await http.get(Uri.parse("$baseUrl/ios-distribution.json"));
+      List<dynamic> entities = jsonDecode(response.body);
+      entities[0] = {'最後更新': entities[0]['最後更新']};
+      entities[1] = {'版本分佈': entities[1]['版本分佈']};
+      entities[2] = {'累積分佈': entities[2]['累積分佈']};
+      model =
+          MobileDistribution.fromJson(entities.cast<Map<String, dynamic>>());
     } finally {
       httpClient.close();
     }

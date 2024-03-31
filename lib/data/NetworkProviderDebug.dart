@@ -83,13 +83,24 @@ class NetworkProviderDebug extends NetworkProvider {
   }
 
   @override
-  Future<AndroidDistribution?> getAndroidDistribution() async {
+  Future<MobileDistribution?> getAndroidDistribution() async {
     final response =
         await rootBundle.loadString('resources/android-distribution.json');
     List<dynamic> entities = json.decode(response);
     entities[0] = {'最後更新': entities[0]['最後更新']};
     entities[1] = {'版本分佈': entities[1]['版本分佈']};
     entities[2] = {'累積分佈': entities[2]['累積分佈']};
-    return Future.value(AndroidDistribution.fromJson(entities.cast<Map<String, dynamic>>()));
+    return Future.value(MobileDistribution.fromJson(entities.cast<Map<String, dynamic>>()));
+  }
+
+  @override
+  Future<MobileDistribution?> getIOSDistribution() async {
+    final response =
+        await rootBundle.loadString('resources/ios-distribution.json');
+    List<dynamic> entities = json.decode(response);
+    entities[0] = {'最後更新': entities[0]['最後更新']};
+    entities[1] = {'版本分佈': entities[1]['版本分佈']};
+    entities[2] = {'累積分佈': entities[2]['累積分佈']};
+    return Future.value(MobileDistribution.fromJson(entities.cast<Map<String, dynamic>>()));
   }
 }

@@ -23,5 +23,7 @@ abstract class NetworkProvider {
 
   Future<List<VesionModelMacOs>> getMacOSVersions();
 
-  Future<AndroidDistribution?> getAndroidDistribution();
+  Future<MobileDistribution?> getAndroidDistribution();
+
+  Future<MobileDistribution?> getIOSDistribution();
 }

@@ -16,7 +16,7 @@ class AndroidDistributionCubit extends Cubit<AndroidDistributionState> {
 
   void load(ChartType chartType) async {
     try {
-      AndroidDistribution? data;
+      MobileDistribution? data;
       if (state is AndroidDistributionLoaded) {
         data = (state as AndroidDistributionLoaded).androidDistributionModel;
       } else {

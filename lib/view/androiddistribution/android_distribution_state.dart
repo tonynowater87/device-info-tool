@@ -7,7 +7,7 @@ class AndroidDistributionInitial extends AndroidDistributionState {}
 
 class AndroidDistributionLoaded extends AndroidDistributionState {
 
-  final AndroidDistribution androidDistributionModel;
+  final MobileDistribution androidDistributionModel;
   double maxX;
 
   AndroidDistributionLoaded({required this.androidDistributionModel, this.maxX = 100.0});
