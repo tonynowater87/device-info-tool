@@ -1,38 +1,38 @@
 import 'package:device_info_tool/common/miscellaneous.dart';
 import 'package:device_info_tool/data/model/Distribution.dart';
-import 'package:device_info_tool/view/androiddistribution/android_distribution_cubit.dart';
 import 'package:device_info_tool/view/androiddistribution/chart_type.dart';
+import 'package:device_info_tool/view/iosdistribution/ios_distribution_cubit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-class AndroidDistributionPage extends StatefulWidget {
-  const AndroidDistributionPage({super.key});
+class IOSDistributionPage extends StatefulWidget {
+  const IOSDistributionPage({super.key});
 
   @override
-  State<AndroidDistributionPage> createState() =>
-      _AndroidDistributionPageState();
+  State<IOSDistributionPage> createState() =>
+      _IOSDistributionPageState();
 }
 
-class _AndroidDistributionPageState extends State<AndroidDistributionPage>
+class _IOSDistributionPageState extends State<IOSDistributionPage>
     with AutomaticKeepAliveClientMixin {
   ChartType _selectedSegment = ChartType.cumulative;
 
   @override
   void initState() {
     super.initState();
-    context.read<AndroidDistributionCubit>().load(_selectedSegment);
+    context.read<IosDistributionCubit>().load(_selectedSegment);
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var state = context.watch<AndroidDistributionCubit>().state;
+    var state = context.watch<IosDistributionCubit>().state;
     switch (state.runtimeType) {
-      case AndroidDistributionInitial:
-      case AndroidDistributionLoaded:
-        final data = tryCast<AndroidDistributionLoaded>(state);
+      case IosDistributionInitial:
+      case IosDistributionLoaded:
+        final data = tryCast<IosDistributionLoaded>(state);
 
         List<Widget> content;
         if (data == null) {
@@ -66,8 +66,8 @@ class _AndroidDistributionPageState extends State<AndroidDistributionPage>
                         isVisible: true,
                         labelAlignment: ChartDataLabelAlignment.top),
                     dataSource: _selectedSegment == ChartType.cumulative
-                        ? data.androidDistributionModel.cumulativeDistribution
-                        : data.androidDistributionModel.versionDistribution,
+                        ? data.iOSDistributionModel.cumulativeDistribution
+                        : data.iOSDistributionModel.versionDistribution,
                     xValueMapper: (Distribution data, _) => data.versionName,
                     yValueMapper: (Distribution data, _) => data.percentage,
                   ),
@@ -84,7 +84,7 @@ class _AndroidDistributionPageState extends State<AndroidDistributionPage>
                 child: Padding(
                   padding: const EdgeInsets.only(left: 8.0),
                   child: Text(
-                      'Last updated: ${data.androidDistributionModel.lastUpdated}\ndata from: https://gs.statcounter.com',
+                      'Last updated: ${data.iOSDistributionModel.lastUpdated}\ndata from: https://gs.statcounter.com',
                       style: Theme.of(context).textTheme.caption),
                 ),
               ),
@@ -110,7 +110,7 @@ class _AndroidDistributionPageState extends State<AndroidDistributionPage>
                   onSelectionChanged: (value) {
                     _selectedSegment = value.first;
                     context
-                        .read<AndroidDistributionCubit>()
+                        .read<IosDistributionCubit>()
                         .load(_selectedSegment);
                   }),
             ),
@@ -121,7 +121,7 @@ class _AndroidDistributionPageState extends State<AndroidDistributionPage>
             ),
           ],
         );
-      case AndroidDistributionFailure:
+      case IosDistributionFailure:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -129,7 +129,7 @@ class _AndroidDistributionPageState extends State<AndroidDistributionPage>
             OutlinedButton(
               child: const Text('Retry'),
               onPressed: () {
-                context.read<AndroidDistributionCubit>().load(_selectedSegment);
+                context.read<IosDistributionCubit>().load(_selectedSegment);
               },
             ),
           ],

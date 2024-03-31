@@ -25,6 +25,8 @@ import 'package:device_info_tool/view/deeplink/deep_link_page.dart';
 import 'package:device_info_tool/view/intentbuttons/intent_buttons_page.dart';
 import 'package:device_info_tool/view/ios/ios_version_page.dart';
 import 'package:device_info_tool/view/ios/ios_version_page_cubit.dart';
+import 'package:device_info_tool/view/iosdistribution/ios_distribution_cubit.dart';
+import 'package:device_info_tool/view/iosdistribution/ios_distribution_page.dart';
 import 'package:device_info_tool/view/wearOS/android_wear_os_version_page.dart';
 import 'package:device_info_tool/view/wearOS/android_wear_os_version_page_cubit.dart';
 import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
@@ -165,11 +167,18 @@ class _MyAppState extends State<MyApp> {
       child: const AndroidDistributionPage(),
     );
 
+    var iOSDistributionScreen = BlocProvider(
+      create: (context) => IosDistributionCubit(
+          networkProvider: context.read<NetworkProvider>()),
+      child: const IOSDistributionPage(),
+    );
+
     if (Platform.isAndroid) {
       bottomNavBarItems = [
         _getDeviceInfoNavBarItem(),
         _getIntentButtonsItem(),
         _getAndroidDistributionNavBarItem(),
+        _getIOSDistributionNavBarItem(),
         _getDeepLinkNavBarItem(),
         _getAndroidNavBarItem(),
         _getAndroidWearOSNavBarItem(),
@@ -183,6 +192,7 @@ class _MyAppState extends State<MyApp> {
         androidDeviceInfoScreen,
         androidIntentButtonScreen,
         androidDistributionScreen,
+        iOSDistributionScreen,
         deepLinkScreen,
         androidScreen,
         androidWearOSScreen,
@@ -401,5 +411,14 @@ class _MyAppState extends State<MyApp> {
           fit: BoxFit.contain,
         ),
         text: "Android OS Distribution");
+  }
+
+  Tab _getIOSDistributionNavBarItem() {
+    return Tab(
+        icon: Image.asset(
+          'assets/images/iphone-device-icon.png',
+          fit: BoxFit.contain,
+        ),
+        text: "iOS Distribution");
   }
 }
