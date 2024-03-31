@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:device_info_tool/data/NetworkProvider.dart';
-import 'package:device_info_tool/data/model/AndroidDistribution.dart';
+import 'package:device_info_tool/data/model/MobileDistribution.dart';
 import 'package:device_info_tool/data/model/VersionModelAndroid.dart';
 import 'package:device_info_tool/data/model/VersionModelAndroidWearOS.dart';
 import 'package:device_info_tool/data/model/VersionModelIOS.dart';

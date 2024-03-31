@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:device_info_tool/data/NetworkProvider.dart';
-import 'package:device_info_tool/data/model/AndroidDistribution.dart';
+import 'package:device_info_tool/data/model/MobileDistribution.dart';
 import 'package:device_info_tool/view/androiddistribution/chart_type.dart';
 import 'package:meta/meta.dart';
 
