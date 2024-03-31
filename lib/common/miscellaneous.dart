@@ -12,3 +12,11 @@ Decoration getDecoration(String text) => RotatedCornerDecoration.withColor(
       text: text,
       style: const TextStyle(fontSize: 12),
     ));
+
+
+T? tryCast<T>(object) {
+  if (object is T) {
+    return object;
+  }
+  return null;
+}

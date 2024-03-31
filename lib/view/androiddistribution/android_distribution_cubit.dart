@@ -15,9 +15,14 @@ class AndroidDistributionCubit extends Cubit<AndroidDistributionState> {
         super(AndroidDistributionInitial());
 
   void load(ChartType chartType) async {
-    emit(AndroidDistributionInitial());
     try {
-      final data = await _networkProvider.getAndroidDistribution();
+      AndroidDistribution? data;
+      if (state is AndroidDistributionLoaded) {
+        data = (state as AndroidDistributionLoaded).androidDistributionModel;
+      } else {
+        emit(AndroidDistributionInitial());
+        data = await _networkProvider.getAndroidDistribution();
+      }
       double max;
       if (data != null) {
         switch (chartType) {
