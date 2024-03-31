@@ -73,6 +73,7 @@ class _DeepLinkPageState extends State<DeepLinkPage>
               padding: const EdgeInsets.all(8.0),
               child: Stack(children: [
                 TextField(
+                  style: Theme.of(context).textTheme.bodyText2,
                   controller: _textEditingController,
                   autocorrect: false,
                   onTapOutside: (pointer) {
