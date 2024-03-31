@@ -6,7 +6,8 @@ var lightThemeData = ThemeData(
     textTheme: TextTheme(
         button: TextStyle(color: CupertinoColors.systemGrey6.darkColor),
         bodyText1: const TextStyle(color: CupertinoColors.systemGrey6),
-        bodyText2: TextStyle(color: CupertinoColors.systemGrey6.darkColor)),
+        bodyText2: TextStyle(color: CupertinoColors.systemGrey6.darkColor),
+        caption: const TextStyle(color: CupertinoColors.systemGrey6)),
     brightness: Brightness.light,
     dialogTheme: const DialogTheme(
         backgroundColor: CupertinoColors.secondarySystemBackground));
@@ -16,7 +17,8 @@ var darkThemeData = ThemeData(
   textTheme: TextTheme(
         button: TextStyle(color: CupertinoColors.systemGrey6.darkColor),
         bodyText1: const TextStyle(color: CupertinoColors.systemGrey6),
-        bodyText2: const TextStyle(color: CupertinoColors.systemGrey6)),
+        bodyText2: const TextStyle(color: CupertinoColors.systemGrey6),
+        caption: const TextStyle(color: CupertinoColors.systemGrey6)),
     brightness: Brightness.dark,
     dialogTheme: DialogTheme(
       backgroundColor: CupertinoColors.secondarySystemBackground.darkColor,

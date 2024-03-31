@@ -80,10 +80,12 @@ class _AndroidDistributionPageState extends State<AndroidDistributionPage>
               child: Container(
                 height: 30,
                 color: CupertinoColors.systemBlue,
-                child: Center(
-                    child: Text(
-                        'Last updated: ${data.androidDistributionModel.lastUpdated}',
-                        style: Theme.of(context).textTheme.bodyText1)),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Text(
+                      'Last updated: ${data.androidDistributionModel.lastUpdated}\ndata from: https://gs.statcounter.com',
+                      style: Theme.of(context).textTheme.caption),
+                ),
               ),
             ),
           ];
