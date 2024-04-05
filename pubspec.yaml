@@ -42,7 +42,7 @@ dependencies:
     path:  ../../../../third-party/flutter/plus_plugins/packages/device_info_plus/device_info_plus
   package_info_plus: 3.1.2
   android_intent_plus: 4.0.1
-  google_mobile_ads: 3.0.0
+  google_mobile_ads: 5.0.0
   scrollable_positioned_list: 0.3.7
   firebase_core: 2.11.0
   firebase_crashlytics: 3.2.0

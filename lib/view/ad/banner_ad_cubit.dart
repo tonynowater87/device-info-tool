@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:meta/meta.dart';
 import 'package:device_info_tool/constants.dart';
+import 'package:flutter/foundation.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 part 'banner_ad_state.dart';
 

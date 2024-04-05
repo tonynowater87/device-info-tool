@@ -204,19 +204,22 @@ class _MyAppState extends State<MyApp> {
       ];
     } else if (Platform.isIOS) {
       bottomNavBarItems = [
+        _getIOSDistributionNavBarItem(),
         _getIOSNavBarItem(),
         _getIPadOSNavBarItem(),
         _getTvOSNavBarItem(),
         _getWatchOSNavBarItem(),
         _getMacOSNavBarItem(),
-        _getAndroidDistributionNavBarItem()
+        _getAndroidDistributionNavBarItem(),
       ];
       screens = [
+        iOSDistributionScreen,
         iOSScreen,
         iPadOSScreen,
         tvOSScreen,
         watchOSScreen,
-        macOSScreen
+        macOSScreen,
+        androidDistributionScreen,
       ];
     }
 

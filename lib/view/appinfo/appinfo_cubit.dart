@@ -21,6 +21,8 @@ class AppInfoCubit extends Cubit<AppInfoState> {
   Future<void> load() async {
     if (Platform.isAndroid) {
       _adUnitId = INTERSTITIAL_ANDROID_ID;
+    } else {
+      _adUnitId = INTERSTITIAL_IOS_ID;
     }
 
     final appInfo = await _appVersionProvider.getAppInfo();
