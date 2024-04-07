@@ -25,6 +25,8 @@ import 'package:device_info_tool/view/deeplink/deep_link_page.dart';
 import 'package:device_info_tool/view/intentbuttons/intent_buttons_page.dart';
 import 'package:device_info_tool/view/ios/ios_version_page.dart';
 import 'package:device_info_tool/view/ios/ios_version_page_cubit.dart';
+import 'package:device_info_tool/view/iosdeviceinfo/ios_device_info_cubit.dart';
+import 'package:device_info_tool/view/iosdeviceinfo/ios_device_info_page.dart';
 import 'package:device_info_tool/view/iosdistribution/ios_distribution_cubit.dart';
 import 'package:device_info_tool/view/iosdistribution/ios_distribution_page.dart';
 import 'package:device_info_tool/view/wearOS/android_wear_os_version_page.dart';
@@ -173,6 +175,11 @@ class _MyAppState extends State<MyApp> {
       child: const IOSDistributionPage(),
     );
 
+    var iOSDeviceInfoScreen = BlocProvider(
+      create: (context) => IosDeviceInfoCubit(),
+      child: const IosDeviceInfoPage(),
+    );
+
     if (Platform.isAndroid) {
       bottomNavBarItems = [
         _getDeviceInfoNavBarItem(),
@@ -204,22 +211,22 @@ class _MyAppState extends State<MyApp> {
       ];
     } else if (Platform.isIOS) {
       bottomNavBarItems = [
+        _getIosDeviceInfoNavBarItem(),
         _getIOSDistributionNavBarItem(),
         _getIOSNavBarItem(),
         _getIPadOSNavBarItem(),
         _getTvOSNavBarItem(),
         _getWatchOSNavBarItem(),
-        _getMacOSNavBarItem(),
-        _getAndroidDistributionNavBarItem(),
+        _getMacOSNavBarItem()
       ];
       screens = [
+        iOSDeviceInfoScreen,
         iOSDistributionScreen,
         iOSScreen,
         iPadOSScreen,
         tvOSScreen,
         watchOSScreen,
         macOSScreen,
-        androidDistributionScreen,
       ];
     }
 
@@ -423,5 +430,14 @@ class _MyAppState extends State<MyApp> {
           fit: BoxFit.contain,
         ),
         text: "iOS Distribution");
+  }
+
+  Tab _getIosDeviceInfoNavBarItem() {
+    return Tab(
+        icon: Image.asset(
+          'assets/images/iphone-device-icon.png',
+          fit: BoxFit.contain,
+        ),
+        text: "Device Info");
   }
 }

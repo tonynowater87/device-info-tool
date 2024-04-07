@@ -61,6 +61,10 @@ dependencies:
   fluttertoast: 8.2.2
   android_id: 0.3.4
   syncfusion_flutter_charts: 25.1.37
+  network_info_plus: 5.0.2
+  connectivity_plus: 6.0.1
+  memory_info: 0.0.3
+  display_metrics: 0.1.5
 
 dev_dependencies:
   flutter_test:
