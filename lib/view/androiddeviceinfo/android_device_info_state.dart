@@ -15,6 +15,9 @@ class AndroidDeviceInfoLoaded extends AndroidDeviceInfoState {
   final String androidId;
   final bool isDeveloper;
   final AndroidBatteryInfoModel? batteryInfoModel;
+  String wifiIp;
+  String connectivities;
+  String storageInfo;
 
   AndroidDeviceInfoLoaded({
     required this.deviceInfoModel,
@@ -25,6 +28,9 @@ class AndroidDeviceInfoLoaded extends AndroidDeviceInfoState {
     required this.androidId,
     required this.isDeveloper,
     required this.batteryInfoModel,
+    required this.wifiIp,
+    required this.connectivities,
+    required this.storageInfo
   });
 
   AndroidDeviceInfoLoaded copyWith({AndroidBatteryInfoModel? batteryInfoModel, bool? isDeveloper}) =>
@@ -36,5 +42,8 @@ class AndroidDeviceInfoLoaded extends AndroidDeviceInfoState {
           advertisingId: advertisingId,
           androidId: androidId,
           isDeveloper: isDeveloper ?? this.isDeveloper,
+          wifiIp: wifiIp,
+          connectivities: connectivities,
+          storageInfo: storageInfo,
           batteryInfoModel: batteryInfoModel ?? this.batteryInfoModel);
 }

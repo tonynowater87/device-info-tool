@@ -6,7 +6,9 @@ import 'package:advertising_id/advertising_id.dart';
 import 'package:android_id/android_id.dart';
 import 'package:battery_info/battery_info_plugin.dart';
 import 'package:bloc/bloc.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:device_info_tool/common/utils.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +16,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_android_developer_mode/flutter_android_developer_mode.dart';
 import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_model.dart';
+import 'package:memory_info/memory_info.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 import 'package:storage_space/storage_space.dart';
 import 'package:system_info2/system_info2.dart';
 
@@ -22,6 +26,9 @@ part 'android_device_info_state.dart';
 class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
   final _deviceInfoPlugin = DeviceInfoPlugin();
   final _batteryInfo = BatteryInfoPlugin();
+  final _networkInfoPlugin = NetworkInfo();
+  final _memoryInfoPlugin = MemoryInfoPlugin();
+  final _connectivityPlugin = Connectivity();
 
   Timer? _timerFetchBattery;
   StreamSubscription? _streamBatteryState;
@@ -34,9 +41,19 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
     final adId = await _getAdvertisingId();
     final androidId = await _getAndroidId();
     final isDeveloper = await _getIsDeveloper();
-    final totalMemory = _getMemoryInfo();
+    final totalMemory = await _getMemoryInfo();
     final cpu = _getCpuInfo();
     final cpuCores = _getCpuCore();
+
+    // network info
+    var wifiIp = await _networkInfoPlugin.getWifiIP();
+    var connectivity = await _connectivityPlugin.checkConnectivity();
+    String connectivityString = connectivity.map((e) => e.name).join(', ');
+
+    // storage info
+    StorageSpace storageSpace =
+    await getStorageSpace(lowOnSpaceThreshold: 0, fractionDigits: 2);
+
     emit(AndroidDeviceInfoLoaded(
         deviceInfoModel: deviceInfo,
         cpu: cpu,
@@ -45,6 +62,10 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
         advertisingId: adId,
         androidId: androidId,
         isDeveloper: isDeveloper,
+        wifiIp: wifiIp ?? '',
+        connectivities: connectivityString,
+        storageInfo:
+            "${storageSpace.usedSize} / ${storageSpace.totalSize} (${storageSpace.usagePercent}%)",
         batteryInfoModel: null));
   }
 
@@ -111,10 +132,18 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
     }, onDone: () {}, cancelOnError: true);
   }
 
-  String _getMemoryInfo() {
-    // bytes to megabytes
-    var totalPhysicMem = SysInfo.getTotalPhysicalMemory() / (1024 * 1024);
-    return "${totalPhysicMem.toStringAsFixed(1)} MB";
+  Future<String> _getMemoryInfo() async {
+
+    // hardware info
+    var totalMemory =
+    Utils.formatMB((await _memoryInfoPlugin.memoryInfo).totalMem!.toInt(), 0);
+    debugPrint('[Tony] totalMemory: $totalMemory');
+    StorageSpace storageSpace =
+        await getStorageSpace(lowOnSpaceThreshold: 0, fractionDigits: 2);
+    debugPrint(
+        '[Tony] storageSpace, total: ${storageSpace.totalSize}, free: ${storageSpace.freeSize}, used: ${storageSpace.usedSize}, usagePercent: ${storageSpace.usagePercent}');
+
+    return totalMemory;
   }
 
   String _getCpuInfo() {
@@ -170,11 +199,6 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
   }
 
   Future<AndroidDeviceInfoModel> _getDeviceInfo() async {
-    StorageSpace storageSpace = await getStorageSpace(
-      lowOnSpaceThreshold: 10 * 1024 * 1024 * 1024, // 2GB
-      fractionDigits: 2, // How many digits to use for the human-readable values
-    );
-
     if (Platform.isAndroid) {
       AndroidDeviceInfo androidDeviceInfo = await _deviceInfoPlugin.androidInfo;
       var deviceModel = androidDeviceInfo.model;
@@ -191,9 +215,6 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
           screenInch: screenInch,
           screenResolution: screenResolution,
           screenDpSize: "${dpInWidth.toInt()} x ${dpInHeight.toInt()}",
-          totalSpace: storageSpace.totalSize,
-          usedSpace: storageSpace.usedSize,
-          freeSpace: storageSpace.freeSize,
           androidVersion: androidDeviceInfo.version.release,
           androidSDKInt: androidDeviceInfo.version.sdkInt.toString(),
           securityPatch: androidDeviceInfo.version.securityPatch ?? "",

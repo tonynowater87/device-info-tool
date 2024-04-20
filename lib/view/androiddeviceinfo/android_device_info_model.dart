@@ -23,9 +23,6 @@ class AndroidDeviceInfoModel {
   String screenDpSize;
   String ydpi;
   String xdpi;
-  String totalSpace;
-  String usedSpace;
-  String freeSpace;
 
   AndroidDeviceInfoModel({
     required this.androidVersion,
@@ -38,9 +35,6 @@ class AndroidDeviceInfoModel {
     required this.screenDpSize,
     required this.ydpi,
     required this.xdpi,
-    required this.totalSpace,
-    required this.usedSpace,
-    required this.freeSpace,
   });
 
   AndroidScreenDensity getScreenDensity() {

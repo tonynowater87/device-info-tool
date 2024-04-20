@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:device_info_tool/common/utils.dart';
 import 'package:display_metrics/display_metrics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:memory_info/memory_info.dart';
@@ -50,7 +49,7 @@ class IosDeviceInfoCubit extends Cubit<IosDeviceInfoState> {
 
     // hardware info
     var totalMemory =
-        _formatMB((await _memoryInfoPlugin.memoryInfo).totalMem!.toInt(), 0);
+        Utils.formatMB((await _memoryInfoPlugin.memoryInfo).totalMem!.toInt(), 0);
     debugPrint('[Tony] totalMemory: $totalMemory');
     StorageSpace storageSpace =
         await getStorageSpace(lowOnSpaceThreshold: 0, fractionDigits: 2);
@@ -110,12 +109,5 @@ class IosDeviceInfoCubit extends Cubit<IosDeviceInfoState> {
       inch: inch,
       ppi: ppi,
     ));
-  }
-
-  String _formatMB(int megabytes, int decimals) {
-    if (megabytes <= 0) return "0 MB";
-    const suffixes = ["MB", "GB", "TB"];
-    var i = (log(megabytes) / log(1000)).floor();
-    return '${(megabytes / pow(1000, i)).toStringAsFixed(decimals)} ${suffixes[i]}';
   }
 }

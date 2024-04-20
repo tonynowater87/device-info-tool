@@ -232,7 +232,7 @@ class _IosDeviceInfoPageState extends State<IosDeviceInfoPage> with SingleTicker
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: <Widget>[
-                                Text('Wifi IP'),
+                                Text('IP Address'),
                                 Text('Connectivity'),
                               ],
                             ),

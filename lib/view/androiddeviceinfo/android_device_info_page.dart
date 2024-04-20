@@ -133,14 +133,14 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Expanded(
+                        const Expanded(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.end,
-                            children: const <Widget>[
-                              Text('Screen Resolution'),
-                              Text('Width x Height In DP'),
-                              Text('Screen Size'),
+                            children: <Widget>[
+                              Text('Screen Size (px)'),
+                              Text('Screen Size (dp)'),
+                              Text('Screen Size (inch)'),
                               Text('xdpi'),
                               Text('ydpi'),
                               Text('Screen Density'),
@@ -301,9 +301,9 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   padding:
                       const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
                   child: Container(
-                    height: 225,
+                    height: 62.5,
                     width: double.infinity,
-                    foregroundDecoration: getDecoration("System"),
+                    foregroundDecoration: getDecoration("Network"),
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                       border: Border.all(
@@ -313,17 +313,13 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Expanded(
+                        const Expanded(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.end,
-                            children: const <Widget>[
-                              Text('CPU Architecture'),
-                              Text('CPU Cores'),
-                              Text('Memory'),
-                              Text('Total Storage Space'),
-                              Text('Free Storage Space'),
-                              Text('Used Storage Space'),
+                            children: <Widget>[
+                              Text('IP Address'),
+                              Text('Connectivity'),
                             ],
                           ),
                         ),
@@ -335,12 +331,76 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text(state.cpu),
-                              Text(state.cpuCores),
-                              Text(state.totalMemory),
-                              Text(state.deviceInfoModel.totalSpace),
-                              Text(state.deviceInfoModel.freeSpace),
-                              Text(state.deviceInfoModel.usedSpace),
+                              Text(state.wifiIp),
+                              Text(state.connectivities),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
+              Padding(
+                  padding:
+                      const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
+                  child: Container(
+                    height: 157.5,
+                    width: double.infinity,
+                    foregroundDecoration: getDecoration("System"),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(8)),
+                      border: Border.all(
+                          width: 1.5,
+                          color: CupertinoColors.activeBlue.withAlpha(100)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(top: 12.0),
+                                child: Text('CPU Architecture'),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 12.0),
+                                child: Text('CPU Cores'),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 12.0),
+                                child: Text('Memory'),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 12.0),
+                                child: Text('Storage'),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(top: 12.0),
+                                child: Text(state.cpu),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 12.0),
+                                child: Text(state.cpuCores),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 12.0),
+                                child: Text(state.totalMemory),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 12.0),
+                                child: Text(state.storageInfo),
+                              ),
                             ],
                           ),
                         ),
@@ -363,11 +423,11 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Expanded(
+                        const Expanded(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.end,
-                            children: const <Widget>[
+                            children: <Widget>[
                               Text('Battery Level'),
                               Text('Charging Status'),
                               Text('Temperature'),
