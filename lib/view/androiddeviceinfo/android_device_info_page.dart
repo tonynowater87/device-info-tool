@@ -121,7 +121,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   padding:
                       const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
                   child: Container(
-                    height: 187.5,
+                    height: 200,
                     width: double.infinity,
                     foregroundDecoration: getDecoration("Display"),
                     decoration: BoxDecoration(
@@ -141,6 +141,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                               Text('Screen Size (px)'),
                               Text('Screen Size (dp)'),
                               Text('Screen Size (inch)'),
+                              Text('Screen Ratio'),
                               Text('xdpi'),
                               Text('ydpi'),
                               Text('Screen Density'),
@@ -158,6 +159,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                               Text(state.deviceInfoModel.screenResolution),
                               Text(state.deviceInfoModel.screenDpSize),
                               Text(state.deviceInfoModel.screenInch),
+                              Text(state.deviceInfoModel.screenRatio),
                               Text(state.deviceInfoModel.xdpi),
                               Text(state.deviceInfoModel.ydpi),
                               Text(state.deviceInfoModel

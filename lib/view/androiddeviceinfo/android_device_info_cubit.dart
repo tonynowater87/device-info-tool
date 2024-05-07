@@ -205,8 +205,10 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
       var deviceBrand = androidDeviceInfo.manufacturer;
       var screenInch =
           "${androidDeviceInfo.displayMetrics.sizeInches.toStringAsPrecision(2)} inches";
+      var widthPx = androidDeviceInfo.displayMetrics.widthPx.toInt();
+      var heightPx = androidDeviceInfo.displayMetrics.heightPx.toInt();
       var screenResolution =
-          '${androidDeviceInfo.displayMetrics.widthPx.toInt()} x ${androidDeviceInfo.displayMetrics.heightPx.toInt()}';
+          '$widthPx x $heightPx';
       var density = androidDeviceInfo.displayMetrics.density;
       var dpInWidth = androidDeviceInfo.displayMetrics.widthPx / density;
       var dpInHeight = androidDeviceInfo.displayMetrics.heightPx / density;
@@ -215,6 +217,7 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
           screenInch: screenInch,
           screenResolution: screenResolution,
           screenDpSize: "${dpInWidth.toInt()} x ${dpInHeight.toInt()}",
+          screenRatio: Utils.getScreenRatio(widthPx, heightPx),
           androidVersion: androidDeviceInfo.version.release,
           androidSDKInt: androidDeviceInfo.version.sdkInt.toString(),
           securityPatch: androidDeviceInfo.version.securityPatch ?? "",
