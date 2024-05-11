@@ -70,6 +70,7 @@ class IosDeviceInfoCubit extends Cubit<IosDeviceInfoState> {
         resolution: "",
         screenPt: "",
         inch: "",
+        aspectRatio: "",
         ppi: "",
         wifiIp: wifiIp ?? "",
         connectivities: connectivityString,
@@ -90,8 +91,9 @@ class IosDeviceInfoCubit extends Cubit<IosDeviceInfoState> {
       return;
     }
     isLoaded = true;
-    String resolution =
-        "${displayMetricsData.resolution.width.toInt()} x ${displayMetricsData.resolution.height.toInt()}";
+    var width = displayMetricsData.resolution.width.toInt();
+    var height = displayMetricsData.resolution.height.toInt();
+    String resolution = "$width x $height";
     String inch = "${displayMetricsData.diagonal} inch";
     String ppi = "${displayMetricsData.ppi.toInt()} ppi";
     // calculate the screen width and height in pt
@@ -107,6 +109,7 @@ class IosDeviceInfoCubit extends Cubit<IosDeviceInfoState> {
       resolution: resolution,
       screenPt: screenPt,
       inch: inch,
+      aspectRatio: Utils.getScreenRatio(width, height),
       ppi: ppi,
     ));
   }

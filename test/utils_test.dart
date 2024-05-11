@@ -38,4 +38,8 @@ void main() {
   test('720, 480 (3:2)', () {
     expect(Utils.getScreenRatio(720, 480), '3.0:2.0');
   });
+
+  test('1179, 2556 (19.5:9)', () {
+    expect(Utils.getScreenRatio(1179, 2556), '19.5:9.0');
+  });
 }

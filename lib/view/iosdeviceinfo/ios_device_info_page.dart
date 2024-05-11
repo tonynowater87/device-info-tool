@@ -169,7 +169,7 @@ class _IosDeviceInfoPageState extends State<IosDeviceInfoPage> with SingleTicker
                     padding:
                         const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
                     child: Container(
-                      height: 125,
+                      height: 155,
                       width: double.infinity,
                       foregroundDecoration: getDecoration("Display"),
                       decoration: BoxDecoration(
@@ -186,9 +186,10 @@ class _IosDeviceInfoPageState extends State<IosDeviceInfoPage> with SingleTicker
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: <Widget>[
-                                Text('Resolution'),
+                                Text('Screen Resolution'),
                                 Text('Screen Size in Pt'),
                                 Text('Screen Inch'),
+                                Text('Screen Aspect Ratio'),
                                 Text('PPI'),
                               ],
                             ),
@@ -204,6 +205,7 @@ class _IosDeviceInfoPageState extends State<IosDeviceInfoPage> with SingleTicker
                                 Text(state.resolution),
                                 Text(state.screenPt),
                                 Text(state.inch),
+                                Text(state.aspectRatio),
                                 Text(state.ppi),
                               ],
                             ),

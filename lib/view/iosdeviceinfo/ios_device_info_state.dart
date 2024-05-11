@@ -17,6 +17,7 @@ class IosDeviceInfoState {
   String resolution;
   String screenPt;
   String inch;
+  String aspectRatio;
   String ppi;
 
   String wifiIp;
@@ -38,6 +39,7 @@ class IosDeviceInfoState {
       required this.resolution,
       required this.screenPt,
       required this.inch,
+      required this.aspectRatio,
       required this.ppi,
       required this.wifiIp,
       required this.connectivities,
@@ -58,6 +60,7 @@ class IosDeviceInfoState {
         resolution = '',
         screenPt = '',
         inch = '',
+        aspectRatio = '',
         ppi = '',
         wifiIp = '',
         connectivities = '',
@@ -78,6 +81,7 @@ class IosDeviceInfoState {
     String? resolution,
     String? screenPt,
     String? inch,
+    String? aspectRatio,
     String? ppi,
     String? wifiIp,
     String? connectivities,
@@ -98,6 +102,7 @@ class IosDeviceInfoState {
       resolution: resolution ?? this.resolution,
       screenPt: screenPt ?? this.screenPt,
       inch: inch ?? this.inch,
+      aspectRatio: aspectRatio ?? this.aspectRatio,
       ppi: ppi ?? this.ppi,
       wifiIp: wifiIp ?? this.wifiIp,
       connectivities: connectivities ?? this.connectivities,

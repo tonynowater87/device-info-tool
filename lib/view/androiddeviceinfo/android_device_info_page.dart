@@ -141,7 +141,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                               Text('Screen Size (px)'),
                               Text('Screen Size (dp)'),
                               Text('Screen Size (inch)'),
-                              Text('Screen Ratio'),
+                              Text('Screen Aspect Ratio'),
                               Text('xdpi'),
                               Text('ydpi'),
                               Text('Screen Density'),
