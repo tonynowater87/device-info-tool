@@ -91,14 +91,14 @@
   },
   {
     "version": "16",
-    "latest_version": "16.7.7",
+    "latest_version": "16.7.8",
     "release_date": "2022-09-12",
-    "latest_date": "2024-03-21"
+    "latest_date": "2024-05-13"
   },
   {
     "version": "17",
-    "latest_version": "17.4.1",
+    "latest_version": "17.5",
     "release_date": "2023-09-18",
-    "latest_date": "2024-03-21"
+    "latest_date": "2024-05-13"
   }
 ]
