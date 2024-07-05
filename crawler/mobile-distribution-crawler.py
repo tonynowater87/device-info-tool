@@ -23,7 +23,7 @@ previousMonth = datetime.now().replace(day=1) - timedelta(days=1)
 queryMonth = previousMonth.strftime('%Y-%m')
 queryMonthInt = previousMonth.strftime('%Y%m')
 queryMonthAbbr = previousMonth.strftime('%b %Y')
-queryMonthLongName = previousMonth.strftime('%B, %Y')
+queryMonthLongName = previousMonth.strftime('%B %Y')
 print(f'previousMonth: {queryMonth}, previousMonthInt: {queryMonthInt}, previousMonthAbbr: {queryMonthAbbr}, previousMonthLongName: {queryMonthLongName}')
 
 iOSCsvUrl = f"https://gs.statcounter.com/ios-version-market-share/mobile-tablet/worldwide/chart.php?bar=1&device=Mobile%20%26%20Tablet&device_hidden=mobile%2Btablet&multi-device=true&statType_hidden=ios_version&region_hidden=ww&granularity=monthly&statType=iOS%20Version&region=Worldwide&fromInt={queryMonthInt}&toInt={queryMonthInt}&fromMonthYear={queryMonth}&toMonthYear={queryMonth}&csv=1"
@@ -31,13 +31,17 @@ iOSCsvUrl = f"https://gs.statcounter.com/ios-version-market-share/mobile-tablet/
 androidCsvUrl = f"https://gs.statcounter.com/android-version-market-share/mobile-tablet/worldwide/chart.php?bar=1&device=Mobile%20%26%20Tablet&device_hidden=mobile%2Btablet&multi-device=true&statType_hidden=android_version&region_hidden=ww&granularity=monthly&statType=Android%20Version&region=Worldwide&fromInt={queryMonthInt}&toInt={queryMonthInt}&fromMonthYear={queryMonth}&toMonthYear={queryMonth}&csv=1"
 
 
-androidCsvResponse = requests.get(androidCsvUrl)
+print(f'androidCsvUrl: {androidCsvUrl}')
 
-
-androidCsv = io.StringIO(androidCsvResponse.text)
-# 讀取 CSV 資料
-reader = csv.DictReader(androidCsv)
-rows = list(reader)
+# androidCsvResponse = requests.get(androidCsvUrl)
+try:
+    androidCsvResponse = requests.get(androidCsvUrl)
+    androidCsv = io.StringIO(androidCsvResponse.text)
+    # 讀取 CSV 資料
+    reader = csv.DictReader(androidCsv)
+    rows = list(reader)
+except Exception as e:
+    print(f"錯誤: {e}")
 
 
 androidOtherPercentage = 0.0
@@ -45,10 +49,10 @@ androidFilteredRows = []
 
 # 過濾掉市場份額小於 1% 的 Android 版本, 並將其歸類為 Other
 for row in rows:
-    if float(row[f'Market Share Perc. ({queryMonthAbbr})']) < 1 or row['Android Version'] == 'Other':
-        androidOtherPercentage += float(row[f'Market Share Perc. ({queryMonthAbbr})'])
+    if float(row[f'Market Share Perc. ({queryMonthLongName})']) < 1 or row['Android Version'] == 'Other':
+        androidOtherPercentage += float(row[f'Market Share Perc. ({queryMonthLongName})'])
     else :
-        androidFilteredRows.append([row['Android Version'], row['Android Version'].split(' ')[0],row[f'Market Share Perc. ({queryMonthAbbr})']])    
+        androidFilteredRows.append([row['Android Version'], row['Android Version'].split(' ')[0],row[f'Market Share Perc. ({queryMonthLongName})']])    
 
 other_android_version = 'Other'
 androidFilteredRows.append([other_android_version, "-1", formatFloat(androidOtherPercentage)])
@@ -95,10 +99,10 @@ iOSFilteredRows = []
 
 # 過濾掉市場份額小於 1% 的 iOS 版本, 並將其歸類為 Other
 for row in rows:
-    if float(row[f'Market Share Perc. ({queryMonthAbbr})']) < 1 or row['iOS Version'] == 'Other':
-        iOSOtherPercentage += float(row[f'Market Share Perc. ({queryMonthAbbr})'])
+    if float(row[f'Market Share Perc. ({queryMonthLongName})']) < 1 or row['iOS Version'] == 'Other':
+        iOSOtherPercentage += float(row[f'Market Share Perc. ({queryMonthLongName})'])
     else :
-        iOSFilteredRows.append([row['iOS Version'], row['iOS Version'].split(' ')[1], row[f'Market Share Perc. ({queryMonthAbbr})']])
+        iOSFilteredRows.append([row['iOS Version'], row['iOS Version'].split(' ')[1], row[f'Market Share Perc. ({queryMonthLongName})']])
         
 iOSFilteredRows.append(['Other', "-1", formatFloat(iOSOtherPercentage)])
 
