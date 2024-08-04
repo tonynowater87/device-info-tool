@@ -1,6 +1,7 @@
 import 'dart:io';
 
-import 'package:buttons_tabbar/buttons_tabbar.dart';
+import 'package:device_info_tool/common/drawer_divider_tile.dart';
+import 'package:device_info_tool/common/drawer_tile.dart';
 import 'package:device_info_tool/data/AppVersionProvider.dart';
 import 'package:device_info_tool/data/AppVersionProviderImpl.dart';
 import 'package:device_info_tool/data/DeviceVersionProvider.dart';
@@ -34,7 +35,6 @@ import 'package:device_info_tool/view/wearOS/android_wear_os_version_page_cubit.
 import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,10 +56,10 @@ Future<void> main() async {
   };
 
   MobileAds.instance.initialize().then((value) => {
-    MobileAds.instance
-      ..setAppMuted(true)
-      ..setAppVolume(0.05)
-  });
+        MobileAds.instance
+          ..setAppMuted(true)
+          ..setAppVolume(0.05)
+      });
   runApp(MultiRepositoryProvider(
     providers: [
       RepositoryProvider<NetworkProvider>(
@@ -102,14 +102,18 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  static String DefaultTitle = 'Current Device Information';
-  String appTitle = DefaultTitle;
-  var bottomNavBarItems = <Tab>[];
+  static String DefaultTitle = 'Device Info Tool';
+
+  late TabController _tabController;
+  var bottomNavBarItems = <Widget>[];
   var screens = <Widget>[];
+  var currentPageIndex = 0;
+  var currentPageTitle = DefaultTitle;
 
   @override
   void dispose() {
     super.dispose();
+    _tabController.dispose();
   }
 
   @override
@@ -186,27 +190,159 @@ class _MyAppState extends State<MyApp> {
 
     if (Platform.isAndroid) {
       bottomNavBarItems = [
-        _getDeviceInfoNavBarItem(),
-        _getIntentButtonsItem(),
-        _getAndroidDistributionNavBarItem(),
-        _getIOSDistributionNavBarItem(),
-        _getDeepLinkNavBarItem(),
-        _getAndroidNavBarItem(),
-        _getAndroidWearOSNavBarItem(),
-        _getIOSNavBarItem(),
-        _getIPadOSNavBarItem(),
-        _getTvOSNavBarItem(),
-        _getWatchOSNavBarItem(),
-        _getMacOSNavBarItem(),
+        const DrawerDividerTile(title: 'Misc'),
+        DrawerTile(
+            selected: currentPageIndex == 0,
+            icon: Image.asset(
+              'assets/images/android-device-icon.png',
+              fit: BoxFit.contain,
+              width: 30,
+              height: 30,
+            ),
+            title: 'Device Info',
+            onTap: (title) {
+              changePageByIndex(0, title);
+            }),
+        DrawerTile(
+            selected: currentPageIndex == 1,
+            icon: const Icon(Icons.open_in_new_rounded),
+            title: 'Intent Actions',
+            onTap: (title) {
+              changePageByIndex(1, title);
+            }),
+        DrawerTile(
+            selected: currentPageIndex == 2,
+            icon: const Icon(Icons.link),
+            title: 'Test Deep Link',
+            onTap: (title) {
+              changePageByIndex(2, title);
+            }),
+        const DrawerDividerTile(title: 'Android'),
+        DrawerTile(
+            selected: currentPageIndex == 3,
+            icon: Image.asset(
+              'assets/images/android-device-icon.png',
+              fit: BoxFit.contain,
+              width: 30,
+              height: 30,
+            ),
+            title: 'Android OS Distribution',
+            onTap: (title) {
+              changePageByIndex(3, title);
+            }),
+        DrawerTile(
+          selected: currentPageIndex == 4,
+          icon: Image.asset(
+            'assets/images/android-device-icon.png',
+            fit: BoxFit.contain,
+            width: 30,
+            height: 30,
+          ),
+          title: 'Android OS',
+          onTap: (title) {
+            changePageByIndex(4, title);
+          },
+        ),
+        DrawerTile(
+          selected: currentPageIndex == 5,
+          icon: Image.asset(
+            'assets/images/smart-device-icon.png',
+            fit: BoxFit.contain,
+            width: 30,
+            height: 30,
+          ),
+          title: 'Android WearOS',
+          onTap: (title) {
+            changePageByIndex(5, title);
+          },
+        ),
+        const DrawerDividerTile(title: 'iOS'),
+        DrawerTile(
+            selected: currentPageIndex == 6,
+            icon: Image.asset(
+              'assets/images/iphone-device-icon.png',
+              fit: BoxFit.contain,
+              width: 30,
+              height: 30,
+            ),
+            title: 'iOS Distribution',
+            onTap: (title) {
+              changePageByIndex(6, title);
+            }),
+        DrawerTile(
+          selected: currentPageIndex == 7,
+          icon: Image.asset(
+            'assets/images/iphone-device-icon.png',
+            fit: BoxFit.contain,
+            width: 30,
+            height: 30,
+          ),
+          title: 'iOS',
+          onTap: (title) {
+            changePageByIndex(7, title);
+          },
+        ),
+        DrawerTile(
+          selected: currentPageIndex == 8,
+          icon: Image.asset(
+            'assets/images/ipad-device-icon.png',
+            fit: BoxFit.contain,
+            width: 30,
+            height: 30,
+          ),
+          title: 'iPadOS',
+          onTap: (title) {
+            changePageByIndex(8, title);
+          },
+        ),
+        DrawerTile(
+          selected: currentPageIndex == 9,
+          icon: Image.asset(
+            'assets/images/apple-tv-device-icon.png',
+            fit: BoxFit.contain,
+            width: 30,
+            height: 30,
+          ),
+          title: 'tvOS',
+          onTap: (title) {
+            changePageByIndex(9, title);
+          },
+        ),
+        DrawerTile(
+          selected: currentPageIndex == 10,
+          icon: Image.asset(
+            'assets/images/apple-watch-device-icon.png',
+            fit: BoxFit.contain,
+            width: 30,
+            height: 30,
+          ),
+          title: 'watchOS',
+          onTap: (title) {
+            changePageByIndex(10, title);
+          },
+        ),
+        DrawerTile(
+          selected: currentPageIndex == 11,
+          icon: Image.asset(
+            'assets/images/mac-device-icon.png',
+            fit: BoxFit.contain,
+            width: 30,
+            height: 30,
+          ),
+          title: 'macOS',
+          onTap: (title) {
+            changePageByIndex(11, title);
+          },
+        ),
       ];
       screens = [
         androidDeviceInfoScreen,
         androidIntentButtonScreen,
-        androidDistributionScreen,
-        iOSDistributionScreen,
         deepLinkScreen,
+        androidDistributionScreen,
         androidScreen,
         androidWearOSScreen,
+        iOSDistributionScreen,
         iOSScreen,
         iPadOSScreen,
         tvOSScreen,
@@ -214,14 +350,97 @@ class _MyAppState extends State<MyApp> {
         macOSScreen,
       ];
     } else if (Platform.isIOS) {
+      // TODO add divider for iOS
       bottomNavBarItems = [
-        _getIosDeviceInfoNavBarItem(),
-        _getIOSDistributionNavBarItem(),
-        _getIOSNavBarItem(),
-        _getIPadOSNavBarItem(),
-        _getTvOSNavBarItem(),
-        _getWatchOSNavBarItem(),
-        _getMacOSNavBarItem()
+        DrawerTile(
+            selected: currentPageIndex == 0,
+            icon: Image.asset(
+              'assets/images/iphone-device-icon.png',
+              fit: BoxFit.contain,
+              width: 30,
+              height: 30,
+            ),
+            title: 'Device Info',
+            onTap: (title) {
+              changePageByIndex(0, title);
+            }),
+        DrawerTile(
+            selected: currentPageIndex == 1,
+            icon: Image.asset(
+              'assets/images/iphone-device-icon.png',
+              fit: BoxFit.contain,
+              width: 30,
+              height: 30,
+            ),
+            title: 'iOS Distribution',
+            onTap: (title) {
+              changePageByIndex(1, title);
+            }),
+        DrawerTile(
+          selected: currentPageIndex == 2,
+          icon: Image.asset(
+            'assets/images/iphone-device-icon.png',
+            fit: BoxFit.contain,
+            width: 30,
+            height: 30,
+          ),
+          title: 'iOS',
+          onTap: (title) {
+            changePageByIndex(2, title);
+          },
+        ),
+        DrawerTile(
+          selected: currentPageIndex == 3,
+          icon: Image.asset(
+            'assets/images/ipad-device-icon.png',
+            fit: BoxFit.contain,
+            width: 30,
+            height: 30,
+          ),
+          title: 'iPadOS',
+          onTap: (title) {
+            changePageByIndex(3, title);
+          },
+        ),
+        DrawerTile(
+          selected: currentPageIndex == 4,
+          icon: Image.asset(
+            'assets/images/apple-tv-device-icon.png',
+            fit: BoxFit.contain,
+            width: 30,
+            height: 30,
+          ),
+          title: 'tvOS',
+          onTap: (title) {
+            changePageByIndex(4, title);
+          },
+        ),
+        DrawerTile(
+          selected: currentPageIndex == 5,
+          icon: Image.asset(
+            'assets/images/apple-watch-device-icon.png',
+            fit: BoxFit.contain,
+            width: 30,
+            height: 30,
+          ),
+          title: 'watchOS',
+          onTap: (title) {
+            changePageByIndex(5, title);
+          },
+        ),
+        DrawerTile(
+          selected: currentPageIndex == 6,
+          icon: Image.asset(
+            'assets/images/mac-device-icon.png',
+            fit: BoxFit.contain,
+            width: 30,
+            height: 30,
+          ),
+          title: 'macOS',
+          onTap: (title) {
+            changePageByIndex(6, title);
+          },
+        )
       ];
       screens = [
         iOSDeviceInfoScreen,
@@ -236,22 +455,32 @@ class _MyAppState extends State<MyApp> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(appTitle),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.of(context).push<void>(
-                  MaterialPageRoute<void>(
-                      builder: (BuildContext context) => BlocProvider(
-                          create: (context) {
-                            return AppInfoCubit(
-                                context.read<AppVersionProvider>());
-                          },
-                          child: const AppInfoPage())),
-                );
+        title: Text(currentPageTitle),
+      ),
+      drawer: Drawer(
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                children: bottomNavBarItems,
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.info_outline_rounded),
+              title: const Text('About App'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => BlocProvider(
+                            create: (context) => AppInfoCubit(
+                                context.read<AppVersionProvider>()),
+                            child: const AppInfoPage())));
               },
-              icon: const Icon(Icons.info_outline_rounded))
-        ],
+            ),
+          ],
+        ),
       ),
       body: SafeArea(
         child: Column(
@@ -261,42 +490,18 @@ class _MyAppState extends State<MyApp> {
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
                   child: DefaultTabController(
+                    initialIndex: currentPageIndex,
                     length: screens.length,
                     child: Builder(builder: (context) {
-                      TabController tabController =
-                          DefaultTabController.of(context);
-                      if (!tabController.hasListeners) {
-                        tabController.addListener(() {
-                          _updateAppTitleByTabIndex(tabController.index);
-                        });
-                      }
-
+                      _tabController = DefaultTabController.of(context);
                       return Column(
                         children: <Widget>[
                           Expanded(
                             child: TabBarView(
+                              physics: const NeverScrollableScrollPhysics(),
                               children: screens,
                             ),
                           ),
-                          ButtonsTabBar(
-                            radius: 12,
-                            contentPadding:
-                                const EdgeInsets.symmetric(horizontal: 12),
-                            backgroundColor:
-                                Theme.of(context).selectedBackgroundColor(),
-                            unselectedBackgroundColor:
-                                Theme.of(context).unselectedBackgroundColor(),
-                            borderWidth: 1,
-                            unselectedBorderColor:
-                                CupertinoColors.activeBlue.withAlpha(200),
-                            borderColor: Colors.transparent,
-                            center: false,
-                            unselectedLabelStyle:
-                                Theme.of(context).unselectedTextStyle(),
-                            labelStyle: Theme.of(context).selectedTextStyle(),
-                            height: 56,
-                            tabs: bottomNavBarItems,
-                          )
                         ],
                       );
                     }),
@@ -318,130 +523,12 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  void _updateAppTitleByTabIndex(int tabIndex) {
+  void changePageByIndex(int index, String title) {
     setState(() {
-      if (tabIndex == 0) {
-        appTitle = DefaultTitle;
-      } else if (tabIndex == 1 || tabIndex == 2 || tabIndex == 3) {
-        appTitle = bottomNavBarItems[tabIndex].text!;
-      } else {
-        var tabText = bottomNavBarItems[tabIndex].text;
-        appTitle = tabText == null ? "" : "$tabText Version List";
-      }
+      currentPageTitle = title;
+      currentPageIndex = index;
+      _tabController.index = index;
     });
-  }
-
-  Tab _getDeviceInfoNavBarItem() {
-    return Tab(
-        icon: Image.asset(
-            Platform.isAndroid
-                ? 'assets/images/android-device-icon.png'
-                : 'assets/images/iphone-device-icon.png',
-            fit: BoxFit.contain),
-        text: "Device Info");
-  }
-
-  Tab _getIntentButtonsItem() {
-    return const Tab(
-        icon: Icon(Icons.open_in_new_rounded), text: "Intent Actions");
-  }
-
-  Tab _getDeepLinkNavBarItem() {
-    return const Tab(icon: Icon(Icons.link), text: "Test Deep Link");
-  }
-
-  Tab _getAndroidNavBarItem() {
-    return Tab(
-        icon: Image.asset(
-          'assets/images/android-device-icon.png',
-          fit: BoxFit.contain,
-        ),
-        text: "Android OS");
-  }
-
-  Tab _getAndroidWearOSNavBarItem() {
-    return Tab(
-        icon: Image.asset(
-          'assets/images/smart-device-icon.png',
-          fit: BoxFit.contain,
-        ),
-        text: "Android WearOS");
-  }
-
-  Tab _getIOSNavBarItem() {
-    return Tab(
-      icon: Image.asset(
-        'assets/images/iphone-device-icon.png',
-        fit: BoxFit.contain,
-      ),
-      text: "iOS",
-    );
-  }
-
-  Tab _getIPadOSNavBarItem() {
-    return Tab(
-      icon: Image.asset(
-        'assets/images/ipad-device-icon.png',
-        fit: BoxFit.contain,
-      ),
-      text: "iPadOS",
-    );
-  }
-
-  Tab _getTvOSNavBarItem() {
-    return Tab(
-      icon: Image.asset(
-        'assets/images/apple-tv-device-icon.png',
-        fit: BoxFit.contain,
-      ),
-      text: "tvOS",
-    );
-  }
-
-  Tab _getWatchOSNavBarItem() {
-    return Tab(
-      icon: Image.asset(
-        'assets/images/apple-watch-device-icon.png',
-        fit: BoxFit.contain,
-      ),
-      text: "watchOS",
-    );
-  }
-
-  Tab _getMacOSNavBarItem() {
-    return Tab(
-      icon: Image.asset(
-        'assets/images/mac-device-icon.png',
-        fit: BoxFit.contain,
-      ),
-      text: "macOS",
-    );
-  }
-
-  Tab _getAndroidDistributionNavBarItem() {
-    return Tab(
-        icon: Image.asset(
-          'assets/images/android-device-icon.png',
-          fit: BoxFit.contain,
-        ),
-        text: "Android OS Distribution");
-  }
-
-  Tab _getIOSDistributionNavBarItem() {
-    return Tab(
-        icon: Image.asset(
-          'assets/images/iphone-device-icon.png',
-          fit: BoxFit.contain,
-        ),
-        text: "iOS Distribution");
-  }
-
-  Tab _getIosDeviceInfoNavBarItem() {
-    return Tab(
-        icon: Image.asset(
-          'assets/images/iphone-device-icon.png',
-          fit: BoxFit.contain,
-        ),
-        text: "Device Info");
+    Navigator.pop(context);
   }
 }

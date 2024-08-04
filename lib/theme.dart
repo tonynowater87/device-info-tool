@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 var lightThemeData = ThemeData(
     colorSchemeSeed: CupertinoColors.activeBlue,
+    backgroundColor: CupertinoColors.systemGrey6,
     textTheme: TextTheme(
         button: TextStyle(color: CupertinoColors.systemGrey6.darkColor),
         bodyText1: const TextStyle(color: CupertinoColors.systemGrey6),
@@ -14,6 +15,7 @@ var lightThemeData = ThemeData(
 
 var darkThemeData = ThemeData(
   colorSchemeSeed: CupertinoColors.activeBlue,
+  backgroundColor: CupertinoColors.systemGrey6.darkColor,
   textTheme: TextTheme(
         button: TextStyle(color: CupertinoColors.systemGrey6.darkColor),
         bodyText1: const TextStyle(color: CupertinoColors.systemGrey6),
@@ -43,9 +45,9 @@ extension CustomColor on ThemeData {
 
   TextStyle unselectedTextStyle() {
     if (brightness == Brightness.dark) {
-      return const TextStyle(color: CupertinoColors.activeBlue);
+      return TextStyle(color: CupertinoColors.white.withAlpha(150));
     } else {
-      return const TextStyle(color: CupertinoColors.activeBlue);
+      return TextStyle(color: CupertinoColors.label.withAlpha(150));
     }
   }
 
@@ -53,7 +55,7 @@ extension CustomColor on ThemeData {
     if (brightness == Brightness.dark) {
       return const TextStyle(color: CupertinoColors.white);
     } else {
-      return const TextStyle(color: CupertinoColors.white);
+      return const TextStyle(color: CupertinoColors.label);
     }
   }
 
