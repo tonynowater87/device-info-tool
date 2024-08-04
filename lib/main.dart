@@ -55,7 +55,11 @@ Future<void> main() async {
     return true;
   };
 
-  MobileAds.instance.initialize();
+  MobileAds.instance.initialize().then((value) => {
+    MobileAds.instance
+      ..setAppMuted(true)
+      ..setAppVolume(0.05)
+  });
   runApp(MultiRepositoryProvider(
     providers: [
       RepositoryProvider<NetworkProvider>(
