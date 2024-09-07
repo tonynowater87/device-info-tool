@@ -129,14 +129,14 @@
     "version": "13",
     "version_name": "Ventura",
     "initial_release_date": "2022-10-24",
-    "latest_version": "13.6.9",
+    "latest_version": "13.6.9This",
     "latest_release_date": "2024-08-07"
   },
   {
     "version": "14",
     "version_name": "Sonoma",
     "initial_release_date": "2023-09-26",
-    "latest_version": "14.6.1",
+    "latest_version": "14.6.1This",
     "latest_release_date": "2024-08-07"
   }
 ]
