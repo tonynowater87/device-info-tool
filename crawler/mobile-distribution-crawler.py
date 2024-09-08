@@ -49,10 +49,20 @@ androidFilteredRows = []
 
 # 過濾掉市場份額小於 1% 的 Android 版本, 並將其歸類為 Other
 for row in rows:
-    if float(row[f'Market Share Perc. ({queryMonthLongName})']) < 1 or row['Android Version'] == 'Other':
-        androidOtherPercentage += float(row[f'Market Share Perc. ({queryMonthLongName})'])
-    else :
-        androidFilteredRows.append([row['Android Version'], row['Android Version'].split(' ')[0],row[f'Market Share Perc. ({queryMonthLongName})']])    
+    market_share_key = f'Market Share Perc. ({queryMonthLongName})'
+    try:
+        market_share = float(row[market_share_key])
+    except KeyError:
+        market_share_key = f'Market Share Perc. ({queryMonthAbbr})'
+        try:
+            market_share = float(row[market_share_key])
+        except KeyError:
+            print(f"警告: 缺少鍵 {market_share_key} 在行 {row}")
+            continue
+    if market_share < 1 or row['Android Version'] == 'Other':
+        androidOtherPercentage += market_share
+    else:
+        androidFilteredRows.append([row['Android Version'], row['Android Version'].split(' ')[0], str(market_share)])
 
 other_android_version = 'Other'
 androidFilteredRows.append([other_android_version, "-1", formatFloat(androidOtherPercentage)])
@@ -99,10 +109,20 @@ iOSFilteredRows = []
 
 # 過濾掉市場份額小於 1% 的 iOS 版本, 並將其歸類為 Other
 for row in rows:
-    if float(row[f'Market Share Perc. ({queryMonthLongName})']) < 1 or row['iOS Version'] == 'Other':
-        iOSOtherPercentage += float(row[f'Market Share Perc. ({queryMonthLongName})'])
+    market_share_key = f'Market Share Perc. ({queryMonthLongName})'
+    try:
+        market_share = float(row[market_share_key])
+    except KeyError:
+        market_share_key = f'Market Share Perc. ({queryMonthAbbr})'
+        try:
+            market_share = float(row[market_share_key])
+        except KeyError:
+            print(f"警告: 缺少鍵 {market_share_key} 在行 {row}")
+            continue
+    if market_share < 1 or row['iOS Version'] == 'Other':
+        iOSOtherPercentage += market_share
     else :
-        iOSFilteredRows.append([row['iOS Version'], row['iOS Version'].split(' ')[1], row[f'Market Share Perc. ({queryMonthLongName})']])
+        iOSFilteredRows.append([row['iOS Version'], row['iOS Version'].split(' ')[1], str(market_share)])
         
 iOSFilteredRows.append(['Other', "-1", formatFloat(iOSOtherPercentage)])
 
