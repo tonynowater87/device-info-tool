@@ -14,6 +14,9 @@ def parseWatchOS(data):
         versionSplit = data[0].split(" ")
         platforms = [versionSplit[0]]
         version = versionSplit[1].split("\n")[0]
+        if "This" in version:
+            version = version.replace('This', '')
+            
             
         # 解析发布日期
         release_date_parts = data[2].split(" ")
@@ -39,6 +42,8 @@ def parseTvOS(data):
         versionSplit = data[0].split(" ")
         platforms = [versionSplit[0]]
         version = versionSplit[1].split("\n")[0]
+        if "This" in version:
+            version = version.replace('This', '')
             
         # 解析发布日期
         release_date_parts = data[2].split(" ")
@@ -60,15 +65,11 @@ def parseTvOS(data):
 
 def parseMacOS(data):
     try:
-        print(f'parseMacOS data={data}')
         # 解析版本
         versionSplit = data[0].split(" ")
         platforms = [versionSplit[0] + " " + versionSplit[1]]
         version = versionSplit[2].split("\n")[0]
-        print(f'parseMacOS versionSplit={versionSplit}, version={version}')
-        # check if 'This' in version
         if "This" in version:
-            print(f'special case')
             version = version.replace('This', '')
             
         # 解析发布日期
