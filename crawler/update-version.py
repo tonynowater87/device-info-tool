@@ -47,11 +47,7 @@ def update_mac_os_versions(file_path, updates):
     data_dict = {item['version']: item for item in data}
 
     for update in updates:
-        if '.' not in update['version']:
-            continue
         split_versions = update['version'].split('.')
-        if len(split_versions) < 2:
-            continue
         major_version = split_versions[0]
         if int(major_version) <= 10:
             continue
