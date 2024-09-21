@@ -28,5 +28,11 @@
     "latest_version": "17.7",
     "release_date": "2023-09-18",
     "latest_date": "2024-09-16"
+  },
+  {
+    "version": "18",
+    "latest_version": "18",
+    "release_date": "2024-09-16",
+    "latest_date": "2024-09-16"
   }
 ]

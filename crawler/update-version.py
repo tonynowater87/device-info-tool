@@ -13,12 +13,12 @@ def update_os_versions(file_path, updates):
     data_dict = {item['version']: item for item in data}
 
     for update in updates:
-        if '.' not in update['version']:
-            continue
+        
         split_versions = update['version'].split('.')
         if len(split_versions) < 2:
-            continue
-        major_version = split_versions[0]
+            major_version = update['version']
+        else:
+            major_version = split_versions[0]            
         # Check if this major version is already in the data
         if major_version in data_dict:
             # Update the existing entry
