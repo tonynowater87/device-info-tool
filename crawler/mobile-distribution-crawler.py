@@ -22,7 +22,10 @@ baseDir = 'crawler/resources'
 previousMonth = datetime.now().replace(day=1) - timedelta(days=1)
 queryMonth = previousMonth.strftime('%Y-%m')
 queryMonthInt = previousMonth.strftime('%Y%m')
-queryMonthAbbr = previousMonth.strftime('%b %Y')
+if previousMonth.month == 9:
+    queryMonthAbbr = previousMonth.strftime('%bt %Y')
+else: 
+    queryMonthAbbr = previousMonth.strftime('%b %Y')
 queryMonthLongName = previousMonth.strftime('%B %Y')
 print(f'previousMonth: {queryMonth}, previousMonthInt: {queryMonthInt}, previousMonthAbbr: {queryMonthAbbr}, previousMonthLongName: {queryMonthLongName}')
 
@@ -54,11 +57,8 @@ for row in rows:
         market_share = float(row[market_share_key])
     except KeyError:
         market_share_key = f'Market Share Perc. ({queryMonthAbbr})'
-        try:
-            market_share = float(row[market_share_key])
-        except KeyError:
-            print(f"警告: 缺少鍵 {market_share_key} 在行 {row}")
-            continue
+        market_share = float(row[market_share_key])
+        
     if market_share < 1 or row['Android Version'] == 'Other':
         androidOtherPercentage += market_share
     else:
