@@ -68,5 +68,12 @@
     "latest_version": "10.6.1",
     "latest_release_date": "2024-08-19",
     "based_on_ios_version": "17.0"
+  },
+  {
+    "version": "11.0",
+    "latest_version": "11.0.1",
+    "release_date": "2024-10-03",
+    "latest_release_date": "2024-10-03",
+    "based_on_ios_version": "1.0"
   }
 ]
