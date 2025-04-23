@@ -27,6 +27,29 @@ date_formats = [
     "%B %Y"
 ]
 
+def rearrange_name(data):
+    processed_data = []
+    for row in data:
+        if len(row) >= 2 and isinstance(row[0], str):
+            parts = row[0].split(' ', 1) # 以第一個空格分割字串，最多分割一次
+            if len(parts) == 2:
+                number_str, name = parts
+                try:
+                    float(number_str) # 嘗試將分割出的第一部分轉換為浮點數，判斷是否為數值
+                    new_first_element = f"{name} {number_str}"
+                    new_row = [new_first_element] + row[1:]
+                    processed_data.append(new_row)
+                except ValueError:
+                    # 如果第一個空格分割出的第一部分不是數值，則不進行處理
+                    processed_data.append(row)
+            else:
+                # 如果第一個元素中沒有空格，則不進行處理
+                processed_data.append(row)
+        else:
+            # 如果子陣列長度小於 2 或第一個元素不是字串，則不進行處理
+            processed_data.append(row)
+    return processed_data
+
 def process_outer_array_final(data):
     if len(data) >= 14:
         sum_of_values = round(sum(float(row[2]) for row in data[13:]), 2)
@@ -152,8 +175,8 @@ def fetch_and_process_android_data(csv_url):
     len = cumulative_rows.__len__()
     print(f"Android 累積分佈版本數量: {len}")
     
-    process_outer_array_final(processed_rows)
-    process_outer_cumulative_array_final(cumulative_rows)
+    processed_rows = process_outer_array_final(rearrange_name(processed_rows))
+    cumulative_rows = process_outer_cumulative_array_final(rearrange_name(cumulative_rows))
     
     result = [
         {'最後更新': queryMonthLongName},
