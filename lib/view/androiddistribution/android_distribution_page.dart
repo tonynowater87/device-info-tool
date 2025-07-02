@@ -85,7 +85,7 @@ class _AndroidDistributionPageState extends State<AndroidDistributionPage>
                   padding: const EdgeInsets.only(left: 8.0),
                   child: Text(
                       'Last updated: ${data.androidDistributionModel.lastUpdated}\ndata from: https://gs.statcounter.com',
-                      style: Theme.of(context).textTheme.caption),
+                      style: Theme.of(context).textTheme.bodySmall),
                 ),
               ),
             ),

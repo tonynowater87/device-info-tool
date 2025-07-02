@@ -3,28 +3,35 @@ import 'package:flutter/material.dart';
 
 var lightThemeData = ThemeData(
     colorSchemeSeed: CupertinoColors.activeBlue,
-    backgroundColor: CupertinoColors.systemGrey6,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: CupertinoColors.activeBlue,
+      surface: CupertinoColors.systemGrey6,
+    ),
     textTheme: TextTheme(
-        button: TextStyle(color: CupertinoColors.systemGrey6.darkColor),
-        bodyText1: const TextStyle(color: CupertinoColors.systemGrey6),
-        bodyText2: TextStyle(color: CupertinoColors.systemGrey6.darkColor),
-        caption: const TextStyle(color: CupertinoColors.systemGrey6)),
+        labelLarge: TextStyle(color: CupertinoColors.systemGrey6.darkColor),
+        bodyLarge: const TextStyle(color: CupertinoColors.systemGrey6),
+        bodyMedium: TextStyle(color: CupertinoColors.systemGrey6.darkColor),
+        bodySmall: const TextStyle(color: CupertinoColors.systemGrey6)),
     brightness: Brightness.light,
-    dialogTheme: const DialogTheme(
+    dialogTheme: const DialogThemeData(
         backgroundColor: CupertinoColors.secondarySystemBackground));
 
 var darkThemeData = ThemeData(
   colorSchemeSeed: CupertinoColors.activeBlue,
-  backgroundColor: CupertinoColors.systemGrey6.darkColor,
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: CupertinoColors.activeBlue,
+    surface: CupertinoColors.systemGrey6.darkColor,
+  ),
   textTheme: TextTheme(
-        button: TextStyle(color: CupertinoColors.systemGrey6.darkColor),
-        bodyText1: const TextStyle(color: CupertinoColors.systemGrey6),
-        bodyText2: const TextStyle(color: CupertinoColors.systemGrey6),
-        caption: const TextStyle(color: CupertinoColors.systemGrey6)),
-    brightness: Brightness.dark,
-    dialogTheme: DialogTheme(
-      backgroundColor: CupertinoColors.secondarySystemBackground.darkColor,
-    ),);
+      labelLarge: TextStyle(color: CupertinoColors.systemGrey6.darkColor),
+      bodyLarge: const TextStyle(color: CupertinoColors.systemGrey6),
+      bodyMedium: const TextStyle(color: CupertinoColors.systemGrey6),
+      bodySmall: const TextStyle(color: CupertinoColors.systemGrey6)),
+  brightness: Brightness.dark,
+  dialogTheme: DialogThemeData(
+    backgroundColor: CupertinoColors.secondarySystemBackground.darkColor,
+  ),
+);
 
 extension CustomColor on ThemeData {
   Color unselectedBackgroundColor() {

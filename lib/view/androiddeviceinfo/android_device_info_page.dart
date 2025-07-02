@@ -227,7 +227,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                                 .copyAdvertisingId();
                           },
                           child: Text('Copy',
-                              style: Theme.of(context).textTheme.bodyText2),
+                              style: Theme.of(context).textTheme.bodyMedium),
                         ),
                         const SizedBox(
                           width: 10,
@@ -291,7 +291,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                                 .copyAndroidId();
                           },
                           child: Text('Copy',
-                              style: Theme.of(context).textTheme.bodyText2),
+                              style: Theme.of(context).textTheme.bodyMedium),
                         ),
                         const SizedBox(
                           width: 10,

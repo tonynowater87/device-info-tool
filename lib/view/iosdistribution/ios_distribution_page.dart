@@ -85,7 +85,7 @@ class _IOSDistributionPageState extends State<IOSDistributionPage>
                   padding: const EdgeInsets.only(left: 8.0),
                   child: Text(
                       'Last updated: ${data.iOSDistributionModel.lastUpdated}\ndata from: https://gs.statcounter.com',
-                      style: Theme.of(context).textTheme.caption),
+                      style: Theme.of(context).textTheme.bodySmall),
                 ),
               ),
             ),
