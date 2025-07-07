@@ -199,31 +199,46 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
   }
 
   Future<AndroidDeviceInfoModel> _getDeviceInfo() async {
+
     if (Platform.isAndroid) {
-      AndroidDeviceInfo androidDeviceInfo = await _deviceInfoPlugin.androidInfo;
-      var deviceModel = androidDeviceInfo.model;
-      var deviceBrand = androidDeviceInfo.manufacturer;
-      var screenInch =
-          "${androidDeviceInfo.displayMetrics.sizeInches.toStringAsPrecision(2)} inches";
-      var widthPx = androidDeviceInfo.displayMetrics.widthPx.toInt();
-      var heightPx = androidDeviceInfo.displayMetrics.heightPx.toInt();
-      var screenResolution =
-          '$widthPx x $heightPx';
-      var density = androidDeviceInfo.displayMetrics.density;
-      var dpInWidth = androidDeviceInfo.displayMetrics.widthPx / density;
-      var dpInHeight = androidDeviceInfo.displayMetrics.heightPx / density;
       return AndroidDeviceInfoModel(
-          deviceModel: deviceModel,
-          screenInch: screenInch,
-          screenResolution: screenResolution,
-          screenDpSize: "${dpInWidth.toInt()} x ${dpInHeight.toInt()}",
-          screenRatio: Utils.getScreenRatio(widthPx, heightPx),
-          androidVersion: androidDeviceInfo.version.release,
-          androidSDKInt: androidDeviceInfo.version.sdkInt.toString(),
-          securityPatch: androidDeviceInfo.version.securityPatch ?? "",
-          deviceBrand: deviceBrand,
-          ydpi: androidDeviceInfo.displayMetrics.yDpi.toInt().toString(),
-          xdpi: androidDeviceInfo.displayMetrics.xDpi.toInt().toString());
+        deviceModel: '',
+        screenInch: '',
+        screenResolution: '',
+        screenDpSize: '',
+        screenRatio: '',
+        androidVersion: '',
+        androidSDKInt: '',
+        securityPatch: '',
+        deviceBrand: '',
+        ydpi: '',
+        xdpi: ''
+      );
+
+      // AndroidDeviceInfo androidDeviceInfo = await _deviceInfoPlugin.androidInfo;
+      // var deviceModel = androidDeviceInfo.model;
+      // var deviceBrand = androidDeviceInfo.manufacturer;
+      // var screenInch =
+      //     "${androidDeviceInfo.displayMetrics.sizeInches.toStringAsPrecision(2)} inches";
+      // var widthPx = androidDeviceInfo.displayMetrics.widthPx.toInt();
+      // var heightPx = androidDeviceInfo.displayMetrics.heightPx.toInt();
+      // var screenResolution =
+      //     '$widthPx x $heightPx';
+      // var density = androidDeviceInfo.displayMetrics.density;
+      // var dpInWidth = androidDeviceInfo.displayMetrics.widthPx / density;
+      // var dpInHeight = androidDeviceInfo.displayMetrics.heightPx / density;
+      // return AndroidDeviceInfoModel(
+      //     deviceModel: deviceModel,
+      //     screenInch: screenInch,
+      //     screenResolution: screenResolution,
+      //     screenDpSize: "${dpInWidth.toInt()} x ${dpInHeight.toInt()}",
+      //     screenRatio: Utils.getScreenRatio(widthPx, heightPx),
+      //     androidVersion: androidDeviceInfo.version.release,
+      //     androidSDKInt: androidDeviceInfo.version.sdkInt.toString(),
+      //     securityPatch: androidDeviceInfo.version.securityPatch ?? "",
+      //     deviceBrand: deviceBrand,
+      //     ydpi: androidDeviceInfo.displayMetrics.yDpi.toInt().toString(),
+      //     xdpi: androidDeviceInfo.displayMetrics.xDpi.toInt().toString());
     } else {
       throw Exception("no expected device");
     }
