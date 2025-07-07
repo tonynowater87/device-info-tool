@@ -50,15 +50,15 @@ dependencies:
   rotated_corner_decoration: 2.1.0+1
   system_info2: 3.0.2
   storage_space: 1.1.0
-  advertising_id: 2.4.0
-  battery_info: 1.1.1
-  flutter_android_developer_mode: 1.0.0
+  advertising_id: 2.7.1
   flutter_fgbg: 0.2.2
   url_launcher: 6.3.1
   material_dialogs: 1.1.5
   easy_dynamic_theme: 2.3.1
   sqflite: 2.2.8+4
-  fluttertoast: 8.2.2
+  fluttertoast:
+    git:
+      url: https://github.com/ponnamkarthik/FlutterToast.git
   android_id: 0.3.4
   syncfusion_flutter_charts: 30.1.38
   memory_info: 0.0.3

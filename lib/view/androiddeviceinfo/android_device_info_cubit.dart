@@ -4,7 +4,6 @@ import 'dart:math';
 
 import 'package:advertising_id/advertising_id.dart';
 import 'package:android_id/android_id.dart';
-import 'package:battery_info/battery_info_plugin.dart';
 import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -13,7 +12,6 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_android_developer_mode/flutter_android_developer_mode.dart';
 import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_model.dart';
 import 'package:memory_info/memory_info.dart';
@@ -25,13 +23,11 @@ part 'android_device_info_state.dart';
 
 class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
   final _deviceInfoPlugin = DeviceInfoPlugin();
-  final _batteryInfo = BatteryInfoPlugin();
   final _networkInfoPlugin = NetworkInfo();
   final _memoryInfoPlugin = MemoryInfoPlugin();
   final _connectivityPlugin = Connectivity();
 
   Timer? _timerFetchBattery;
-  StreamSubscription? _streamBatteryState;
   StreamSubscription<FGBGType>? _foregroundEventStream;
 
   AndroidDeviceInfoCubit() : super(AndroidDeviceInfoInitial());
@@ -85,7 +81,6 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
 
   void release() {
     _timerFetchBattery?.cancel();
-    _streamBatteryState?.cancel();
     _foregroundEventStream?.cancel();
   }
 
@@ -100,36 +95,20 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
       });
     });
 
-    _streamBatteryState ??=
-        _batteryInfo.androidBatteryInfoStream.listen((batteryState) {
-      if (state is AndroidDeviceInfoInitial) return;
-      const unknown = 'unknown';
-      String capacityMaH;
-      if (batteryState?.batteryCapacity == null) {
-        capacityMaH = 'unknown';
-      } else {
-        capacityMaH = "${batteryState!.batteryCapacity! ~/ pow(2, 10)} mAh";
-      }
-
-      emit((state as AndroidDeviceInfoLoaded).copyWith(
-          batteryInfoModel: AndroidBatteryInfoModel(
-              batteryLevel: '${batteryState?.batteryLevel} %' ?? unknown,
-              // Remaining battery capacity as an integer percentage of total capacity (with no fractional part).
-              chargingStatus: batteryState?.chargingStatus?.name ?? unknown,
-              // charging, full, discharging
-              capacity: capacityMaH,
-              // Battery capacity in microampere-hours, as an integer. (mAh / 2 ^ 10)
-              technology: batteryState?.technology ?? unknown,
-              // String describing the technology of the current battery. e.g. Li-ion
-              temperature: "${batteryState?.temperature} °C" ?? unknown,
-              // integer containing the current battery temperature.
-              health: batteryState?.health?.toString().replaceAll('_', ' ') ??
-                  unknown))); // health_good, dead, over_heat, over_voltage, cold, unspecified_failure
-    }, onError: (error) {
-      if (state is AndroidDeviceInfoInitial) return;
-      FirebaseCrashlytics.instance
-          .recordError(Exception("listen battery info error: $error"), null);
-    }, onDone: () {}, cancelOnError: true);
+    String unknown = 'unknown';
+    emit((state as AndroidDeviceInfoLoaded).copyWith(
+        batteryInfoModel: AndroidBatteryInfoModel(
+            batteryLevel: unknown,
+            // Remaining battery capacity as an integer percentage of total capacity (with no fractional part).
+            chargingStatus: unknown,
+            // charging, full, discharging
+            capacity: unknown,
+            // Battery capacity in microampere-hours, as an integer. (mAh / 2 ^ 10)
+            technology: unknown,
+            // String describing the technology of the current battery. e.g. Li-ion
+            temperature: unknown,
+            // integer containing the current battery temperature.
+            health: unknown))); // health_good, dead, over_heat, over_voltage, cold, unspecified_failure
   }
 
   Future<String> _getMemoryInfo() async {
@@ -158,7 +137,9 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
   }
 
   Future<bool> _getIsDeveloper() async {
-    return await FlutterAndroidDeveloperMode.isAndroidDeveloperModeEnabled;
+    // TODO manually implement this
+    // return await FlutterAndroidDeveloperMode.isAndroidDeveloperModeEnabled;
+    return false;
   }
 
   String _getCpuCore() {
