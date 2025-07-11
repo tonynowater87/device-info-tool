@@ -16,7 +16,6 @@ import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_model.dart';
 import 'package:memory_info/memory_info.dart';
 import 'package:network_info_plus/network_info_plus.dart';
-import 'package:storage_space/storage_space.dart';
 import 'package:system_info2/system_info2.dart';
 
 part 'android_device_info_state.dart';
@@ -47,8 +46,8 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
     String connectivityString = connectivity.map((e) => e.name).join(', ');
 
     // storage info
-    StorageSpace storageSpace =
-    await getStorageSpace(lowOnSpaceThreshold: 0, fractionDigits: 2);
+    // StorageSpace storageSpace =
+    // await getStorageSpace(lowOnSpaceThreshold: 0, fractionDigits: 2);
 
     emit(AndroidDeviceInfoLoaded(
         deviceInfoModel: deviceInfo,
@@ -60,8 +59,7 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
         isDeveloper: isDeveloper,
         wifiIp: wifiIp ?? '',
         connectivities: connectivityString,
-        storageInfo:
-            "${storageSpace.usedSize} / ${storageSpace.totalSize} (${storageSpace.usagePercent}%)",
+        storageInfo: "",
         batteryInfoModel: null));
   }
 
@@ -87,6 +85,9 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
   @override
   void onChange(Change<AndroidDeviceInfoState> change) {
     super.onChange(change);
+    debugPrint('[Tony] onChange: ${change.currentState} -> ${change.nextState}');
+    if (state is! AndroidDeviceInfoLoaded) return;
+
     _foregroundEventStream ??= FGBGEvents.stream.listen((event) {
       if (state is AndroidDeviceInfoInitial) return;
       _getIsDeveloper().then((isDeveloper) {
@@ -116,11 +117,11 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
     // hardware info
     var totalMemory =
     Utils.formatMB((await _memoryInfoPlugin.memoryInfo).totalMem!.toInt(), 0);
-    debugPrint('[Tony] totalMemory: $totalMemory');
-    StorageSpace storageSpace =
-        await getStorageSpace(lowOnSpaceThreshold: 0, fractionDigits: 2);
-    debugPrint(
-        '[Tony] storageSpace, total: ${storageSpace.totalSize}, free: ${storageSpace.freeSize}, used: ${storageSpace.usedSize}, usagePercent: ${storageSpace.usagePercent}');
+    // debugPrint('[Tony] totalMemory: $totalMemory');
+    // StorageSpace storageSpace =
+    //     await getStorageSpace(lowOnSpaceThreshold: 0, fractionDigits: 2);
+    // debugPrint(
+    //     '[Tony] storageSpace, total: ${storageSpace.totalSize}, free: ${storageSpace.freeSize}, used: ${storageSpace.usedSize}, usagePercent: ${storageSpace.usagePercent}');
 
     return totalMemory;
   }

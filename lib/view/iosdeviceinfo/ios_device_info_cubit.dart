@@ -6,7 +6,6 @@ import 'package:display_metrics/display_metrics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:memory_info/memory_info.dart';
 import 'package:network_info_plus/network_info_plus.dart';
-import 'package:storage_space/storage_space.dart';
 
 part 'ios_device_info_state.dart';
 
@@ -51,10 +50,10 @@ class IosDeviceInfoCubit extends Cubit<IosDeviceInfoState> {
     var totalMemory =
         Utils.formatMB((await _memoryInfoPlugin.memoryInfo).totalMem!.toInt(), 0);
     debugPrint('[Tony] totalMemory: $totalMemory');
-    StorageSpace storageSpace =
-        await getStorageSpace(lowOnSpaceThreshold: 0, fractionDigits: 2);
-    debugPrint(
-        '[Tony] storageSpace, total: ${storageSpace.totalSize}, free: ${storageSpace.freeSize}, used: ${storageSpace.usedSize}, usagePercent: ${storageSpace.usagePercent}');
+    // StorageSpace storageSpace =
+    //     await getStorageSpace(lowOnSpaceThreshold: 0, fractionDigits: 2);
+    // debugPrint(
+    //     '[Tony] storageSpace, total: ${storageSpace.totalSize}, free: ${storageSpace.freeSize}, used: ${storageSpace.usedSize}, usagePercent: ${storageSpace.usagePercent}');
 
     emit(IosDeviceInfoState(
         brand: brand,
@@ -75,8 +74,7 @@ class IosDeviceInfoCubit extends Cubit<IosDeviceInfoState> {
         wifiIp: wifiIp ?? "",
         connectivities: connectivityString,
         totalMemoryInGB: totalMemory,
-        storageInfo:
-            "${storageSpace.usedSize} / ${storageSpace.totalSize} (${storageSpace.usagePercent}%)"));
+        storageInfo: ""));
   }
 
   void loadContext(BuildContext buildContext) {

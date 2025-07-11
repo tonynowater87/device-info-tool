@@ -3,8 +3,8 @@ import 'package:device_info_tool/data/database_provider.dart';
 import 'package:device_info_tool/data/model/url_record.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
-
+import 'package:url_launcher_android/url_launcher_android.dart';
+import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 part 'deep_link_state.dart';
 
 class DeepLinkCubit extends Cubit<DeepLinkState> {
@@ -26,8 +26,9 @@ class DeepLinkCubit extends Cubit<DeepLinkState> {
     if (_isValidUrl(url)) {
       bool canResolveApp;
       try {
-        canResolveApp = await launchUrl(Uri.parse(url),
-            mode: LaunchMode.externalNonBrowserApplication);
+        UrlLauncherAndroid urlLauncherAndroid = UrlLauncherAndroid();
+        LaunchOptions launchOptions = const LaunchOptions(mode: PreferredLaunchMode.externalNonBrowserApplication);
+        canResolveApp = await urlLauncherAndroid.launchUrl(url, launchOptions);
       } on PlatformException {
         canResolveApp = false;
       }

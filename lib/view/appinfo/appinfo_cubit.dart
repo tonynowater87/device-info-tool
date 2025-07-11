@@ -7,8 +7,8 @@ import 'package:meta/meta.dart';
 import 'package:device_info_tool/constants.dart';
 import 'package:device_info_tool/data/AppVersionProvider.dart';
 import 'package:device_info_tool/oss_licenses.dart';
-import 'package:url_launcher/url_launcher.dart';
-
+import 'package:url_launcher_android/url_launcher_android.dart';
+import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 part 'appinfo_state.dart';
 
 class AppInfoCubit extends Cubit<AppInfoState> {
@@ -47,7 +47,9 @@ class AppInfoCubit extends Cubit<AppInfoState> {
   }
 
   Future<void> openGithubUrl() async {
-    if (!await launchUrl(Uri.parse(_githubUrl))) {
+    UrlLauncherAndroid urlLauncherAndroid = UrlLauncherAndroid();
+    LaunchOptions launchOptions = const LaunchOptions(mode: PreferredLaunchMode.externalNonBrowserApplication);
+    if (!await urlLauncherAndroid.launchUrl(_githubUrl, launchOptions)) {
       throw Exception('Could not launch $_githubUrl');
     }
   }

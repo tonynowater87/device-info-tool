@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 var lightThemeData = ThemeData(
-    colorSchemeSeed: CupertinoColors.activeBlue,
     colorScheme: ColorScheme.fromSeed(
       seedColor: CupertinoColors.activeBlue,
       surface: CupertinoColors.systemGrey6,
@@ -12,12 +11,10 @@ var lightThemeData = ThemeData(
         bodyLarge: const TextStyle(color: CupertinoColors.systemGrey6),
         bodyMedium: TextStyle(color: CupertinoColors.systemGrey6.darkColor),
         bodySmall: const TextStyle(color: CupertinoColors.systemGrey6)),
-    brightness: Brightness.light,
     dialogTheme: const DialogThemeData(
         backgroundColor: CupertinoColors.secondarySystemBackground));
 
 var darkThemeData = ThemeData(
-  colorSchemeSeed: CupertinoColors.activeBlue,
   colorScheme: ColorScheme.fromSeed(
     seedColor: CupertinoColors.activeBlue,
     surface: CupertinoColors.systemGrey6.darkColor,
@@ -27,7 +24,6 @@ var darkThemeData = ThemeData(
       bodyLarge: const TextStyle(color: CupertinoColors.systemGrey6),
       bodyMedium: const TextStyle(color: CupertinoColors.systemGrey6),
       bodySmall: const TextStyle(color: CupertinoColors.systemGrey6)),
-  brightness: Brightness.dark,
   dialogTheme: DialogThemeData(
     backgroundColor: CupertinoColors.secondarySystemBackground.darkColor,
   ),

@@ -43,27 +43,28 @@ dependencies:
   android_intent_plus: 5.3.0
   network_info_plus: 6.1.4
   connectivity_plus: 6.1.4
-  google_mobile_ads: 5.0.0
+  google_mobile_ads: 6.0.0
   scrollable_positioned_list: 0.3.7
   firebase_core: 2.11.0
   firebase_crashlytics: 3.2.0
   rotated_corner_decoration: 2.1.0+1
   system_info2: 3.0.2
-  storage_space: 1.1.0
+#  storage_space: 1.1.0
   advertising_id: 2.7.1
   flutter_fgbg: 0.2.2
-  url_launcher: 6.3.1
+  url_launcher_android: 6.3.16
   material_dialogs: 1.1.5
   easy_dynamic_theme: 2.3.1
-  sqflite: 2.2.8+4
+  sqflite: 2.4.2
   fluttertoast:
     git:
       url: https://github.com/ponnamkarthik/FlutterToast.git
   android_id: 0.3.4
   syncfusion_flutter_charts: 30.1.38
-  memory_info: 0.0.3
+  memory_info: 0.0.4
   display_metrics: 0.1.5
   lottie: 3.3.1
+  shared_preferences_android: 2.4.10
 
 dev_dependencies:
   flutter_test:
