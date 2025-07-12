@@ -32,6 +32,10 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
   AndroidDeviceInfoCubit() : super(AndroidDeviceInfoInitial());
 
   Future<void> load() async {
+    var channel = const MethodChannel('com.tonynowater.mobileosversions');
+    var _deviceInfo = await channel.invokeMethod("getDeviceInfo");
+    var _batteryInfo = await channel.invokeMethod("getBatteryInfo");
+
     final deviceInfo = await _getDeviceInfo();
     final adId = await _getAdvertisingId();
     final androidId = await _getAndroidId();
