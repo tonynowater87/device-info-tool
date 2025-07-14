@@ -4,6 +4,8 @@ import android.app.Activity
 import android.util.DisplayMetrics
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 class DeviceInfoHandler(private val activity: Activity) {
     fun handle(call: MethodCall, result: MethodChannel.Result) {
@@ -14,11 +16,16 @@ class DeviceInfoHandler(private val activity: Activity) {
         val density = displayMetrics.density
         val dpInWidth = widthPx / density
         val dpInHeight = heightPx / density
+        val widthInches = widthPx / displayMetrics.xdpi
+        val heightInches = heightPx / displayMetrics.ydpi
+        val inches = sqrt((widthInches * widthInches + heightInches * heightInches).toDouble())
+
         val map = mapOf(
             "deviceModel" to android.os.Build.MODEL,
             "screenResolutionWidth" to "$widthPx",
             "screenResolutionHeight" to "$heightPx",
             "screenDpSize" to "${dpInWidth.toInt()}x${dpInHeight.toInt()}",
+            "screenInch" to String.format("%.1f", inches),
             "androidVersion" to android.os.Build.VERSION.RELEASE,
             "androidSDKInt" to android.os.Build.VERSION.SDK_INT.toString(),
             "securityPatch" to android.os.Build.VERSION.SECURITY_PATCH,
