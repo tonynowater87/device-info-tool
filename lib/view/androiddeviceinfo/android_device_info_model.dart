@@ -1,3 +1,5 @@
+import 'package:device_info_tool/common/utils.dart';
+
 enum AndroidScreenDensity {
   ldpi(120),
   mdpi(160),
@@ -38,6 +40,27 @@ class AndroidDeviceInfoModel {
     required this.ydpi,
     required this.xdpi,
   });
+
+  factory AndroidDeviceInfoModel.fromMap(Map<dynamic, dynamic> map) {
+    var widthInPx = int.tryParse(map['screenResolutionWidth']);
+    var heightInPx = int.tryParse(map['screenResolutionHeight']);
+    return AndroidDeviceInfoModel(
+      androidVersion: map['androidVersion'],
+      androidSDKInt: map['androidSDKInt'],
+      securityPatch: map['securityPatch'],
+      deviceBrand: map['deviceBrand'],
+      deviceModel: map['deviceModel'],
+      screenInch: map['screenInch'] ?? '',
+      screenResolution: "$widthInPx x $heightInPx",
+      screenDpSize: map['screenDpSize'],
+      screenRatio: Utils.getScreenRatio(
+        widthInPx ?? 0,
+        heightInPx ?? 0,
+      ),
+      ydpi: map['ydpi'],
+      xdpi: map['xdpi'],
+    );
+  }
 
   AndroidScreenDensity getScreenDensity() {
     final intDPI = int.tryParse(ydpi) ?? 0;
@@ -82,6 +105,17 @@ class AndroidBatteryInfoModel {
     required this.temperature,
     required this.health,
   });
+
+  factory AndroidBatteryInfoModel.fromMap(Map<dynamic, dynamic> map) {
+    return AndroidBatteryInfoModel(
+      batteryLevel: map['batteryLevel'],
+      chargingStatus: map['chargingStatus'],
+      capacity: map['capacity'],
+      technology: map['technology'],
+      temperature: map['temperature'],
+      health: map['health'],
+    );
+  }
 
 
 }

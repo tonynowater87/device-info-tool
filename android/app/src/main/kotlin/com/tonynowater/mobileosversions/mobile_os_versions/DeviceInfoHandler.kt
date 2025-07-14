@@ -1,23 +1,31 @@
-package com.tonynowater.mobileosversions.mobile_os_versions // 請替換成你的 package name
+package com.tonynowater.mobileosversions.mobile_os_versions
 
-import android.content.Context
-import android.os.Build
+import android.app.Activity
+import android.util.DisplayMetrics
+import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
-// 專門處理裝置資訊的類別
-class DeviceInfoHandler(private val context: Context) {
-
-    fun handle(call: io.flutter.plugin.common.MethodCall, result: MethodChannel.Result) {
-        when (call.method) {
-            "getDeviceInfo" -> getDeviceInfo(result)
-            // 如果 DeviceInfoHandler 還要處理其他方法，可以加在這裡
-            // "getDeviceName" -> getDeviceName(result) 
-            else -> result.notImplemented()
-        }
-    }
-
-    private fun getDeviceInfo(result: MethodChannel.Result) {
-        val deviceInfo = "製造商: ${Build.MANUFACTURER}, 型號: ${Build.MODEL}"
-        result.success(deviceInfo)
+class DeviceInfoHandler(private val activity: Activity) {
+    fun handle(call: MethodCall, result: MethodChannel.Result) {
+        val displayMetrics = DisplayMetrics()
+        activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val widthPx = displayMetrics.widthPixels
+        val heightPx = displayMetrics.heightPixels
+        val density = displayMetrics.density
+        val dpInWidth = widthPx / density
+        val dpInHeight = heightPx / density
+        val map = mapOf(
+            "deviceModel" to android.os.Build.MODEL,
+            "screenResolutionWidth" to "$widthPx",
+            "screenResolutionHeight" to "$heightPx",
+            "screenDpSize" to "${dpInWidth.toInt()}x${dpInHeight.toInt()}",
+            "androidVersion" to android.os.Build.VERSION.RELEASE,
+            "androidSDKInt" to android.os.Build.VERSION.SDK_INT.toString(),
+            "securityPatch" to android.os.Build.VERSION.SECURITY_PATCH,
+            "deviceBrand" to android.os.Build.MANUFACTURER,
+            "ydpi" to displayMetrics.ydpi.toInt().toString(),
+            "xdpi" to displayMetrics.xdpi.toInt().toString()
+        )
+        result.success(map)
     }
 }
