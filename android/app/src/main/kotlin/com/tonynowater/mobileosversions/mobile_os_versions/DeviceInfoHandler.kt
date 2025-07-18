@@ -32,7 +32,7 @@ class DeviceInfoHandler(private val activity: Activity) {
 
         val cpuInfo = getCpuInfo()
 
-        val map = mapOf(
+        val map = mutableMapOf(
             "deviceModel" to android.os.Build.MODEL,
             "screenResolutionWidth" to "$widthPx",
             "screenResolutionHeight" to "$heightPx",
@@ -40,11 +40,12 @@ class DeviceInfoHandler(private val activity: Activity) {
             "screenInch" to String.format("%.1f", inches),
             "androidVersion" to android.os.Build.VERSION.RELEASE,
             "androidSDKInt" to android.os.Build.VERSION.SDK_INT.toString(),
-            "securityPatch" to android.os.Build.VERSION.SECURITY_PATCH,
+            "securityPatch" to (android.os.Build.VERSION.SECURITY_PATCH ?: ""),
             "deviceBrand" to android.os.Build.MANUFACTURER,
             "ydpi" to displayMetrics.ydpi.toInt().toString(),
             "xdpi" to displayMetrics.xdpi.toInt().toString(),
         )
+        map.putAll(cpuInfo)
         result.success(map)
     }
 
