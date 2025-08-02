@@ -623,14 +623,26 @@ def fetch_and_process_ios_data(csv_url):
 
     other_percentage = 0.0
     processed_rows = []
+    merged_percentage = 0.0
+    versions_to_merge = []
+
     for row in sorted_rows:
         market_share = float(row[market_share_key])
         version = row['iOS Version']
-        # 使用正則表達式匹配 iOS 版本號
         pattern = r'iOS (\d+\.?\d*)'
-        version_number = re.search(pattern, version).group(1) if re.search(pattern, version) else "-1"
-        print(f"版本: {version}, 市佔率: {market_share}")
-        processed_rows.append([version, version_number, str(market_share)])
+        version_number_match = re.search(pattern, version)
+        
+        if version_number_match:
+            version_number = float(version_number_match.group(1))
+            if 19.0 <= version_number <= 26.0:
+                merged_percentage += market_share
+                versions_to_merge.append(version)
+                continue
+
+        processed_rows.append([version, version_number_match.group(1) if version_number_match else "-1", str(market_share)])
+
+    if versions_to_merge:
+        processed_rows.insert(0, ["iOS 26.0", "26.0", formatFloat(merged_percentage)])
 
     # 計算累積分佈
     cumulative_percentage = 0.0
