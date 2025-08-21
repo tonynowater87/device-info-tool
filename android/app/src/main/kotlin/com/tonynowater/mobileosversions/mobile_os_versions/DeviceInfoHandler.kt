@@ -114,7 +114,7 @@ class DeviceInfoHandler(private val activity: Activity) {
     fun getPhysicalCpuCores(): Int {
         try {
             val cpuPresentFile = File("/sys/devices/system/cpu/present")
-            val content = cpuPresentFile.readText() // e.g., "0-7"
+            val content = cpuPresentFile.readText().trim() // e.g., "0-7"
             val parts = content.split("-")
             if (parts.size == 2) {
                 val start = parts[0].toInt()
