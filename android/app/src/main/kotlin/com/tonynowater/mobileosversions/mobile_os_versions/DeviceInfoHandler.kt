@@ -9,6 +9,8 @@ import android.net.NetworkInfo
 import android.os.BatteryManager
 import android.os.StatFs
 import android.os.Environment
+import android.os.storage.StorageManager
+import android.app.usage.StorageStatsManager
 import android.text.format.Formatter
 import android.util.DisplayMetrics
 import androidx.core.content.ContextCompat.getSystemService
@@ -131,35 +133,289 @@ class DeviceInfoHandler(private val activity: Activity) {
         val storageInfo = mutableMapOf<String, String>()
         
         try {
-            val internalStorage = Environment.getDataDirectory()
-            val internalStat = StatFs(internalStorage.path)
-            val internalTotalBytes = internalStat.blockSizeLong * internalStat.blockCountLong
-            val internalAvailableBytes = internalStat.blockSizeLong * internalStat.availableBlocksLong
-            
-            storageInfo["internalStorageTotal"] = Formatter.formatFileSize(activity, internalTotalBytes)
-            storageInfo["internalStorageAvailable"] = Formatter.formatFileSize(activity, internalAvailableBytes)
-            storageInfo["internalStorageUsed"] = Formatter.formatFileSize(activity, internalTotalBytes - internalAvailableBytes)
-            
-            if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
-                val externalStorage = Environment.getExternalStorageDirectory()
-                val externalStat = StatFs(externalStorage.path)
-                val externalTotalBytes = externalStat.blockSizeLong * externalStat.blockCountLong
-                val externalAvailableBytes = externalStat.blockSizeLong * externalStat.availableBlocksLong
-                
-                storageInfo["externalStorageTotal"] = Formatter.formatFileSize(activity, externalTotalBytes)
-                storageInfo["externalStorageAvailable"] = Formatter.formatFileSize(activity, externalAvailableBytes)
-                storageInfo["externalStorageUsed"] = Formatter.formatFileSize(activity, externalTotalBytes - externalAvailableBytes)
-            } else {
-                storageInfo["externalStorageTotal"] = "Not Available"
-                storageInfo["externalStorageAvailable"] = "Not Available"
-                storageInfo["externalStorageUsed"] = "Not Available"
+            // Method 1: Try StorageStatsManager API for Android 8.0+ (API 26+)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                val storageStatsResult = getStorageInfoUsingStorageStats()
+                if (storageStatsResult != null) {
+                    storageInfo.putAll(storageStatsResult)
+                    return storageInfo
+                }
             }
+            
+            // Method 2: Try multiple paths with different strategies
+            val storageResults = tryMultipleStorageMethods()
+            if (storageResults != null) {
+                storageInfo.putAll(storageResults)
+                return storageInfo
+            }
+            
+            // Method 3: Fallback to basic method
+            getStorageInfoFallback(storageInfo)
+            
         } catch (e: Exception) {
             e.printStackTrace()
             storageInfo["storageError"] = e.message ?: "Unknown storage error"
+            setStorageError(storageInfo)
         }
         
         return storageInfo
+    }
+    
+    private fun getStorageInfoUsingStorageStats(): Map<String, String>? {
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                val storageStatsManager = activity.getSystemService(Context.STORAGE_STATS_SERVICE) as StorageStatsManager
+                val storageManager = activity.getSystemService(Context.STORAGE_SERVICE) as StorageManager
+                
+                // Get the primary storage volume
+                val primaryVolume = storageManager.primaryStorageVolume
+                val uuid = storageManager.getUuidForPath(activity.filesDir)
+                
+                val totalBytes = storageStatsManager.getTotalBytes(uuid)
+                val freeBytes = storageStatsManager.getFreeBytes(uuid)
+                val usedBytes = totalBytes - freeBytes
+                
+                return mapOf(
+                    "internalStorageTotal" to Formatter.formatFileSize(activity, totalBytes),
+                    "internalStorageAvailable" to Formatter.formatFileSize(activity, freeBytes),
+                    "internalStorageUsed" to Formatter.formatFileSize(activity, usedBytes),
+                    "externalStorageTotal" to Formatter.formatFileSize(activity, totalBytes),
+                    "externalStorageAvailable" to Formatter.formatFileSize(activity, freeBytes),
+                    "externalStorageUsed" to Formatter.formatFileSize(activity, usedBytes),
+                    "debugStoragePath" to "StorageStatsManager API"
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+    
+    private fun tryMultipleStorageMethods(): Map<String, String>? {
+        // Try different storage paths and calculation methods
+        val methods = listOf(
+            { getStorageFromPath("/storage/emulated/0") },
+            { getStorageFromPath("/sdcard") },
+            { getStorageFromPath("/mnt/sdcard") },
+            { getStorageFromEnvironment() },
+            { getStorageFromDataDirectory() }
+        )
+        
+        var bestResult: Map<String, String>? = null
+        var bestTotal = 0L
+        
+        for (method in methods) {
+            try {
+                val result = method()
+                if (result != null) {
+                    // Try to parse the total to compare
+                    val totalStr = result["totalBytes"] as? Long
+                    if (totalStr != null && totalStr > bestTotal) {
+                        bestTotal = totalStr
+                        bestResult = mapOf(
+                            "internalStorageTotal" to Formatter.formatFileSize(activity, totalStr),
+                            "internalStorageAvailable" to result["availableFormatted"] as String,
+                            "internalStorageUsed" to result["usedFormatted"] as String,
+                            "externalStorageTotal" to Formatter.formatFileSize(activity, totalStr),
+                            "externalStorageAvailable" to result["availableFormatted"] as String,
+                            "externalStorageUsed" to result["usedFormatted"] as String,
+                            "debugStoragePath" to (result["path"] as String)
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                continue
+            }
+        }
+        
+        return bestResult
+    }
+    
+    private fun getStorageFromPath(path: String): Map<String, Any>? {
+        try {
+            val file = File(path)
+            if (file.exists()) {
+                val stat = StatFs(path)
+                val totalBytes = stat.blockSizeLong * stat.blockCountLong
+                val availableBytes = stat.blockSizeLong * stat.availableBlocksLong
+                val usedBytes = totalBytes - availableBytes
+                
+                return mapOf(
+                    "path" to path,
+                    "totalBytes" to totalBytes,
+                    "availableFormatted" to Formatter.formatFileSize(activity, availableBytes),
+                    "usedFormatted" to Formatter.formatFileSize(activity, usedBytes)
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+    
+    private fun getStorageFromEnvironment(): Map<String, Any>? {
+        try {
+            val extDir = Environment.getExternalStorageDirectory()
+            return getStorageFromPath(extDir.absolutePath)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+    
+    private fun getStorageFromDataDirectory(): Map<String, Any>? {
+        try {
+            val dataDir = Environment.getDataDirectory()
+            return getStorageFromPath(dataDir.absolutePath)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+    
+    private fun findMainStoragePath(): String? {
+        try {
+            // Priority order: Try user-accessible storage paths first, avoid system paths
+            val userStoragePaths = listOf(
+                "/storage/emulated/0",  // Primary user storage
+                "/sdcard",              // User accessible sdcard
+                "/storage/self/primary", // Alternative user storage
+                Environment.getExternalStorageDirectory().absolutePath  // Android API path
+            )
+            
+            // First, try user storage paths
+            for (path in userStoragePaths) {
+                try {
+                    val file = File(path)
+                    if (file.exists() && file.canRead()) {
+                        val stat = StatFs(path)
+                        val totalBytes = stat.blockSizeLong * stat.blockCountLong
+                        // If we find a valid user storage path with reasonable size (>10GB), use it
+                        if (totalBytes > 10L * 1024 * 1024 * 1024) { // More than 10GB
+                            return path
+                        }
+                    }
+                } catch (e: Exception) {
+                    continue
+                }
+            }
+            
+            // If no good user storage found, read /proc/mounts but exclude /data
+            val mountsFile = File("/proc/mounts")
+            if (mountsFile.exists()) {
+                val reader = BufferedReader(FileReader(mountsFile))
+                var line: String?
+                while (reader.readLine().also { line = it } != null) {
+                    val parts = line!!.split(" ")
+                    if (parts.size >= 2) {
+                        val mountPoint = parts[1]
+                        // Look for user-accessible storage mount points, skip system ones
+                        when {
+                            mountPoint == "/storage/emulated/0" -> {
+                                reader.close()
+                                return "/storage/emulated/0"
+                            }
+                            mountPoint.contains("/storage/emulated") -> {
+                                reader.close()
+                                return mountPoint
+                            }
+                            mountPoint == "/sdcard" -> {
+                                reader.close()
+                                return "/sdcard"
+                            }
+                            // Skip /data as it's system storage, not user storage
+                        }
+                    }
+                }
+                reader.close()
+            }
+            
+            // Last resort: try to find largest non-system storage
+            val fallbackPaths = listOf(
+                "/storage/emulated/0", 
+                "/sdcard",
+                "/mnt/sdcard",
+                Environment.getExternalStorageDirectory().absolutePath
+            )
+            
+            var bestPath: String? = null
+            var bestSize = 0L
+            
+            for (path in fallbackPaths) {
+                try {
+                    val file = File(path)
+                    if (file.exists()) {
+                        val stat = StatFs(path)
+                        val totalBytes = stat.blockSizeLong * stat.blockCountLong
+                        if (totalBytes > bestSize) {
+                            bestSize = totalBytes
+                            bestPath = path
+                        }
+                    }
+                } catch (e: Exception) {
+                    continue
+                }
+            }
+            
+            return bestPath
+            
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+    }
+    
+    private fun getStorageInfoFallback(storageInfo: MutableMap<String, String>) {
+        try {
+            // Try different paths to get the most accurate storage information
+            val paths = listOf(
+                "/storage/emulated/0",  // Primary external storage
+                Environment.getExternalStorageDirectory().absolutePath,  // External storage
+                Environment.getDataDirectory().absolutePath,  // Data directory
+                activity.filesDir.absolutePath  // App files directory
+            )
+            
+            var bestStat: StatFs? = null
+            var bestTotalBytes = 0L
+            
+            for (path in paths) {
+                try {
+                    val stat = StatFs(path)
+                    val totalBytes = stat.blockSizeLong * stat.blockCountLong
+                    if (totalBytes > bestTotalBytes) {
+                        bestTotalBytes = totalBytes
+                        bestStat = stat
+                    }
+                } catch (e: Exception) {
+                    // Continue to next path
+                    continue
+                }
+            }
+            
+            if (bestStat != null) {
+                val totalBytes = bestStat.blockSizeLong * bestStat.blockCountLong
+                val availableBytes = bestStat.blockSizeLong * bestStat.availableBlocksLong
+                val usedBytes = totalBytes - availableBytes
+                
+                storageInfo["internalStorageTotal"] = Formatter.formatFileSize(activity, totalBytes)
+                storageInfo["internalStorageAvailable"] = Formatter.formatFileSize(activity, availableBytes)
+                storageInfo["internalStorageUsed"] = Formatter.formatFileSize(activity, usedBytes)
+            } else {
+                setStorageError(storageInfo)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            setStorageError(storageInfo)
+        }
+    }
+    
+    private fun setStorageError(storageInfo: MutableMap<String, String>) {
+        storageInfo["internalStorageTotal"] = "Error"
+        storageInfo["internalStorageAvailable"] = "Error"
+        storageInfo["internalStorageUsed"] = "Error"
+        storageInfo["externalStorageTotal"] = "Error"
+        storageInfo["externalStorageAvailable"] = "Error"
+        storageInfo["externalStorageUsed"] = "Error"
     }
 
     private fun getBatteryInfo(): Map<String, String> {

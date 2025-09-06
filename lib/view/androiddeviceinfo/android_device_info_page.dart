@@ -414,7 +414,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
     return Padding(
         padding: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
         child: Container(
-          height: 175,
+          height: 125,
           width: double.infinity,
           foregroundDecoration: getDecoration("Storage"),
           decoration: BoxDecoration(
@@ -431,12 +431,9 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Text('Internal Total'),
-                    Text('Internal Available'),
-                    Text('Internal Used'),
-                    Text('External Total'),
-                    Text('External Available'),
-                    Text('External Used'),
+                    Text('Total Space'),
+                    Text('Available Space'),
+                    Text('Used Space'),
                   ],
                 ),
               ),
@@ -449,9 +446,6 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                     Text(state.storageInfoModel?.internalTotalSpace ?? ''),
                     Text(state.storageInfoModel?.internalAvailableSpace ?? ''),
                     Text(state.storageInfoModel?.internalUsedSpace ?? ''),
-                    Text(state.storageInfoModel?.externalTotalSpace ?? ''),
-                    Text(state.storageInfoModel?.externalAvailableSpace ?? ''),
-                    Text(state.storageInfoModel?.externalUsedSpace ?? ''),
                   ],
                 ),
               ),
@@ -568,14 +562,12 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
 
   Widget _buildCpuDetailsSection(AndroidDeviceInfoLoaded state) {
     final cpuDetails = state.cpuInfoModel?.cpuDetails ?? {};
-    final mainCpuInfo = cpuDetails.entries.take(5).toList();
-    
     return Padding(
         padding: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0, bottom: 8.0),
         child: Container(
           height: 200,
           width: double.infinity,
-          foregroundDecoration: getDecoration("CPU Details"),
+          foregroundDecoration: getDecoration("CPU"),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(8)),
             border: Border.all(
@@ -585,7 +577,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Expanded(
+              const Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -593,7 +585,6 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                     Text('Core Count'),
                     Text('Total Memory'),
                     Text('Available Memory'),
-                    ...mainCpuInfo.map((e) => Text(e.key)),
                   ],
                 ),
               ),
@@ -606,7 +597,6 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                     Text(state.cpuInfoModel?.cpuCoreCount ?? ''),
                     Text(state.cpuInfoModel?.totalMemory ?? ''),
                     Text(state.cpuInfoModel?.availableMemory ?? ''),
-                    ...mainCpuInfo.map((e) => FittedBox(child: Text(e.value))),
                   ],
                 ),
               ),
