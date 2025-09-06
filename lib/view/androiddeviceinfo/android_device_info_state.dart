@@ -13,28 +13,20 @@ class AndroidDeviceInfoLoaded extends AndroidDeviceInfoState {
   final AndroidSystemInfoModel? systemInfoModel;
   final AndroidCpuInfoModel? cpuInfoModel;
 
-  final String cpu;
-  final String cpuCores;
-  final String totalMemory;
   final String advertisingId;
   final String androidId;
   final bool isDeveloper;
   String wifiIp;
   String connectivities;
-  String storageInfo;
 
   AndroidDeviceInfoLoaded({
     required this.deviceInfoModel,
-    required this.cpu,
-    required this.cpuCores,
-    required this.totalMemory,
     required this.advertisingId,
     required this.androidId,
     required this.isDeveloper,
     required this.batteryInfoModel,
     required this.wifiIp,
     required this.connectivities,
-    required this.storageInfo,
     this.storageInfoModel,
     this.networkInfoModel,
     this.systemInfoModel,
@@ -51,15 +43,11 @@ class AndroidDeviceInfoLoaded extends AndroidDeviceInfoState {
   }) =>
       AndroidDeviceInfoLoaded(
           deviceInfoModel: deviceInfoModel,
-          cpu: cpu,
-          cpuCores: cpuCores,
-          totalMemory: totalMemory,
           advertisingId: advertisingId,
           androidId: androidId,
           isDeveloper: isDeveloper ?? this.isDeveloper,
           wifiIp: wifiIp,
           connectivities: connectivities,
-          storageInfo: storageInfo,
           batteryInfoModel: batteryInfoModel ?? this.batteryInfoModel,
           storageInfoModel: storageInfoModel ?? this.storageInfoModel,
           networkInfoModel: networkInfoModel ?? this.networkInfoModel,
