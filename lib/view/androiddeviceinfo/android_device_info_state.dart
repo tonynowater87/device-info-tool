@@ -7,6 +7,11 @@ class AndroidDeviceInfoInitial extends AndroidDeviceInfoState {}
 
 class AndroidDeviceInfoLoaded extends AndroidDeviceInfoState {
   final AndroidDeviceInfoModel deviceInfoModel;
+  final AndroidBatteryInfoModel? batteryInfoModel;
+  final AndroidStorageInfoModel? storageInfoModel;
+  final AndroidNetworkInfoModel? networkInfoModel;
+  final AndroidSystemInfoModel? systemInfoModel;
+  final AndroidCpuInfoModel? cpuInfoModel;
 
   final String cpu;
   final String cpuCores;
@@ -14,7 +19,6 @@ class AndroidDeviceInfoLoaded extends AndroidDeviceInfoState {
   final String advertisingId;
   final String androidId;
   final bool isDeveloper;
-  final AndroidBatteryInfoModel? batteryInfoModel;
   String wifiIp;
   String connectivities;
   String storageInfo;
@@ -30,10 +34,21 @@ class AndroidDeviceInfoLoaded extends AndroidDeviceInfoState {
     required this.batteryInfoModel,
     required this.wifiIp,
     required this.connectivities,
-    required this.storageInfo
+    required this.storageInfo,
+    this.storageInfoModel,
+    this.networkInfoModel,
+    this.systemInfoModel,
+    this.cpuInfoModel,
   });
 
-  AndroidDeviceInfoLoaded copyWith({AndroidBatteryInfoModel? batteryInfoModel, bool? isDeveloper}) =>
+  AndroidDeviceInfoLoaded copyWith({
+    AndroidBatteryInfoModel? batteryInfoModel, 
+    bool? isDeveloper,
+    AndroidStorageInfoModel? storageInfoModel,
+    AndroidNetworkInfoModel? networkInfoModel,
+    AndroidSystemInfoModel? systemInfoModel,
+    AndroidCpuInfoModel? cpuInfoModel,
+  }) =>
       AndroidDeviceInfoLoaded(
           deviceInfoModel: deviceInfoModel,
           cpu: cpu,
@@ -45,5 +60,9 @@ class AndroidDeviceInfoLoaded extends AndroidDeviceInfoState {
           wifiIp: wifiIp,
           connectivities: connectivities,
           storageInfo: storageInfo,
-          batteryInfoModel: batteryInfoModel ?? this.batteryInfoModel);
+          batteryInfoModel: batteryInfoModel ?? this.batteryInfoModel,
+          storageInfoModel: storageInfoModel ?? this.storageInfoModel,
+          networkInfoModel: networkInfoModel ?? this.networkInfoModel,
+          systemInfoModel: systemInfoModel ?? this.systemInfoModel,
+          cpuInfoModel: cpuInfoModel ?? this.cpuInfoModel);
 }

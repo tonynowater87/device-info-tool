@@ -37,7 +37,11 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
     var batteryInfoMap = await channel.invokeMethod("getBatteryInfo");
 
     final deviceInfo = AndroidDeviceInfoModel.fromMap(deviceInfoMap);
-    final batteryInfo = AndroidBatteryInfoModel.fromMap(batteryInfoMap);
+    final batteryInfo = AndroidBatteryInfoModel.fromMap(deviceInfoMap);
+    final storageInfo = AndroidStorageInfoModel.fromMap(deviceInfoMap);
+    final networkInfo = AndroidNetworkInfoModel.fromMap(deviceInfoMap);
+    final systemInfo = AndroidSystemInfoModel.fromMap(deviceInfoMap);
+    final cpuInfo = AndroidCpuInfoModel.fromMap(deviceInfoMap);
 
     final adId = await _getAdvertisingId();
     final androidId = await _getAndroidId();
@@ -62,7 +66,11 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
         wifiIp: wifiIp ?? '',
         connectivities: connectivityString,
         storageInfo: "",
-        batteryInfoModel: batteryInfo));
+        batteryInfoModel: batteryInfo,
+        storageInfoModel: storageInfo,
+        networkInfoModel: networkInfo,
+        systemInfoModel: systemInfo,
+        cpuInfoModel: cpuInfo));
   }
 
   void copyAdvertisingId() {
