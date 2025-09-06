@@ -565,7 +565,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
     return Padding(
         padding: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0, bottom: 8.0),
         child: Container(
-          height: 200,
+          height: 125,
           width: double.infinity,
           foregroundDecoration: getDecoration("CPU"),
           decoration: BoxDecoration(
