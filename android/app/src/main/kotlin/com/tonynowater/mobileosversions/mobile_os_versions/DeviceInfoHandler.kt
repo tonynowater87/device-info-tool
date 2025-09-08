@@ -427,6 +427,34 @@ class DeviceInfoHandler(private val activity: Activity) {
             
             batteryInfo["batteryLevel"] = "$batteryLevel%"
             
+            // Try to get battery capacity from different sources
+            var capacity = "Unknown"
+            
+            // Method 1: Try to read from system files
+            val capacityPaths = listOf(
+                "/sys/class/power_supply/battery/charge_full_design",
+                "/sys/class/power_supply/battery/charge_full",
+                "/sys/class/power_supply/bms/charge_full_design",
+                "/sys/class/power_supply/bms/charge_full"
+            )
+            
+            for (path in capacityPaths) {
+                try {
+                    val capacityFile = java.io.File(path)
+                    if (capacityFile.exists()) {
+                        val capacityValue = capacityFile.readText().trim().toInt()
+                        if (capacityValue > 0) {
+                            capacity = "${capacityValue / 1000} mAh"
+                            break
+                        }
+                    }
+                } catch (e: Exception) {
+                    continue
+                }
+            }
+            
+            batteryInfo["capacity"] = capacity
+            
             // Use BroadcastReceiver to get more detailed battery info
             val batteryIntent = activity.registerReceiver(null, android.content.IntentFilter(android.content.Intent.ACTION_BATTERY_CHANGED))
             
