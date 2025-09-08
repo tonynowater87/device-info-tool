@@ -192,6 +192,7 @@ class AndroidSystemInfoModel {
   String kernelVersion;
   String supportedABIs;
   String is64Bit;
+  bool isDeveloperOptionsEnabled;
 
   AndroidSystemInfoModel({
     required this.androidId,
@@ -212,6 +213,7 @@ class AndroidSystemInfoModel {
     required this.kernelVersion,
     required this.supportedABIs,
     required this.is64Bit,
+    required this.isDeveloperOptionsEnabled,
   });
 
   factory AndroidSystemInfoModel.fromMap(Map<dynamic, dynamic> map) {
@@ -234,6 +236,7 @@ class AndroidSystemInfoModel {
       kernelVersion: map['kernelVersion'] ?? '',
       supportedABIs: map['supportedABIs'] ?? '',
       is64Bit: map['is64Bit'] ?? '',
+      isDeveloperOptionsEnabled: map['isDeveloperOptionsEnabled'] == 'true',
     );
   }
 }

@@ -525,6 +525,7 @@ class DeviceInfoHandler(private val activity: Activity) {
             systemInfo["kernelVersion"] = getKernelVersion()
             systemInfo["supportedABIs"] = android.os.Build.SUPPORTED_ABIS.joinToString(", ")
             systemInfo["is64Bit"] = (android.os.Build.SUPPORTED_64_BIT_ABIS.isNotEmpty()).toString()
+            systemInfo["isDeveloperOptionsEnabled"] = isDeveloperOptionsEnabled().toString()
         } catch (e: Exception) {
             e.printStackTrace()
             systemInfo["systemError"] = e.message ?: "Unknown system error"
@@ -543,6 +544,56 @@ class DeviceInfoHandler(private val activity: Activity) {
             }
         } catch (e: Exception) {
             "Unknown"
+        }
+    }
+
+    private fun isDeveloperOptionsEnabled(): Boolean {
+        return try {
+            // Try multiple methods to detect developer options
+            
+            // Method 1: Check DEVELOPMENT_SETTINGS_ENABLED
+            var isEnabled = false
+            try {
+                val developerOptionsEnabled = android.provider.Settings.Global.getInt(
+                    activity.contentResolver,
+                    android.provider.Settings.Global.DEVELOPMENT_SETTINGS_ENABLED,
+                    0
+                )
+                isEnabled = developerOptionsEnabled == 1
+            } catch (e: Exception) {
+                // Method 1 failed, try method 2
+            }
+            
+            // Method 2: Check ADB_ENABLED (USB debugging)
+            if (!isEnabled) {
+                try {
+                    val adbEnabled = android.provider.Settings.Global.getInt(
+                        activity.contentResolver,
+                        android.provider.Settings.Global.ADB_ENABLED,
+                        0
+                    )
+                    isEnabled = adbEnabled == 1
+                } catch (e: Exception) {
+                    // Method 2 failed, try method 3
+                }
+            }
+            
+            // Method 3: Check if app is debuggable (alternative indicator)
+            if (!isEnabled) {
+                try {
+                    val pm = activity.packageManager
+                    val appInfo = pm.getApplicationInfo(activity.packageName, PackageManager.GET_META_DATA)
+                    // This checks if the app itself is debuggable, which might indicate dev environment
+                    val isDebuggable = (appInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
+                    isEnabled = isDebuggable
+                } catch (e: Exception) {
+                    // All methods failed
+                }
+            }
+            
+            isEnabled
+        } catch (e: Exception) {
+            false
         }
     }
 }

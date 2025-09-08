@@ -44,7 +44,7 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
     final cpuInfo = AndroidCpuInfoModel.fromMap(deviceInfoMap);
 
     final adId = await _getAdvertisingId();
-    final isDeveloper = await _getIsDeveloper();
+    final isDeveloper = systemInfo.isDeveloperOptionsEnabled;
 
     // network info from Flutter plugins
     var wifiIp = await _networkInfoPlugin.getWifiIP();
@@ -84,11 +84,6 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
     _foregroundEventStream?.cancel();
   }
 
-  Future<bool> _getIsDeveloper() async {
-    // TODO manually implement this
-    // return await FlutterAndroidDeveloperMode.isAndroidDeveloperModeEnabled;
-    return false;
-  }
 
   Future<String> _getAdvertisingId() async {
     String? advertisingId;
