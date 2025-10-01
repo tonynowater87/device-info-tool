@@ -10,7 +10,54 @@ import re
 def formatFloat(floatValue):
     return re.sub('0+$|\.0+$', '', "{:.2f}".format(floatValue))
 
-baseDir = 'crawler/resources'
+def find_market_share_key(rows):
+    """尋找市場份額欄位的輔助函數"""
+    if not rows or len(rows) == 0:
+        return None
+
+    # 嘗試使用上個月
+    previousMonth = datetime.now().replace(day=1) - timedelta(days=1)
+    market_share_key = None
+
+    for date_format in date_formats:
+        try:
+            market_share_key = f'Market Share Perc. ({previousMonth.strftime(date_format)})'
+            if market_share_key in rows[0]:
+                print(f"找到欄位: {market_share_key}")
+                return market_share_key
+        except Exception as e:
+            pass
+
+    # 如果找不到，嘗試使用當前月份
+    currentMonth = datetime.now()
+    for date_format in date_formats:
+        try:
+            market_share_key = f'Market Share Perc. ({currentMonth.strftime(date_format)})'
+            if market_share_key in rows[0]:
+                print(f"使用當前月份欄位: {market_share_key}")
+                return market_share_key
+        except Exception as e:
+            pass
+
+    # 如果還是找不到，列出所有可用的欄位並嘗試自動匹配
+    print(f"可用的欄位: {list(rows[0].keys())}")
+    for key in rows[0].keys():
+        if key.startswith('Market Share Perc.'):
+            market_share_key = key
+            print(f"自動匹配到欄位: {market_share_key}")
+            return market_share_key
+
+    return None
+
+# 獲取腳本所在目錄
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(script_dir)
+baseDir = os.path.join(script_dir, 'resources')
+outputDir = os.path.join(project_root, 'resources')
+
+# 確保目錄存在
+os.makedirs(baseDir, exist_ok=True)
+os.makedirs(outputDir, exist_ok=True)
 
 # 計算上個月的日期
 previousMonth = datetime.now().replace(day=1) - timedelta(days=1)
@@ -95,17 +142,8 @@ def fetch_and_process_android_data(csv_url):
         print(f"錯誤: {e}")
         return None
 
-    # 嘗試所有可能的日期格式
-    market_share_key = None
-    for date_format in date_formats:
-        try:
-            market_share_key = f'Market Share Perc. ({previousMonth.strftime(date_format)})'
-            if market_share_key in rows[0]:
-                break
-        except Exception as e:
-            print(f"錯誤: {e}")
-            pass
-
+    # 使用輔助函數尋找市場份額欄位
+    market_share_key = find_market_share_key(rows)
     if market_share_key is None:
         print("找不到市場份額的欄位")
         return None
@@ -194,17 +232,8 @@ def fetch_and_process_android_data(csv_url):
         print(f"錯誤: {e}")
         return None
 
-    # 嘗試所有可能的日期格式
-    market_share_key = None
-    for date_format in date_formats:
-        try:
-            market_share_key = f'Market Share Perc. ({previousMonth.strftime(date_format)})'
-            if market_share_key in rows[0]:
-                break
-        except Exception as e:
-            print(f"錯誤: {e}")
-            pass
-
+    # 使用輔助函數尋找市場份額欄位
+    market_share_key = find_market_share_key(rows)
     if market_share_key is None:
         print("找不到市場份額的欄位")
         return None
@@ -265,17 +294,8 @@ def fetch_and_process_android_data(csv_url):
         print(f"錯誤: {e}")
         return None
 
-    # 嘗試所有可能的日期格式
-    market_share_key = None
-    for date_format in date_formats:
-        try:
-            market_share_key = f'Market Share Perc. ({previousMonth.strftime(date_format)})'
-            if market_share_key in rows[0]:
-                break
-        except Exception as e:
-            print(f"錯誤: {e}")
-            pass
-
+    # 使用輔助函數尋找市場份額欄位
+    market_share_key = find_market_share_key(rows)
     if market_share_key is None:
         print("找不到市場份額的欄位")
         return None
@@ -339,17 +359,8 @@ def fetch_and_process_android_data(csv_url):
         print(f"錯誤: {e}")
         return None
 
-    # 嘗試所有可能的日期格式
-    market_share_key = None
-    for date_format in date_formats:
-        try:
-            market_share_key = f'Market Share Perc. ({previousMonth.strftime(date_format)})'
-            if market_share_key in rows[0]:
-                break
-        except Exception as e:
-            print(f"錯誤: {e}")
-            pass
-
+    # 使用輔助函數尋找市場份額欄位
+    market_share_key = find_market_share_key(rows)
     if market_share_key is None:
         print("找不到市場份額的欄位")
         return None
@@ -401,17 +412,8 @@ def fetch_and_process_android_data(csv_url):
         print(f"錯誤: {e}")
         return None
 
-    # 嘗試所有可能的日期格式
-    market_share_key = None
-    for date_format in date_formats:
-        try:
-            market_share_key = f'Market Share Perc. ({previousMonth.strftime(date_format)})'
-            if market_share_key in rows[0]:
-                break
-        except Exception as e:
-            print(f"錯誤: {e}")
-            pass
-
+    # 使用輔助函數尋找市場份額欄位
+    market_share_key = find_market_share_key(rows)
     if market_share_key is None:
         print("找不到市場份額的欄位")
         return None
@@ -467,17 +469,8 @@ def fetch_and_process_android_data(csv_url):
         print(f"錯誤: {e}")
         return None
 
-    # 嘗試所有可能的日期格式
-    market_share_key = None
-    for date_format in date_formats:
-        try:
-            market_share_key = f'Market Share Perc. ({previousMonth.strftime(date_format)})'
-            if market_share_key in rows[0]:
-                break
-        except Exception as e:
-            print(f"錯誤: {e}")
-            pass
-
+    # 使用輔助函數尋找市場份額欄位
+    market_share_key = find_market_share_key(rows)
     if market_share_key is None:
         print("找不到市場份額的欄位")
         return None
@@ -529,17 +522,8 @@ def fetch_and_process_android_data(csv_url):
         print(f"錯誤: {e}")
         return None
 
-    # 嘗試所有可能的日期格式
-    market_share_key = None
-    for date_format in date_formats:
-        try:
-            market_share_key = f'Market Share Perc. ({previousMonth.strftime(date_format)})'
-            if market_share_key in rows[0]:
-                break
-        except Exception as e:
-            print(f"錯誤: {e}")
-            pass
-
+    # 使用輔助函數尋找市場份額欄位
+    market_share_key = find_market_share_key(rows)
     if market_share_key is None:
         print("找不到市場份額的欄位")
         return None
@@ -593,17 +577,8 @@ def fetch_and_process_ios_data(csv_url):
         print(f"錯誤: {e}")
         return None
 
-    # 嘗試所有可能的日期格式
-    market_share_key = None
-    for date_format in date_formats:
-        try:
-            market_share_key = f'Market Share Perc. ({previousMonth.strftime(date_format)})'
-            if market_share_key in rows[0]:
-                break
-        except Exception as e:
-            print(f"錯誤: {e}")
-            pass
-
+    # 使用輔助函數尋找市場份額欄位
+    market_share_key = find_market_share_key(rows)
     if market_share_key is None:
         print("找不到市場份額的欄位")
         return None
@@ -676,10 +651,11 @@ if android_result:
     # 將資料轉換為 JSON
     android_json_data = json.dumps(android_result, ensure_ascii=False, indent=4)
     try:
-        # 儲存 JSON 檔案
-        with open(f'{baseDir}/android-distribution.json', 'w', encoding='utf-8') as f:
+        # 儲存 JSON 檔案到輸出目錄
+        output_path = os.path.join(outputDir, 'android-distribution.json')
+        with open(output_path, 'w', encoding='utf-8') as f:
             f.write(android_json_data)
-        os.system(f'mv {baseDir}/android-distribution.json ./resources/android-distribution.json')
+        print(f'Android 資料已儲存至: {output_path}')
     except ValueError as e:
         print(f'invalid json: {e}')
 
@@ -689,9 +665,10 @@ if ios_result:
     # 將資料轉換為 JSON
     ios_json_data = json.dumps(ios_result, ensure_ascii=False, indent=4)
     try:
-        # 儲存 JSON 檔案
-        with open(f'{baseDir}/ios-distribution.json', 'w', encoding='utf-8') as f:
+        # 儲存 JSON 檔案到輸出目錄
+        output_path = os.path.join(outputDir, 'ios-distribution.json')
+        with open(output_path, 'w', encoding='utf-8') as f:
             f.write(ios_json_data)
-        os.system(f'mv {baseDir}/ios-distribution.json ./resources/ios-distribution.json')
+        print(f'iOS 資料已儲存至: {output_path}')
     except ValueError as e:
         print(f'invalid json: {e}')
