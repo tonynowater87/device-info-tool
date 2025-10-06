@@ -411,6 +411,10 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
   }
 
   Widget _buildStorageInfoSection(AndroidDeviceInfoLoaded state) {
+    final storageModel = state.storageInfoModel;
+    final usedPercentage = storageModel?.getUsedPercentage() ?? '';
+    final availablePercentage = storageModel?.getAvailablePercentage() ?? '';
+
     return Padding(
         padding: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
         child: Container(
@@ -443,9 +447,9 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(state.storageInfoModel?.internalTotalSpace ?? ''),
-                    Text(state.storageInfoModel?.internalAvailableSpace ?? ''),
-                    Text(state.storageInfoModel?.internalUsedSpace ?? ''),
+                    Text(storageModel?.internalTotalSpace ?? ''),
+                    Text('${storageModel?.internalAvailableSpace ?? ''} ${availablePercentage.isNotEmpty ? '($availablePercentage)' : ''}'),
+                    Text('${storageModel?.internalUsedSpace ?? ''} ${usedPercentage.isNotEmpty ? '($usedPercentage)' : ''}'),
                   ],
                 ),
               ),

@@ -128,6 +128,9 @@ class AndroidStorageInfoModel {
   String externalTotalSpace;
   String externalAvailableSpace;
   String externalUsedSpace;
+  int? internalTotalBytes;
+  int? internalAvailableBytes;
+  int? internalUsedBytes;
 
   AndroidStorageInfoModel({
     required this.internalTotalSpace,
@@ -136,6 +139,9 @@ class AndroidStorageInfoModel {
     required this.externalTotalSpace,
     required this.externalAvailableSpace,
     required this.externalUsedSpace,
+    this.internalTotalBytes,
+    this.internalAvailableBytes,
+    this.internalUsedBytes,
   });
 
   factory AndroidStorageInfoModel.fromMap(Map<dynamic, dynamic> map) {
@@ -146,7 +152,26 @@ class AndroidStorageInfoModel {
       externalTotalSpace: map['externalStorageTotal'] ?? '',
       externalAvailableSpace: map['externalStorageAvailable'] ?? '',
       externalUsedSpace: map['externalStorageUsed'] ?? '',
+      internalTotalBytes: int.tryParse(map['internalStorageTotalBytes'] ?? ''),
+      internalAvailableBytes: int.tryParse(map['internalStorageAvailableBytes'] ?? ''),
+      internalUsedBytes: int.tryParse(map['internalStorageUsedBytes'] ?? ''),
     );
+  }
+
+  String getUsedPercentage() {
+    if (internalTotalBytes != null && internalUsedBytes != null && internalTotalBytes! > 0) {
+      final percentage = (internalUsedBytes! / internalTotalBytes! * 100).toStringAsFixed(1);
+      return '$percentage%';
+    }
+    return '';
+  }
+
+  String getAvailablePercentage() {
+    if (internalTotalBytes != null && internalAvailableBytes != null && internalTotalBytes! > 0) {
+      final percentage = (internalAvailableBytes! / internalTotalBytes! * 100).toStringAsFixed(1);
+      return '$percentage%';
+    }
+    return '';
   }
 }
 

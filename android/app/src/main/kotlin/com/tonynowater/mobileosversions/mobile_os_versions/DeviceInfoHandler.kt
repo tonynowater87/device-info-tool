@@ -179,6 +179,9 @@ class DeviceInfoHandler(private val activity: Activity) {
                     "internalStorageTotal" to Formatter.formatFileSize(activity, totalBytes),
                     "internalStorageAvailable" to Formatter.formatFileSize(activity, freeBytes),
                     "internalStorageUsed" to Formatter.formatFileSize(activity, usedBytes),
+                    "internalStorageTotalBytes" to totalBytes.toString(),
+                    "internalStorageAvailableBytes" to freeBytes.toString(),
+                    "internalStorageUsedBytes" to usedBytes.toString(),
                     "externalStorageTotal" to Formatter.formatFileSize(activity, totalBytes),
                     "externalStorageAvailable" to Formatter.formatFileSize(activity, freeBytes),
                     "externalStorageUsed" to Formatter.formatFileSize(activity, usedBytes),
@@ -212,10 +215,15 @@ class DeviceInfoHandler(private val activity: Activity) {
                     val totalStr = result["totalBytes"] as? Long
                     if (totalStr != null && totalStr > bestTotal) {
                         bestTotal = totalStr
+                        val availableBytes = result["availableBytes"] as Long
+                        val usedBytes = result["usedBytes"] as Long
                         bestResult = mapOf(
                             "internalStorageTotal" to Formatter.formatFileSize(activity, totalStr),
                             "internalStorageAvailable" to result["availableFormatted"] as String,
                             "internalStorageUsed" to result["usedFormatted"] as String,
+                            "internalStorageTotalBytes" to totalStr.toString(),
+                            "internalStorageAvailableBytes" to availableBytes.toString(),
+                            "internalStorageUsedBytes" to usedBytes.toString(),
                             "externalStorageTotal" to Formatter.formatFileSize(activity, totalStr),
                             "externalStorageAvailable" to result["availableFormatted"] as String,
                             "externalStorageUsed" to result["usedFormatted"] as String,
@@ -243,6 +251,8 @@ class DeviceInfoHandler(private val activity: Activity) {
                 return mapOf(
                     "path" to path,
                     "totalBytes" to totalBytes,
+                    "availableBytes" to availableBytes,
+                    "usedBytes" to usedBytes,
                     "availableFormatted" to Formatter.formatFileSize(activity, availableBytes),
                     "usedFormatted" to Formatter.formatFileSize(activity, usedBytes)
                 )
@@ -396,10 +406,13 @@ class DeviceInfoHandler(private val activity: Activity) {
                 val totalBytes = bestStat.blockSizeLong * bestStat.blockCountLong
                 val availableBytes = bestStat.blockSizeLong * bestStat.availableBlocksLong
                 val usedBytes = totalBytes - availableBytes
-                
+
                 storageInfo["internalStorageTotal"] = Formatter.formatFileSize(activity, totalBytes)
                 storageInfo["internalStorageAvailable"] = Formatter.formatFileSize(activity, availableBytes)
                 storageInfo["internalStorageUsed"] = Formatter.formatFileSize(activity, usedBytes)
+                storageInfo["internalStorageTotalBytes"] = totalBytes.toString()
+                storageInfo["internalStorageAvailableBytes"] = availableBytes.toString()
+                storageInfo["internalStorageUsedBytes"] = usedBytes.toString()
             } else {
                 setStorageError(storageInfo)
             }
