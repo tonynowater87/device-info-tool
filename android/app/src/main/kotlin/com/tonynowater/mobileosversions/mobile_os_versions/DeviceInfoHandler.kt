@@ -70,9 +70,21 @@ class DeviceInfoHandler(private val activity: Activity) {
             val cpuCoreCount = getPhysicalCpuCores()
             cpuInfo["CPU Core Count"] = cpuCoreCount.toString()
 
+            // Add CPU Architecture
+            val cpuArchitecture = if (android.os.Build.SUPPORTED_64_BIT_ABIS.isNotEmpty()) {
+                android.os.Build.SUPPORTED_64_BIT_ABIS[0]
+            } else if (android.os.Build.SUPPORTED_32_BIT_ABIS.isNotEmpty()) {
+                android.os.Build.SUPPORTED_32_BIT_ABIS[0]
+            } else {
+                android.os.Build.SUPPORTED_ABIS[0]
+            }
+            cpuInfo["CPU Architecture"] = cpuArchitecture
+
             val memoryInfo = getMemoryInfo()
             cpuInfo["Total Memory"] = memoryInfo["totalMemory"] ?: "N/A"
             cpuInfo["Available Memory"] = memoryInfo["availableMemory"] ?: "N/A"
+            cpuInfo["Total Memory Bytes"] = memoryInfo["totalMemoryBytes"] ?: "0"
+            cpuInfo["Available Memory Bytes"] = memoryInfo["availableMemoryBytes"] ?: "0"
 
             val reader = BufferedReader(FileReader("/proc/cpuinfo"))
             var line: String?
@@ -110,6 +122,8 @@ class DeviceInfoHandler(private val activity: Activity) {
         return mapOf(
             "totalMemory" to totalMemoryStr,
             "availableMemory" to availableMemoryStr,
+            "totalMemoryBytes" to totalMemory.toString(),
+            "availableMemoryBytes" to availableMemory.toString(),
         )
     }
 

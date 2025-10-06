@@ -341,11 +341,9 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                       ],
                     ),
                   )),
-              _buildBatteryInfoSection(state),
-              _buildStorageInfoSection(state),
-              _buildNetworkDetailsSection(state),
-              _buildSystemDetailsSection(state),
               _buildCpuDetailsSection(state),
+              _buildStorageInfoSection(state),
+              _buildBatteryInfoSection(state),
             ],
           ),
         ),
@@ -565,13 +563,16 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
   }
 
   Widget _buildCpuDetailsSection(AndroidDeviceInfoLoaded state) {
-    final cpuDetails = state.cpuInfoModel?.cpuDetails ?? {};
+    final cpuModel = state.cpuInfoModel;
+    final usedMemoryPercentage = cpuModel?.getUsedMemoryPercentage() ?? '';
+    final availableMemoryPercentage = cpuModel?.getAvailableMemoryPercentage() ?? '';
+
     return Padding(
         padding: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0, bottom: 8.0),
         child: Container(
-          height: 125,
+          height: 162.5,
           width: double.infinity,
-          foregroundDecoration: getDecoration("CPU"),
+          foregroundDecoration: getDecoration("System"),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(8)),
             border: Border.all(
@@ -586,6 +587,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
+                    Text('Architecture'),
                     Text('Core Count'),
                     Text('Total Memory'),
                     Text('Available Memory'),
@@ -598,9 +600,10 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(state.cpuInfoModel?.cpuCoreCount ?? ''),
-                    Text(state.cpuInfoModel?.totalMemory ?? ''),
-                    Text(state.cpuInfoModel?.availableMemory ?? ''),
+                    Text(cpuModel?.cpuArchitecture ?? ''),
+                    Text(cpuModel?.cpuCoreCount ?? ''),
+                    Text(cpuModel?.totalMemory ?? ''),
+                    Text('${cpuModel?.availableMemory ?? ''} ${availableMemoryPercentage.isNotEmpty ? '($availableMemoryPercentage)' : ''}'),
                   ],
                 ),
               ),

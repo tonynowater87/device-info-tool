@@ -268,32 +268,61 @@ class AndroidSystemInfoModel {
 
 class AndroidCpuInfoModel {
   String cpuCoreCount;
+  String cpuArchitecture;
   String totalMemory;
   String availableMemory;
+  int? totalMemoryBytes;
+  int? availableMemoryBytes;
   Map<String, String> cpuDetails;
 
   AndroidCpuInfoModel({
     required this.cpuCoreCount,
+    required this.cpuArchitecture,
     required this.totalMemory,
     required this.availableMemory,
+    this.totalMemoryBytes,
+    this.availableMemoryBytes,
     required this.cpuDetails,
   });
 
   factory AndroidCpuInfoModel.fromMap(Map<dynamic, dynamic> map) {
     Map<String, String> details = {};
     map.forEach((key, value) {
-      if (key != 'CPU Core Count' && 
-          key != 'Total Memory' && 
-          key != 'Available Memory') {
+      if (key != 'CPU Core Count' &&
+          key != 'CPU Architecture' &&
+          key != 'Total Memory' &&
+          key != 'Available Memory' &&
+          key != 'Total Memory Bytes' &&
+          key != 'Available Memory Bytes') {
         details[key.toString()] = value.toString();
       }
     });
 
     return AndroidCpuInfoModel(
       cpuCoreCount: map['CPU Core Count'] ?? '',
+      cpuArchitecture: map['CPU Architecture'] ?? '',
       totalMemory: map['Total Memory'] ?? '',
       availableMemory: map['Available Memory'] ?? '',
+      totalMemoryBytes: int.tryParse(map['Total Memory Bytes'] ?? ''),
+      availableMemoryBytes: int.tryParse(map['Available Memory Bytes'] ?? ''),
       cpuDetails: details,
     );
+  }
+
+  String getUsedMemoryPercentage() {
+    if (totalMemoryBytes != null && availableMemoryBytes != null && totalMemoryBytes! > 0) {
+      final usedBytes = totalMemoryBytes! - availableMemoryBytes!;
+      final percentage = (usedBytes / totalMemoryBytes! * 100).toStringAsFixed(1);
+      return '$percentage%';
+    }
+    return '';
+  }
+
+  String getAvailableMemoryPercentage() {
+    if (totalMemoryBytes != null && availableMemoryBytes != null && totalMemoryBytes! > 0) {
+      final percentage = (availableMemoryBytes! / totalMemoryBytes! * 100).toStringAsFixed(1);
+      return '$percentage%';
+    }
+    return '';
   }
 }
