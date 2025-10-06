@@ -28,14 +28,31 @@ class DeviceInfoHandler(private val activity: Activity) {
     fun handle(call: MethodCall, result: MethodChannel.Result) {
         val displayMetrics = DisplayMetrics()
         activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+
+        // Get real screen size including system bars for accurate aspect ratio
+        val realSize = android.graphics.Point()
+        activity.windowManager.defaultDisplay.getRealSize(realSize)
+        val realWidthPx = realSize.x
+        val realHeightPx = realSize.y
+
         val widthPx = displayMetrics.widthPixels
         val heightPx = displayMetrics.heightPixels
         val density = displayMetrics.density
         val dpInWidth = widthPx / density
         val dpInHeight = heightPx / density
-        val widthInches = widthPx / displayMetrics.xdpi
-        val heightInches = heightPx / displayMetrics.ydpi
+
+        // Use real size for inch calculation
+        val widthInches = realWidthPx / displayMetrics.xdpi
+        val heightInches = realHeightPx / displayMetrics.ydpi
         val inches = sqrt((widthInches * widthInches + heightInches * heightInches).toDouble())
+
+        // Round to nearest 0.1 inch for cleaner display
+        // Special handling: >= 5.93 rounds up to 6.0
+        val roundedInches = if (inches >= 5.93) {
+            6.0
+        } else {
+            kotlin.math.round(inches * 10.0) / 10.0
+        }
 
         val cpuInfo = getCpuInfo()
         val storageInfo = getStorageInfo()
@@ -45,10 +62,10 @@ class DeviceInfoHandler(private val activity: Activity) {
 
         val map = mutableMapOf(
             "deviceModel" to android.os.Build.MODEL,
-            "screenResolutionWidth" to "$widthPx",
-            "screenResolutionHeight" to "$heightPx",
+            "screenResolutionWidth" to "$realWidthPx",
+            "screenResolutionHeight" to "$realHeightPx",
             "screenDpSize" to "${dpInWidth.toInt()}x${dpInHeight.toInt()}",
-            "screenInch" to String.format("%.1f", inches),
+            "screenInch" to String.format("%.1f", roundedInches),
             "androidVersion" to android.os.Build.VERSION.RELEASE,
             "androidSDKInt" to android.os.Build.VERSION.SDK_INT.toString(),
             "securityPatch" to (android.os.Build.VERSION.SECURITY_PATCH ?: ""),
