@@ -271,8 +271,10 @@ class AndroidCpuInfoModel {
   String cpuArchitecture;
   String totalMemory;
   String availableMemory;
+  String usedMemory;
   int? totalMemoryBytes;
   int? availableMemoryBytes;
+  int? usedMemoryBytes;
   Map<String, String> cpuDetails;
 
   AndroidCpuInfoModel({
@@ -280,8 +282,10 @@ class AndroidCpuInfoModel {
     required this.cpuArchitecture,
     required this.totalMemory,
     required this.availableMemory,
+    required this.usedMemory,
     this.totalMemoryBytes,
     this.availableMemoryBytes,
+    this.usedMemoryBytes,
     required this.cpuDetails,
   });
 
@@ -292,8 +296,10 @@ class AndroidCpuInfoModel {
           key != 'CPU Architecture' &&
           key != 'Total Memory' &&
           key != 'Available Memory' &&
+          key != 'Used Memory' &&
           key != 'Total Memory Bytes' &&
-          key != 'Available Memory Bytes') {
+          key != 'Available Memory Bytes' &&
+          key != 'Used Memory Bytes') {
         details[key.toString()] = value.toString();
       }
     });
@@ -303,16 +309,17 @@ class AndroidCpuInfoModel {
       cpuArchitecture: map['CPU Architecture'] ?? '',
       totalMemory: map['Total Memory'] ?? '',
       availableMemory: map['Available Memory'] ?? '',
+      usedMemory: map['Used Memory'] ?? '',
       totalMemoryBytes: int.tryParse(map['Total Memory Bytes'] ?? ''),
       availableMemoryBytes: int.tryParse(map['Available Memory Bytes'] ?? ''),
+      usedMemoryBytes: int.tryParse(map['Used Memory Bytes'] ?? ''),
       cpuDetails: details,
     );
   }
 
   String getUsedMemoryPercentage() {
-    if (totalMemoryBytes != null && availableMemoryBytes != null && totalMemoryBytes! > 0) {
-      final usedBytes = totalMemoryBytes! - availableMemoryBytes!;
-      final percentage = (usedBytes / totalMemoryBytes! * 100).toStringAsFixed(1);
+    if (totalMemoryBytes != null && usedMemoryBytes != null && totalMemoryBytes! > 0) {
+      final percentage = (usedMemoryBytes! / totalMemoryBytes! * 100).toStringAsFixed(1);
       return '$percentage%';
     }
     return '';

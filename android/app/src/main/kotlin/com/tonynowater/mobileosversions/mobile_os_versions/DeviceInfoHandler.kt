@@ -100,8 +100,10 @@ class DeviceInfoHandler(private val activity: Activity) {
             val memoryInfo = getMemoryInfo()
             cpuInfo["Total Memory"] = memoryInfo["totalMemory"] ?: "N/A"
             cpuInfo["Available Memory"] = memoryInfo["availableMemory"] ?: "N/A"
+            cpuInfo["Used Memory"] = memoryInfo["usedMemory"] ?: "N/A"
             cpuInfo["Total Memory Bytes"] = memoryInfo["totalMemoryBytes"] ?: "0"
             cpuInfo["Available Memory Bytes"] = memoryInfo["availableMemoryBytes"] ?: "0"
+            cpuInfo["Used Memory Bytes"] = memoryInfo["usedMemoryBytes"] ?: "0"
 
             val reader = BufferedReader(FileReader("/proc/cpuinfo"))
             var line: String?
@@ -131,16 +133,21 @@ class DeviceInfoHandler(private val activity: Activity) {
 
         val totalMemory = memoryInfo.totalMem
         val availableMemory = memoryInfo.availMem
+        val usedMemory = totalMemory - availableMemory
 
         val totalMemoryStr = Formatter.formatFileSize(activity.applicationContext, totalMemory)
         val availableMemoryStr =
             Formatter.formatFileSize(activity.applicationContext, availableMemory)
+        val usedMemoryStr =
+            Formatter.formatFileSize(activity.applicationContext, usedMemory)
 
         return mapOf(
             "totalMemory" to totalMemoryStr,
             "availableMemory" to availableMemoryStr,
+            "usedMemory" to usedMemoryStr,
             "totalMemoryBytes" to totalMemory.toString(),
             "availableMemoryBytes" to availableMemory.toString(),
+            "usedMemoryBytes" to usedMemory.toString(),
         )
     }
 

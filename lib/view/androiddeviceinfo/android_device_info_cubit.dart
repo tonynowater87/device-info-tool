@@ -27,6 +27,7 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
   final _connectivityPlugin = Connectivity();
 
   Timer? _timerFetchBattery;
+  Timer? _timerUpdateMemory;
   StreamSubscription<FGBGType>? _foregroundEventStream;
 
   AndroidDeviceInfoCubit() : super(AndroidDeviceInfoInitial());
@@ -63,6 +64,9 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
         networkInfoModel: networkInfo,
         systemInfoModel: systemInfo,
         cpuInfoModel: cpuInfo));
+
+    // Start memory update timer
+    _startMemoryUpdateTimer();
   }
 
   void copyAdvertisingId() {
@@ -81,7 +85,45 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
 
   void release() {
     _timerFetchBattery?.cancel();
+    _timerUpdateMemory?.cancel();
     _foregroundEventStream?.cancel();
+  }
+
+  Future<void> _updateMemoryInfo() async {
+    if (state is! AndroidDeviceInfoLoaded) return;
+
+    try {
+      var channel = const MethodChannel('com.tonynowater.mobileosversions');
+      var deviceInfoMap = await channel.invokeMethod("getDeviceInfo");
+
+      // Only update CPU info (which contains memory info)
+      final cpuInfo = AndroidCpuInfoModel.fromMap(deviceInfoMap);
+
+      final currentState = state as AndroidDeviceInfoLoaded;
+      emit(AndroidDeviceInfoLoaded(
+        deviceInfoModel: currentState.deviceInfoModel,
+        advertisingId: currentState.advertisingId,
+        androidId: currentState.androidId,
+        isDeveloper: currentState.isDeveloper,
+        wifiIp: currentState.wifiIp,
+        connectivities: currentState.connectivities,
+        batteryInfoModel: currentState.batteryInfoModel,
+        storageInfoModel: currentState.storageInfoModel,
+        networkInfoModel: currentState.networkInfoModel,
+        systemInfoModel: currentState.systemInfoModel,
+        cpuInfoModel: cpuInfo, // Update only CPU/Memory info
+      ));
+    } catch (e) {
+      // Silently fail to avoid disrupting the UI
+      debugPrint('Failed to update memory info: $e');
+    }
+  }
+
+  void _startMemoryUpdateTimer() {
+    _timerUpdateMemory?.cancel();
+    _timerUpdateMemory = Timer.periodic(const Duration(seconds: 10), (timer) {
+      _updateMemoryInfo();
+    });
   }
 
 

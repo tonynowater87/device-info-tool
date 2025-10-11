@@ -570,7 +570,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
     return Padding(
         padding: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0, bottom: 8.0),
         child: Container(
-          height: 162.5,
+          height: 200,
           width: double.infinity,
           foregroundDecoration: getDecoration("System"),
           decoration: BoxDecoration(
@@ -590,6 +590,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                     Text('Architecture'),
                     Text('Core Count'),
                     Text('Total Memory'),
+                    Text('Used Memory'),
                     Text('Available Memory'),
                   ],
                 ),
@@ -603,6 +604,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                     Text(cpuModel?.cpuArchitecture ?? ''),
                     Text(cpuModel?.cpuCoreCount ?? ''),
                     Text(cpuModel?.totalMemory ?? ''),
+                    Text('${cpuModel?.usedMemory ?? ''} ${usedMemoryPercentage.isNotEmpty ? '($usedMemoryPercentage)' : ''}'),
                     Text('${cpuModel?.availableMemory ?? ''} ${availableMemoryPercentage.isNotEmpty ? '($availableMemoryPercentage)' : ''}'),
                   ],
                 ),

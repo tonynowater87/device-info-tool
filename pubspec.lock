@@ -282,10 +282,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_fgbg
-      sha256: d37511eef6afb7e2e3f2278ec6498bb12c650ed517c81bcd09452d910e8b9174
+      sha256: eb6da9b2047372566a6e17b505975fe5bace94af01f6fc825c4b6f81baa6c447
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.2"
+    version: "0.7.1"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
