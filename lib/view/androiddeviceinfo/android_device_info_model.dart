@@ -97,6 +97,8 @@ class AndroidBatteryInfoModel {
   String temperature;
   String health;
   String voltage;
+  String current;
+  String power;
 
   AndroidBatteryInfoModel({
     required this.batteryLevel,
@@ -106,6 +108,8 @@ class AndroidBatteryInfoModel {
     required this.temperature,
     required this.health,
     required this.voltage,
+    required this.current,
+    required this.power,
   });
 
   factory AndroidBatteryInfoModel.fromMap(Map<dynamic, dynamic> map) {
@@ -117,6 +121,8 @@ class AndroidBatteryInfoModel {
       temperature: map['batteryTemperature'] ?? '',
       health: map['batteryHealth'] ?? '',
       voltage: map['batteryVoltage'] ?? '',
+      current: map['batteryCurrent'] ?? 'N/A',
+      power: map['batteryPower'] ?? 'N/A',
     );
   }
 }

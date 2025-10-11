@@ -28,6 +28,7 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
 
   Timer? _timerFetchBattery;
   Timer? _timerUpdateMemory;
+  Timer? _timerUpdateBattery;
   StreamSubscription<FGBGType>? _foregroundEventStream;
 
   AndroidDeviceInfoCubit() : super(AndroidDeviceInfoInitial());
@@ -67,6 +68,9 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
 
     // Start memory update timer
     _startMemoryUpdateTimer();
+
+    // Start battery update timer
+    _startBatteryUpdateTimer();
   }
 
   void copyAdvertisingId() {
@@ -86,6 +90,7 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
   void release() {
     _timerFetchBattery?.cancel();
     _timerUpdateMemory?.cancel();
+    _timerUpdateBattery?.cancel();
     _foregroundEventStream?.cancel();
   }
 
@@ -123,6 +128,43 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
     _timerUpdateMemory?.cancel();
     _timerUpdateMemory = Timer.periodic(const Duration(seconds: 10), (timer) {
       _updateMemoryInfo();
+    });
+  }
+
+  Future<void> _updateBatteryInfo() async {
+    if (state is! AndroidDeviceInfoLoaded) return;
+
+    try {
+      var channel = const MethodChannel('com.tonynowater.mobileosversions');
+      var deviceInfoMap = await channel.invokeMethod("getDeviceInfo");
+
+      // Only update battery info
+      final batteryInfo = AndroidBatteryInfoModel.fromMap(deviceInfoMap);
+
+      final currentState = state as AndroidDeviceInfoLoaded;
+      emit(AndroidDeviceInfoLoaded(
+        deviceInfoModel: currentState.deviceInfoModel,
+        advertisingId: currentState.advertisingId,
+        androidId: currentState.androidId,
+        isDeveloper: currentState.isDeveloper,
+        wifiIp: currentState.wifiIp,
+        connectivities: currentState.connectivities,
+        batteryInfoModel: batteryInfo, // Update only battery info
+        storageInfoModel: currentState.storageInfoModel,
+        networkInfoModel: currentState.networkInfoModel,
+        systemInfoModel: currentState.systemInfoModel,
+        cpuInfoModel: currentState.cpuInfoModel,
+      ));
+    } catch (e) {
+      // Silently fail to avoid disrupting the UI
+      debugPrint('Failed to update battery info: $e');
+    }
+  }
+
+  void _startBatteryUpdateTimer() {
+    _timerUpdateBattery?.cancel();
+    _timerUpdateBattery = Timer.periodic(const Duration(seconds: 3), (timer) {
+      _updateBatteryInfo();
     });
   }
 

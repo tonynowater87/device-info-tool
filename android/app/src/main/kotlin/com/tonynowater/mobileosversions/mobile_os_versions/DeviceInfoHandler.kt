@@ -471,39 +471,72 @@ class DeviceInfoHandler(private val activity: Activity) {
 
     private fun getBatteryInfo(): Map<String, String> {
         val batteryInfo = mutableMapOf<String, String>()
-        
+
         try {
             val batteryManager = activity.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
             val batteryLevel = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-            
+
             batteryInfo["batteryLevel"] = "$batteryLevel%"
-            
+
             // Try to get battery capacity from different sources
             var capacity = "Unknown"
-            
-            // Method 1: Try to read from system files
-            val capacityPaths = listOf(
-                "/sys/class/power_supply/battery/charge_full_design",
-                "/sys/class/power_supply/battery/charge_full",
-                "/sys/class/power_supply/bms/charge_full_design",
-                "/sys/class/power_supply/bms/charge_full"
-            )
-            
-            for (path in capacityPaths) {
-                try {
-                    val capacityFile = java.io.File(path)
-                    if (capacityFile.exists()) {
-                        val capacityValue = capacityFile.readText().trim().toInt()
-                        if (capacityValue > 0) {
-                            capacity = "${capacityValue / 1000} mAh"
-                            break
+            var capacityMah = 0
+
+            // Method 1: Try BatteryManager API (Android 5.0+)
+            try {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    val chargeCounter = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
+                    val energyCounter = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER)
+
+                    if (chargeCounter > 0) {
+                        // chargeCounter is in microampere-hours, convert to mAh
+                        capacityMah = chargeCounter / 1000
+                        // Estimate full capacity based on current level
+                        if (batteryLevel > 0) {
+                            val estimatedFullCapacity = (capacityMah * 100) / batteryLevel
+                            capacity = "$estimatedFullCapacity mAh"
                         }
                     }
-                } catch (e: Exception) {
-                    continue
+                }
+            } catch (e: Exception) {
+                // Continue to next method
+            }
+
+            // Method 2: Try to read from system files
+            if (capacity == "Unknown") {
+                val capacityPaths = listOf(
+                    "/sys/class/power_supply/battery/charge_full_design",
+                    "/sys/class/power_supply/battery/charge_full",
+                    "/sys/class/power_supply/bms/charge_full_design",
+                    "/sys/class/power_supply/bms/charge_full",
+                    "/sys/class/power_supply/battery/capacity",
+                    "/sys/class/power_supply/usb/capacity"
+                )
+
+                for (path in capacityPaths) {
+                    try {
+                        val capacityFile = java.io.File(path)
+                        if (capacityFile.exists()) {
+                            val capacityValue = capacityFile.readText().trim().toInt()
+                            if (capacityValue > 0) {
+                                // Values from charge_full* are in microampere-hours
+                                if (path.contains("charge_full")) {
+                                    capacityMah = capacityValue / 1000
+                                    capacity = "$capacityMah mAh"
+                                } else {
+                                    // Some paths return direct mAh values
+                                    capacityMah = capacityValue
+                                    capacity = "$capacityValue mAh"
+                                }
+                                break
+                            }
+                        }
+                    } catch (e: Exception) {
+                        continue
+                    }
                 }
             }
-            
+
             batteryInfo["capacity"] = capacity
             
             // Use BroadcastReceiver to get more detailed battery info
@@ -538,12 +571,58 @@ class DeviceInfoHandler(private val activity: Activity) {
                 if (voltage > 0) {
                     batteryInfo["batteryVoltage"] = "${voltage}V"
                 }
+
+                // Get current (in microamperes, negative when discharging, positive when charging)
+                var currentMicroAmps = 0
+                try {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        currentMicroAmps = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
+                    }
+                } catch (e: Exception) {
+                    // Try reading from system files
+                    val currentPaths = listOf(
+                        "/sys/class/power_supply/battery/current_now",
+                        "/sys/class/power_supply/battery/current_avg",
+                        "/sys/class/power_supply/bms/current_now"
+                    )
+
+                    for (path in currentPaths) {
+                        try {
+                            val currentFile = java.io.File(path)
+                            if (currentFile.exists()) {
+                                currentMicroAmps = currentFile.readText().trim().toInt()
+                                if (currentMicroAmps != 0) break
+                            }
+                        } catch (ex: Exception) {
+                            continue
+                        }
+                    }
+                }
+
+                // Convert current to milliamperes
+                val currentMilliAmps = currentMicroAmps / 1000.0f
+
+                // Display current with proper sign and unit
+                if (currentMicroAmps != 0) {
+                    batteryInfo["batteryCurrent"] = String.format("%.0f mA", currentMilliAmps)
+                } else {
+                    batteryInfo["batteryCurrent"] = "N/A"
+                }
+
+                // Calculate power (Watts) = Voltage (V) * Current (A)
+                if (voltage > 0 && currentMicroAmps != 0) {
+                    val currentAmps = currentMicroAmps / 1_000_000.0f
+                    val powerWatts = voltage * currentAmps
+                    batteryInfo["batteryPower"] = String.format("%.2f W", powerWatts)
+                } else {
+                    batteryInfo["batteryPower"] = "N/A"
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
             batteryInfo["batteryError"] = e.message ?: "Unknown battery error"
         }
-        
+
         return batteryInfo
     }
 
