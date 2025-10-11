@@ -31,6 +31,9 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
   Timer? _timerUpdateBattery;
   StreamSubscription<FGBGType>? _foregroundEventStream;
 
+  bool _isScrolling = false;
+  bool _hasPendingUpdate = false;
+
   AndroidDeviceInfoCubit() : super(AndroidDeviceInfoInitial());
 
   Future<void> load() async {
@@ -87,6 +90,20 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
     }
   }
 
+  void pauseUpdates() {
+    _isScrolling = true;
+  }
+
+  void resumeUpdates() {
+    _isScrolling = false;
+    // If there were pending updates during scrolling, execute them now
+    if (_hasPendingUpdate) {
+      _hasPendingUpdate = false;
+      _updateMemoryInfo();
+      _updateBatteryInfo();
+    }
+  }
+
   void release() {
     _timerFetchBattery?.cancel();
     _timerUpdateMemory?.cancel();
@@ -97,6 +114,12 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
   Future<void> _updateMemoryInfo() async {
     if (state is! AndroidDeviceInfoLoaded) return;
 
+    // Skip update if user is scrolling, but mark as pending
+    if (_isScrolling) {
+      _hasPendingUpdate = true;
+      return;
+    }
+
     try {
       var channel = const MethodChannel('com.tonynowater.mobileosversions');
       var deviceInfoMap = await channel.invokeMethod("getDeviceInfo");
@@ -105,6 +128,16 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
       final cpuInfo = AndroidCpuInfoModel.fromMap(deviceInfoMap);
 
       final currentState = state as AndroidDeviceInfoLoaded;
+
+      // Only emit if memory data actually changed (to avoid unnecessary UI rebuilds)
+      final currentCpu = currentState.cpuInfoModel;
+      if (currentCpu != null &&
+          currentCpu.availableMemory == cpuInfo.availableMemory &&
+          currentCpu.usedMemory == cpuInfo.usedMemory) {
+        // Data hasn't changed significantly, skip emit
+        return;
+      }
+
       emit(AndroidDeviceInfoLoaded(
         deviceInfoModel: currentState.deviceInfoModel,
         advertisingId: currentState.advertisingId,
@@ -134,6 +167,12 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
   Future<void> _updateBatteryInfo() async {
     if (state is! AndroidDeviceInfoLoaded) return;
 
+    // Skip update if user is scrolling, but mark as pending
+    if (_isScrolling) {
+      _hasPendingUpdate = true;
+      return;
+    }
+
     try {
       var channel = const MethodChannel('com.tonynowater.mobileosversions');
       var deviceInfoMap = await channel.invokeMethod("getDeviceInfo");
@@ -142,6 +181,18 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
       final batteryInfo = AndroidBatteryInfoModel.fromMap(deviceInfoMap);
 
       final currentState = state as AndroidDeviceInfoLoaded;
+
+      // Only emit if battery data actually changed (to avoid unnecessary UI rebuilds)
+      final currentBattery = currentState.batteryInfoModel;
+      if (currentBattery != null &&
+          currentBattery.chargingStatus == batteryInfo.chargingStatus &&
+          currentBattery.batteryLevel == batteryInfo.batteryLevel &&
+          currentBattery.temperature == batteryInfo.temperature &&
+          currentBattery.voltage == batteryInfo.voltage) {
+        // Data hasn't changed, skip emit
+        return;
+      }
+
       emit(AndroidDeviceInfoLoaded(
         deviceInfoModel: currentState.deviceInfoModel,
         advertisingId: currentState.advertisingId,

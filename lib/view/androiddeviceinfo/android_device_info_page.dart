@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:device_info_tool/common/miscellaneous.dart';
 import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_cubit.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,6 +21,9 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
   OverlayEntry? _overlayEntry;
   AnimationStatusListener? snackbarAnimationStatusListener;
 
+  Timer? _scrollEndTimer;
+  bool _isScrolling = false;
+
   @override
   void initState() {
     super.initState();
@@ -40,6 +44,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
 
   @override
   void deactivate() {
+    _scrollEndTimer?.cancel();
     _animationController
       ?..removeStatusListener(snackbarAnimationStatusListener!)
       ..dispose();
@@ -57,10 +62,36 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
       );
     } else if (state is AndroidDeviceInfoLoaded) {
       return Container(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (scrollNotification) {
+            if (scrollNotification is ScrollStartNotification) {
+              // User started scrolling
+              if (!_isScrolling) {
+                _isScrolling = true;
+                context.read<AndroidDeviceInfoCubit>().pauseUpdates();
+              }
+              // Cancel any pending scroll end timer
+              _scrollEndTimer?.cancel();
+            } else if (scrollNotification is ScrollUpdateNotification) {
+              // User is scrolling
+              // Reset the timer each time there's a scroll update
+              _scrollEndTimer?.cancel();
+            } else if (scrollNotification is ScrollEndNotification) {
+              // Scrolling stopped, but wait a bit to avoid rapid updates
+              _scrollEndTimer?.cancel();
+              _scrollEndTimer = Timer(const Duration(milliseconds: 300), () {
+                if (_isScrolling) {
+                  _isScrolling = false;
+                  context.read<AndroidDeviceInfoCubit>().resumeUpdates();
+                }
+              });
+            }
+            return false;
+          },
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
               Padding(
                   padding:
                       const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
@@ -346,6 +377,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   )),
             ],
           ),
+        ),
         ),
       );
     } else {
