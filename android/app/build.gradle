@@ -45,7 +45,7 @@ println("releaseKeyStorePassword:" + releaseKeyStorePassword)
 android {
     namespace "com.tonynowater.mobileosversions.mobile_os_versions"
 
-    compileSdkVersion 35
+    compileSdkVersion 36
 
     ndkVersion flutter.ndkVersion
 
