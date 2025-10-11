@@ -175,6 +175,51 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   padding:
                       const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
                   child: Container(
+                    height: 62.5,
+                    width: double.infinity,
+                    foregroundDecoration: getDecoration("Network"),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(8)),
+                      border: Border.all(
+                          width: 1.5,
+                          color: CupertinoColors.activeBlue.withAlpha(100)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              Text('IP Address'),
+                              Text('Connectivity'),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(state.wifiIp),
+                              Text(state.connectivities),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
+              _buildCpuDetailsSection(state),
+              _buildStorageInfoSection(state),
+              _buildBatteryInfoSection(state),
+              Padding(
+                  padding:
+                      const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
+                  child: Container(
                     key: adidContainerKey,
                     height: 50,
                     width: double.infinity,
@@ -237,7 +282,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   )),
               Padding(
                   padding:
-                      const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
+                      const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0, bottom: 8.0),
                   child: Container(
                     key: androidIdContainerKey,
                     height: 50,
@@ -299,51 +344,6 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                       ],
                     ),
                   )),
-              Padding(
-                  padding:
-                      const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
-                  child: Container(
-                    height: 62.5,
-                    width: double.infinity,
-                    foregroundDecoration: getDecoration("Network"),
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(8)),
-                      border: Border.all(
-                          width: 1.5,
-                          color: CupertinoColors.activeBlue.withAlpha(100)),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        const Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              Text('IP Address'),
-                              Text('Connectivity'),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(state.wifiIp),
-                              Text(state.connectivities),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  )),
-              _buildCpuDetailsSection(state),
-              _buildStorageInfoSection(state),
-              _buildBatteryInfoSection(state),
             ],
           ),
         ),
@@ -357,7 +357,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
     return Padding(
         padding: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
         child: Container(
-          height: 212.5,
+          height: 175,
           width: double.infinity,
           foregroundDecoration: getDecoration("Battery"),
           decoration: BoxDecoration(
@@ -379,7 +379,6 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                     Text('Charging Status'),
                     Text('Temperature'),
                     Text('Battery Level'),
-                    Text('Charging Wattage'),
                   ],
                 ),
               ),
@@ -396,7 +395,6 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                       Text(state.batteryInfoModel?.chargingStatus ?? ''),
                       Text(state.batteryInfoModel?.temperature ?? ''),
                       Text(state.batteryInfoModel?.batteryLevel ?? ''),
-                      Text(state.batteryInfoModel?.power ?? 'N/A'),
                     ],
                   ),
                 ),

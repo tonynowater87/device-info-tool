@@ -548,31 +548,8 @@ class DeviceInfoHandler(private val activity: Activity) {
                 val technology = batteryIntent.getStringExtra(android.os.BatteryManager.EXTRA_TECHNOLOGY) ?: "Unknown"
                 val temperature = batteryIntent.getIntExtra(android.os.BatteryManager.EXTRA_TEMPERATURE, -1) / 10.0f
                 val voltage = batteryIntent.getIntExtra(android.os.BatteryManager.EXTRA_VOLTAGE, -1) / 1000.0f
-                
-                batteryInfo["batteryStatus"] = when (status) {
-                    android.os.BatteryManager.BATTERY_STATUS_CHARGING -> "Charging"
-                    android.os.BatteryManager.BATTERY_STATUS_DISCHARGING -> "Discharging"
-                    android.os.BatteryManager.BATTERY_STATUS_FULL -> "Full"
-                    android.os.BatteryManager.BATTERY_STATUS_NOT_CHARGING -> "Not Charging"
-                    else -> "Unknown"
-                }
-                batteryInfo["batteryHealth"] = when (health) {
-                    android.os.BatteryManager.BATTERY_HEALTH_GOOD -> "Good"
-                    android.os.BatteryManager.BATTERY_HEALTH_OVERHEAT -> "Overheat"
-                    android.os.BatteryManager.BATTERY_HEALTH_DEAD -> "Dead"
-                    android.os.BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> "Over Voltage"
-                    android.os.BatteryManager.BATTERY_HEALTH_COLD -> "Cold"
-                    else -> "Unknown"
-                }
-                batteryInfo["batteryTechnology"] = technology
-                if (temperature > 0) {
-                    batteryInfo["batteryTemperature"] = "${temperature}°C"
-                }
-                if (voltage > 0) {
-                    batteryInfo["batteryVoltage"] = "${voltage}V"
-                }
 
-                // Get current (in microamperes, negative when discharging, positive when charging)
+                // Get current (in microamperes) for power calculation
                 var currentMicroAmps = 0
                 try {
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -599,23 +576,37 @@ class DeviceInfoHandler(private val activity: Activity) {
                     }
                 }
 
-                // Convert current to milliamperes
-                val currentMilliAmps = currentMicroAmps / 1000.0f
-
-                // Display current with proper sign and unit
-                if (currentMicroAmps != 0) {
-                    batteryInfo["batteryCurrent"] = String.format("%.0f mA", currentMilliAmps)
-                } else {
-                    batteryInfo["batteryCurrent"] = "N/A"
+                // Set battery status with power info integrated when charging
+                batteryInfo["batteryStatus"] = when (status) {
+                    android.os.BatteryManager.BATTERY_STATUS_CHARGING -> {
+                        if (voltage > 0 && currentMicroAmps > 0) {
+                            val currentAmps = currentMicroAmps / 1_000_000.0f
+                            val powerWatts = voltage * currentAmps
+                            String.format("Charging (%.2f W)", powerWatts)
+                        } else {
+                            "Charging"
+                        }
+                    }
+                    android.os.BatteryManager.BATTERY_STATUS_DISCHARGING -> "Discharging"
+                    android.os.BatteryManager.BATTERY_STATUS_FULL -> "Full"
+                    android.os.BatteryManager.BATTERY_STATUS_NOT_CHARGING -> "Not Charging"
+                    else -> "Unknown"
                 }
 
-                // Calculate power (Watts) = Voltage (V) * Current (A)
-                if (voltage > 0 && currentMicroAmps != 0) {
-                    val currentAmps = currentMicroAmps / 1_000_000.0f
-                    val powerWatts = voltage * currentAmps
-                    batteryInfo["batteryPower"] = String.format("%.2f W", powerWatts)
-                } else {
-                    batteryInfo["batteryPower"] = "N/A"
+                batteryInfo["batteryHealth"] = when (health) {
+                    android.os.BatteryManager.BATTERY_HEALTH_GOOD -> "Good"
+                    android.os.BatteryManager.BATTERY_HEALTH_OVERHEAT -> "Overheat"
+                    android.os.BatteryManager.BATTERY_HEALTH_DEAD -> "Dead"
+                    android.os.BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> "Over Voltage"
+                    android.os.BatteryManager.BATTERY_HEALTH_COLD -> "Cold"
+                    else -> "Unknown"
+                }
+                batteryInfo["batteryTechnology"] = technology
+                if (temperature > 0) {
+                    batteryInfo["batteryTemperature"] = "${temperature}°C"
+                }
+                if (voltage > 0) {
+                    batteryInfo["batteryVoltage"] = "${voltage}V"
                 }
             }
         } catch (e: Exception) {
