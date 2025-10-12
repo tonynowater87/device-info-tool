@@ -73,13 +73,19 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
               // Cancel any pending scroll end timer
               _scrollEndTimer?.cancel();
             } else if (scrollNotification is ScrollUpdateNotification) {
-              // User is scrolling
-              // Reset the timer each time there's a scroll update
+              // User is scrolling or Fling is active
+              // Ensure we are in scrolling state
+              if (!_isScrolling) {
+                _isScrolling = true;
+                context.read<AndroidDeviceInfoCubit>().pauseUpdates();
+              }
+              // Reset the timer each time there's a scroll update (including Fling)
               _scrollEndTimer?.cancel();
             } else if (scrollNotification is ScrollEndNotification) {
-              // Scrolling stopped, but wait a bit to avoid rapid updates
+              // Finger lifted, but Fling might still be active
+              // Wait longer to ensure Fling completely stops
               _scrollEndTimer?.cancel();
-              _scrollEndTimer = Timer(const Duration(milliseconds: 300), () {
+              _scrollEndTimer = Timer(const Duration(milliseconds: 800), () {
                 if (_isScrolling) {
                   _isScrolling = false;
                   context.read<AndroidDeviceInfoCubit>().resumeUpdates();

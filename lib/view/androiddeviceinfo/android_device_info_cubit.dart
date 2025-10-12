@@ -26,7 +26,6 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
   final _memoryInfoPlugin = MemoryInfoPlugin();
   final _connectivityPlugin = Connectivity();
 
-  Timer? _timerFetchBattery;
   Timer? _timerUpdateMemory;
   Timer? _timerUpdateBattery;
   StreamSubscription<FGBGType>? _foregroundEventStream;
@@ -96,16 +95,12 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
 
   void resumeUpdates() {
     _isScrolling = false;
-    // If there were pending updates during scrolling, execute them now
-    if (_hasPendingUpdate) {
-      _hasPendingUpdate = false;
-      _updateMemoryInfo();
-      _updateBatteryInfo();
-    }
+    // Clear the pending flag, but don't execute updates immediately
+    // Let the Timer trigger the next update naturally to avoid performance impact
+    _hasPendingUpdate = false;
   }
 
   void release() {
-    _timerFetchBattery?.cancel();
     _timerUpdateMemory?.cancel();
     _timerUpdateBattery?.cancel();
     _foregroundEventStream?.cancel();
@@ -138,6 +133,12 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
         return;
       }
 
+      // Check again if user started scrolling during data fetch
+      if (_isScrolling) {
+        _hasPendingUpdate = true;
+        return;
+      }
+
       emit(AndroidDeviceInfoLoaded(
         deviceInfoModel: currentState.deviceInfoModel,
         advertisingId: currentState.advertisingId,
@@ -159,7 +160,7 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
 
   void _startMemoryUpdateTimer() {
     _timerUpdateMemory?.cancel();
-    _timerUpdateMemory = Timer.periodic(const Duration(seconds: 10), (timer) {
+    _timerUpdateMemory = Timer.periodic(const Duration(seconds: 1), (timer) {
       _updateMemoryInfo();
     });
   }
@@ -214,7 +215,7 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
 
   void _startBatteryUpdateTimer() {
     _timerUpdateBattery?.cancel();
-    _timerUpdateBattery = Timer.periodic(const Duration(seconds: 3), (timer) {
+    _timerUpdateBattery = Timer.periodic(const Duration(seconds: 1), (timer) {
       _updateBatteryInfo();
     });
   }
