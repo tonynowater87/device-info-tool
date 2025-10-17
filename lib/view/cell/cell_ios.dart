@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:device_info_tool/data/DeviceVersionProvider.dart';
+import 'package:device_info_tool/theme.dart';
 import 'package:device_info_tool/view/ios/ui_model_ios.dart';
 import 'package:rotated_corner_decoration/rotated_corner_decoration.dart';
 
@@ -28,11 +30,11 @@ class CellIOSView extends StatelessWidget {
       }
 
       decoration = RotatedCornerDecoration.withColor(
-          color: CupertinoColors.activeBlue,
+          color: Theme.of(context).badgeColor(),
           badgeSize: const Size(112, 56),
           badgeCornerRadius: const Radius.circular(8),
-          badgeShadow: const BadgeShadow(
-              color: CupertinoColors.activeBlue, elevation: 2),
+          badgeShadow: BadgeShadow(
+              color: Theme.of(context).badgeShadowColor(), elevation: 2),
           textSpan: TextSpan(
             text: text,
             style: const TextStyle(fontSize: 12),
@@ -67,7 +69,7 @@ class CellIOSView extends StatelessWidget {
         decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(8)),
             border: Border.all(
-                width: 1.5, color: CupertinoColors.activeBlue.withAlpha(100))),
+                width: 1.5, color: Theme.of(context).containerBorderColor())),
         child: Row(
           children: <Widget>[
             Padding(

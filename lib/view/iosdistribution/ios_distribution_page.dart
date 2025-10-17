@@ -1,5 +1,6 @@
 import 'package:device_info_tool/common/miscellaneous.dart';
 import 'package:device_info_tool/data/model/Distribution.dart';
+import 'package:device_info_tool/theme.dart';
 import 'package:device_info_tool/view/androiddistribution/chart_type.dart';
 import 'package:device_info_tool/view/iosdistribution/ios_distribution_cubit.dart';
 import 'package:flutter/cupertino.dart';
@@ -80,7 +81,7 @@ class _IOSDistributionPageState extends State<IOSDistributionPage>
               right: 0,
               child: Container(
                 height: 30,
-                color: CupertinoColors.systemBlue,
+                color: Theme.of(context).footerBackgroundColor(),
                 child: Padding(
                   padding: const EdgeInsets.only(left: 8.0),
                   child: Text(

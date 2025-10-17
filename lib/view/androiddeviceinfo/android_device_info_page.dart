@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:device_info_tool/common/miscellaneous.dart';
+import 'package:device_info_tool/theme.dart';
 import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_cubit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -104,12 +105,12 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   child: Container(
                     height: 187.5,
                     width: double.infinity,
-                    foregroundDecoration: getDecoration("Device"),
+                    foregroundDecoration: getDecoration("Device", context),
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                       border: Border.all(
                           width: 1.5,
-                          color: CupertinoColors.activeBlue.withAlpha(100)),
+                          color: Theme.of(context).containerBorderColor()),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -160,12 +161,12 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   child: Container(
                     height: 200,
                     width: double.infinity,
-                    foregroundDecoration: getDecoration("Display"),
+                    foregroundDecoration: getDecoration("Display", context),
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                       border: Border.all(
                           width: 1.5,
-                          color: CupertinoColors.activeBlue.withAlpha(100)),
+                          color: Theme.of(context).containerBorderColor()),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -214,12 +215,12 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                   child: Container(
                     height: 62.5,
                     width: double.infinity,
-                    foregroundDecoration: getDecoration("Network"),
+                    foregroundDecoration: getDecoration("Network", context),
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                       border: Border.all(
                           width: 1.5,
-                          color: CupertinoColors.activeBlue.withAlpha(100)),
+                          color: Theme.of(context).containerBorderColor()),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -264,7 +265,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                       border: Border.all(
                           width: 1.5,
-                          color: CupertinoColors.activeBlue.withAlpha(100)),
+                          color: Theme.of(context).containerBorderColor()),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -328,7 +329,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                       border: Border.all(
                           width: 1.5,
-                          color: CupertinoColors.activeBlue.withAlpha(100)),
+                          color: Theme.of(context).containerBorderColor()),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -397,12 +398,12 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
         child: Container(
           height: 175,
           width: double.infinity,
-          foregroundDecoration: getDecoration("Battery"),
+          foregroundDecoration: getDecoration("Battery", context),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(8)),
             border: Border.all(
                 width: 1.5,
-                color: CupertinoColors.activeBlue.withAlpha(100)),
+                color: Theme.of(context).containerBorderColor()),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -452,12 +453,12 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
         child: Container(
           height: 125,
           width: double.infinity,
-          foregroundDecoration: getDecoration("Storage"),
+          foregroundDecoration: getDecoration("Storage", context),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(8)),
             border: Border.all(
                 width: 1.5,
-                color: CupertinoColors.activeBlue.withAlpha(100)),
+                color: Theme.of(context).containerBorderColor()),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -496,12 +497,12 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
         child: Container(
           height: 125,
           width: double.infinity,
-          foregroundDecoration: getDecoration("Network Details"),
+          foregroundDecoration: getDecoration("Network Details", context),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(8)),
             border: Border.all(
                 width: 1.5,
-                color: CupertinoColors.activeBlue.withAlpha(100)),
+                color: Theme.of(context).containerBorderColor()),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -542,12 +543,12 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
         child: Container(
           height: 300,
           width: double.infinity,
-          foregroundDecoration: getDecoration("System Details"),
+          foregroundDecoration: getDecoration("System Details", context),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(8)),
             border: Border.all(
                 width: 1.5,
-                color: CupertinoColors.activeBlue.withAlpha(100)),
+                color: Theme.of(context).containerBorderColor()),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -606,12 +607,12 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
         child: Container(
           height: 200,
           width: double.infinity,
-          foregroundDecoration: getDecoration("System"),
+          foregroundDecoration: getDecoration("System", context),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(8)),
             border: Border.all(
                 width: 1.5,
-                color: CupertinoColors.activeBlue.withAlpha(100)),
+                color: Theme.of(context).containerBorderColor()),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -663,7 +664,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
           child: Container(
             width: MediaQuery.of(context).size.width - 16,
             decoration: BoxDecoration(
-                color: CupertinoColors.activeBlue.withOpacity(0.8),
+                color: Theme.of(context).toastBackgroundColor(),
                 borderRadius: BorderRadius.circular(8)),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 16.0),

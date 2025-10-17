@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:device_info_tool/data/model/VersionModelAndroidWearOS.dart';
+import 'package:device_info_tool/theme.dart';
 import 'package:rotated_corner_decoration/rotated_corner_decoration.dart';
 
 class CellAndroidWearOSView extends StatelessWidget {
@@ -16,13 +18,13 @@ class CellAndroidWearOSView extends StatelessWidget {
   Widget build(BuildContext context) {
     Decoration? decoration;
     if (isLatest) {
-      decoration = const RotatedCornerDecoration.withColor(
-          color: CupertinoColors.activeBlue,
-          badgeSize: Size(112, 56),
-          badgeCornerRadius: Radius.circular(8),
+      decoration = RotatedCornerDecoration.withColor(
+          color: Theme.of(context).badgeColor(),
+          badgeSize: const Size(112, 56),
+          badgeCornerRadius: const Radius.circular(8),
           badgeShadow:
-              BadgeShadow(color: CupertinoColors.activeBlue, elevation: 2),
-          textSpan: TextSpan(
+              BadgeShadow(color: Theme.of(context).badgeShadowColor(), elevation: 2),
+          textSpan: const TextSpan(
             text: '  Latest\nVersion',
             style: TextStyle(fontSize: 12),
           ));
@@ -35,7 +37,7 @@ class CellAndroidWearOSView extends StatelessWidget {
         decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(8)),
             border: Border.all(
-                width: 1.5, color: CupertinoColors.activeBlue.withAlpha(100))),
+                width: 1.5, color: Theme.of(context).containerBorderColor())),
         child: Row(
           children: <Widget>[
             Padding(

@@ -1,4 +1,5 @@
 import 'package:device_info_tool/common/miscellaneous.dart';
+import 'package:device_info_tool/theme.dart';
 import 'package:device_info_tool/view/iosdeviceinfo/ios_device_info_cubit.dart';
 import 'package:display_metrics/display_metrics.dart';
 import 'package:flutter/cupertino.dart';
@@ -77,12 +78,12 @@ class _IosDeviceInfoPageState extends State<IosDeviceInfoPage> with SingleTicker
                     child: Container(
                       height: 140.6,
                       width: double.infinity,
-                      foregroundDecoration: getDecoration("Device"),
+                      foregroundDecoration: getDecoration("Device", context),
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.all(Radius.circular(8)),
                         border: Border.all(
                             width: 1.5,
-                            color: CupertinoColors.activeBlue.withAlpha(100)),
+                            color: Theme.of(context).containerBorderColor()),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -171,12 +172,12 @@ class _IosDeviceInfoPageState extends State<IosDeviceInfoPage> with SingleTicker
                     child: Container(
                       height: 155,
                       width: double.infinity,
-                      foregroundDecoration: getDecoration("Display"),
+                      foregroundDecoration: getDecoration("Display", context),
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.all(Radius.circular(8)),
                         border: Border.all(
                             width: 1.5,
-                            color: CupertinoColors.activeBlue.withAlpha(100)),
+                            color: Theme.of(context).containerBorderColor()),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -219,12 +220,12 @@ class _IosDeviceInfoPageState extends State<IosDeviceInfoPage> with SingleTicker
                     child: Container(
                       height: 62.5,
                       width: double.infinity,
-                      foregroundDecoration: getDecoration("Network"),
+                      foregroundDecoration: getDecoration("Network", context),
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.all(Radius.circular(8)),
                         border: Border.all(
                             width: 1.5,
-                            color: CupertinoColors.activeBlue.withAlpha(100)),
+                            color: Theme.of(context).containerBorderColor()),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -261,12 +262,12 @@ class _IosDeviceInfoPageState extends State<IosDeviceInfoPage> with SingleTicker
                     child: Container(
                       height: 62.5,
                       width: double.infinity,
-                      foregroundDecoration: getDecoration("Hardware"),
+                      foregroundDecoration: getDecoration("Hardware", context),
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.all(Radius.circular(8)),
                         border: Border.all(
                             width: 1.5,
-                            color: CupertinoColors.activeBlue.withAlpha(100)),
+                            color: Theme.of(context).containerBorderColor()),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -308,7 +309,7 @@ class _IosDeviceInfoPageState extends State<IosDeviceInfoPage> with SingleTicker
                         borderRadius: const BorderRadius.all(Radius.circular(8)),
                         border: Border.all(
                             width: 1.5,
-                            color: CupertinoColors.activeBlue.withAlpha(100)),
+                            color: Theme.of(context).containerBorderColor()),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -383,7 +384,7 @@ class _IosDeviceInfoPageState extends State<IosDeviceInfoPage> with SingleTicker
           child: Container(
             width: MediaQuery.of(context).size.width - 16,
             decoration: BoxDecoration(
-                color: CupertinoColors.activeBlue.withOpacity(0.8),
+                color: Theme.of(context).toastBackgroundColor(),
                 borderRadius: BorderRadius.circular(8)),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 16.0),

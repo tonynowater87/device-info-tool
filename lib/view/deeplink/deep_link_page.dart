@@ -1,5 +1,6 @@
 import 'package:device_info_tool/common/dialogs.dart';
 import 'package:device_info_tool/data/model/url_record.dart';
+import 'package:device_info_tool/theme.dart';
 import 'package:device_info_tool/view/deeplink/deep_link_cell_view.dart';
 import 'package:device_info_tool/view/deeplink/deep_link_cubit.dart';
 import 'package:flutter/cupertino.dart';
@@ -124,7 +125,7 @@ class _DeepLinkPageState extends State<DeepLinkPage>
                 decoration: BoxDecoration(
                   border: Border.all(
                     width: 1,
-                    color: Colors.grey,
+                    color: Theme.of(context).containerBorderColor(),
                   ),
                   borderRadius: BorderRadius.circular(5),
                 ),
@@ -138,8 +139,8 @@ class _DeepLinkPageState extends State<DeepLinkPage>
                               ? FontWeight.normal
                               : FontWeight.bold,
                           color: state.isTextFieldEmpty
-                              ? Colors.grey
-                              : Colors.blue)),
+                              ? Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5)
+                              : Theme.of(context).colorScheme.primary)),
                 ),
               ),
             ),
@@ -215,7 +216,7 @@ class _DeepLinkPageState extends State<DeepLinkPage>
                     separatorBuilder: (BuildContext context, int index) {
                       return Divider(
                         height: 1.5,
-                        color: CupertinoColors.activeBlue.withAlpha(100),
+                        color: Theme.of(context).containerBorderColor(),
                       );
                     },
                   ),
@@ -259,7 +260,7 @@ class _DeepLinkPageState extends State<DeepLinkPage>
           child: Container(
             width: MediaQuery.of(context).size.width - 16,
             decoration: BoxDecoration(
-                color: CupertinoColors.activeBlue.withOpacity(0.8),
+                color: Theme.of(context).toastBackgroundColor(),
                 borderRadius: BorderRadius.circular(8)),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 16.0),

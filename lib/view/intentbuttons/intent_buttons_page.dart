@@ -1,6 +1,8 @@
+import 'package:device_info_tool/theme.dart';
 import 'package:device_info_tool/view/intentbuttons/action_buttons_view.dart';
 import 'package:device_info_tool/view/intentbuttons/intent_action_model.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class IntentButtonsPage extends StatelessWidget {
   List<IntentActionModel> actions = [
@@ -84,7 +86,7 @@ class IntentButtonsPage extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(8)),
               border: Border.all(
-                  width: 1.5, color: CupertinoColors.activeBlue.withAlpha(100)),
+                  width: 1.5, color: Theme.of(context).containerBorderColor()),
             ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
