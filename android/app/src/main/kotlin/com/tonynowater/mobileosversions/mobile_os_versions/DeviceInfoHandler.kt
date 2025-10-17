@@ -64,7 +64,7 @@ class DeviceInfoHandler(private val activity: Activity) {
             "deviceModel" to android.os.Build.MODEL,
             "screenResolutionWidth" to "$realWidthPx",
             "screenResolutionHeight" to "$realHeightPx",
-            "screenDpSize" to "${dpInWidth.toInt()}x${dpInHeight.toInt()}",
+            "screenDpSize" to "${dpInWidth.toInt()} x ${dpInHeight.toInt()}",
             "screenInch" to String.format("%.1f", roundedInches),
             "androidVersion" to android.os.Build.VERSION.RELEASE,
             "androidSDKInt" to android.os.Build.VERSION.SDK_INT.toString(),
