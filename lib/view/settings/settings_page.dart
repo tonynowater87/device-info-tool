@@ -88,24 +88,6 @@ class _SettingsPageState extends State<SettingsPage> {
               );
             },
           ),
-          Visibility(
-            visible: _selectedPageTitle != null,
-            child: ListTile(
-              leading: const Icon(Icons.clear),
-              title: const Text('Clear Default Start Page'),
-              onTap: () {
-                _showClearConfirmDialog(
-                  context,
-                  dialogBackgroundColor,
-                  dialogCancelTextStyle,
-                  dialogCancelIconColor,
-                  dialogConfirmTextStyle,
-                  dialogConfirmIconColor,
-                  dialogConfirmButtonBackgroundColor,
-                );
-              },
-            ),
-          ),
           const Divider(),
           const Padding(
             padding: EdgeInsets.all(16.0),
@@ -206,54 +188,6 @@ class _SettingsPageState extends State<SettingsPage> {
           },
           text: 'Confirm',
           iconData: Icons.check,
-          color: dialogConfirmButtonBackgroundColor,
-          textStyle: dialogConfirmTextStyle,
-          iconColor: dialogConfirmIconColor,
-        ),
-      ],
-    );
-  }
-
-  void _showClearConfirmDialog(
-    BuildContext context,
-    Color dialogBackgroundColor,
-    TextStyle dialogCancelTextStyle,
-    Color dialogCancelIconColor,
-    TextStyle dialogConfirmTextStyle,
-    Color dialogConfirmIconColor,
-    Color dialogConfirmButtonBackgroundColor,
-  ) {
-    Dialogs.materialDialog(
-      color: dialogBackgroundColor,
-      context: context,
-      msg: 'Are you sure to clear the default start page?',
-      actions: [
-        IconsOutlineButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          text: 'Cancel',
-          iconData: Icons.cancel_outlined,
-          textStyle: dialogCancelTextStyle,
-          iconColor: dialogCancelIconColor,
-        ),
-        IconsButton(
-          onPressed: () async {
-            await _defaultPageProvider.clearDefaultPage();
-            setState(() {
-              _selectedPageTitle = null;
-            });
-            if (!mounted) return;
-            Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text('Default page cleared'),
-                backgroundColor: Theme.of(context).containerBorderColor(),
-              ),
-            );
-          },
-          text: 'Clear',
-          iconData: Icons.delete_outline,
           color: dialogConfirmButtonBackgroundColor,
           textStyle: dialogConfirmTextStyle,
           iconColor: dialogConfirmIconColor,
