@@ -10,6 +10,7 @@ import 'package:device_info_tool/data/NetworkProvider.dart';
 import 'package:device_info_tool/data/NetworkProviderDebug.dart';
 import 'package:device_info_tool/data/NetworkProviderGithub.dart';
 import 'package:device_info_tool/data/database_provider.dart';
+import 'package:device_info_tool/data/default_page_provider.dart';
 import 'package:device_info_tool/firebase_options.dart';
 import 'package:device_info_tool/theme.dart';
 import 'package:device_info_tool/view/ad/banner_ad_cubit.dart';
@@ -30,6 +31,7 @@ import 'package:device_info_tool/view/iosdeviceinfo/ios_device_info_cubit.dart';
 import 'package:device_info_tool/view/iosdeviceinfo/ios_device_info_page.dart';
 import 'package:device_info_tool/view/iosdistribution/ios_distribution_cubit.dart';
 import 'package:device_info_tool/view/iosdistribution/ios_distribution_page.dart';
+import 'package:device_info_tool/view/settings/settings_page.dart';
 import 'package:device_info_tool/view/wearOS/android_wear_os_version_page.dart';
 import 'package:device_info_tool/view/wearOS/android_wear_os_version_page_cubit.dart';
 import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
@@ -107,8 +109,28 @@ class _MyAppState extends State<MyApp> {
   late TabController _tabController;
   var bottomNavBarItems = <Widget>[];
   var screens = <Widget>[];
+  var pageNames = <String>[];
   var currentPageIndex = 0;
   var currentPageTitle = DefaultTitle;
+  final DefaultPageProvider _defaultPageProvider = DefaultPageProvider();
+  DefaultPageSettings? _currentDefaultPage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDefaultPage();
+  }
+
+  Future<void> _loadDefaultPage() async {
+    final defaultPage = await _defaultPageProvider.getDefaultPage();
+    if (defaultPage != null && mounted) {
+      setState(() {
+        _currentDefaultPage = defaultPage;
+        currentPageIndex = defaultPage.pageIndex;
+        currentPageTitle = defaultPage.pageTitle;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -189,6 +211,21 @@ class _MyAppState extends State<MyApp> {
     );
 
     if (Platform.isAndroid) {
+      pageNames = [
+        'Device Info',
+        'Intent Actions',
+        'Test Deep Link',
+        'Android OS Distribution',
+        'Android OS',
+        'Android WearOS',
+        'iOS Distribution',
+        'iOS',
+        'iPadOS',
+        'tvOS',
+        'watchOS',
+        'macOS',
+      ];
+
       bottomNavBarItems = [
         const DrawerDividerTile(title: 'Misc'),
         DrawerTile(
@@ -199,21 +236,21 @@ class _MyAppState extends State<MyApp> {
               width: 30,
               height: 30,
             ),
-            title: 'Device Info',
+            title: pageNames[0],
             onTap: (title) {
               changePageByIndex(0, title);
             }),
         DrawerTile(
             selected: currentPageIndex == 1,
             icon: const Icon(Icons.open_in_new_rounded),
-            title: 'Intent Actions',
+            title: pageNames[1],
             onTap: (title) {
               changePageByIndex(1, title);
             }),
         DrawerTile(
             selected: currentPageIndex == 2,
             icon: const Icon(Icons.link),
-            title: 'Test Deep Link',
+            title: pageNames[2],
             onTap: (title) {
               changePageByIndex(2, title);
             }),
@@ -226,7 +263,7 @@ class _MyAppState extends State<MyApp> {
               width: 30,
               height: 30,
             ),
-            title: 'Android OS Distribution',
+            title: pageNames[3],
             onTap: (title) {
               changePageByIndex(3, title);
             }),
@@ -238,7 +275,7 @@ class _MyAppState extends State<MyApp> {
             width: 30,
             height: 30,
           ),
-          title: 'Android OS',
+          title: pageNames[4],
           onTap: (title) {
             changePageByIndex(4, title);
           },
@@ -251,7 +288,7 @@ class _MyAppState extends State<MyApp> {
             width: 30,
             height: 30,
           ),
-          title: 'Android WearOS',
+          title: pageNames[5],
           onTap: (title) {
             changePageByIndex(5, title);
           },
@@ -265,7 +302,7 @@ class _MyAppState extends State<MyApp> {
               width: 30,
               height: 30,
             ),
-            title: 'iOS Distribution',
+            title: pageNames[6],
             onTap: (title) {
               changePageByIndex(6, title);
             }),
@@ -277,7 +314,7 @@ class _MyAppState extends State<MyApp> {
             width: 30,
             height: 30,
           ),
-          title: 'iOS',
+          title: pageNames[7],
           onTap: (title) {
             changePageByIndex(7, title);
           },
@@ -290,7 +327,7 @@ class _MyAppState extends State<MyApp> {
             width: 30,
             height: 30,
           ),
-          title: 'iPadOS',
+          title: pageNames[8],
           onTap: (title) {
             changePageByIndex(8, title);
           },
@@ -303,7 +340,7 @@ class _MyAppState extends State<MyApp> {
             width: 30,
             height: 30,
           ),
-          title: 'tvOS',
+          title: pageNames[9],
           onTap: (title) {
             changePageByIndex(9, title);
           },
@@ -316,7 +353,7 @@ class _MyAppState extends State<MyApp> {
             width: 30,
             height: 30,
           ),
-          title: 'watchOS',
+          title: pageNames[10],
           onTap: (title) {
             changePageByIndex(10, title);
           },
@@ -329,7 +366,7 @@ class _MyAppState extends State<MyApp> {
             width: 30,
             height: 30,
           ),
-          title: 'macOS',
+          title: pageNames[11],
           onTap: (title) {
             changePageByIndex(11, title);
           },
@@ -350,7 +387,16 @@ class _MyAppState extends State<MyApp> {
         macOSScreen,
       ];
     } else if (Platform.isIOS) {
-      // TODO add divider for iOS
+      pageNames = [
+        'Device Info',
+        'iOS Distribution',
+        'iOS',
+        'iPadOS',
+        'tvOS',
+        'watchOS',
+        'macOS',
+      ];
+
       bottomNavBarItems = [
         DrawerTile(
             selected: currentPageIndex == 0,
@@ -360,7 +406,7 @@ class _MyAppState extends State<MyApp> {
               width: 30,
               height: 30,
             ),
-            title: 'Device Info',
+            title: pageNames[0],
             onTap: (title) {
               changePageByIndex(0, title);
             }),
@@ -372,7 +418,7 @@ class _MyAppState extends State<MyApp> {
               width: 30,
               height: 30,
             ),
-            title: 'iOS Distribution',
+            title: pageNames[1],
             onTap: (title) {
               changePageByIndex(1, title);
             }),
@@ -384,7 +430,7 @@ class _MyAppState extends State<MyApp> {
             width: 30,
             height: 30,
           ),
-          title: 'iOS',
+          title: pageNames[2],
           onTap: (title) {
             changePageByIndex(2, title);
           },
@@ -397,7 +443,7 @@ class _MyAppState extends State<MyApp> {
             width: 30,
             height: 30,
           ),
-          title: 'iPadOS',
+          title: pageNames[3],
           onTap: (title) {
             changePageByIndex(3, title);
           },
@@ -410,7 +456,7 @@ class _MyAppState extends State<MyApp> {
             width: 30,
             height: 30,
           ),
-          title: 'tvOS',
+          title: pageNames[4],
           onTap: (title) {
             changePageByIndex(4, title);
           },
@@ -423,7 +469,7 @@ class _MyAppState extends State<MyApp> {
             width: 30,
             height: 30,
           ),
-          title: 'watchOS',
+          title: pageNames[5],
           onTap: (title) {
             changePageByIndex(5, title);
           },
@@ -436,7 +482,7 @@ class _MyAppState extends State<MyApp> {
             width: 30,
             height: 30,
           ),
-          title: 'macOS',
+          title: pageNames[6],
           onTap: (title) {
             changePageByIndex(6, title);
           },
@@ -466,17 +512,19 @@ class _MyAppState extends State<MyApp> {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.info_outline_rounded),
-              title: const Text('About App'),
-              onTap: () {
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: () async {
                 Navigator.pop(context);
-                Navigator.push(
+                await Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => BlocProvider(
-                            create: (context) => AppInfoCubit(
-                                context.read<AppVersionProvider>()),
-                            child: const AppInfoPage())));
+                        builder: (context) => SettingsPage(
+                            pageNames: pageNames,
+                            currentDefaultPage: _currentDefaultPage,
+                            appVersionProvider: context.read<AppVersionProvider>())));
+                // Always reload default page setting after returning from settings
+                await _loadDefaultPage();
               },
             ),
           ],

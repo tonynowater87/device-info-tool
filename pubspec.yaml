@@ -64,6 +64,7 @@ dependencies:
   memory_info: 0.0.4
   display_metrics: 0.1.5
   lottie: 3.3.1
+  shared_preferences: 2.3.3
   shared_preferences_android: 2.4.10
 
 dev_dependencies:
