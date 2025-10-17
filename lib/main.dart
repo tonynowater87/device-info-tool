@@ -129,6 +129,12 @@ class _MyAppState extends State<MyApp> {
         currentPageIndex = defaultPage.pageIndex;
         currentPageTitle = defaultPage.pageTitle;
       });
+      // Wait for the widget tree to be built before navigating
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _tabController.animateTo(currentPageIndex);
+        }
+      });
     }
   }
 
