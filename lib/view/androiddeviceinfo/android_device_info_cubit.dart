@@ -55,18 +55,20 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
     var connectivity = await _connectivityPlugin.checkConnectivity();
     String connectivityString = connectivity.map((e) => e.name).join(', ');
 
-    emit(AndroidDeviceInfoLoaded(
-        deviceInfoModel: deviceInfo,
-        advertisingId: adId,
-        androidId: systemInfo.androidId,  // Use from systemInfo instead of separate call
-        isDeveloper: isDeveloper,
-        wifiIp: wifiIp ?? '',
-        connectivities: connectivityString,
-        batteryInfoModel: batteryInfo,
-        storageInfoModel: storageInfo,
-        networkInfoModel: networkInfo,
-        systemInfoModel: systemInfo,
-        cpuInfoModel: cpuInfo));
+    if (!isClosed) {
+      emit(AndroidDeviceInfoLoaded(
+          deviceInfoModel: deviceInfo,
+          advertisingId: adId,
+          androidId: systemInfo.androidId,  // Use from systemInfo instead of separate call
+          isDeveloper: isDeveloper,
+          wifiIp: wifiIp ?? '',
+          connectivities: connectivityString,
+          batteryInfoModel: batteryInfo,
+          storageInfoModel: storageInfo,
+          networkInfoModel: networkInfo,
+          systemInfoModel: systemInfo,
+          cpuInfoModel: cpuInfo));
+    }
 
     // Start memory update timer
     _startMemoryUpdateTimer();
@@ -106,6 +108,14 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
     _foregroundEventStream?.cancel();
   }
 
+  @override
+  Future<void> close() {
+    _timerUpdateMemory?.cancel();
+    _timerUpdateBattery?.cancel();
+    _foregroundEventStream?.cancel();
+    return super.close();
+  }
+
   Future<void> _updateMemoryInfo() async {
     if (state is! AndroidDeviceInfoLoaded) return;
 
@@ -139,19 +149,21 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
         return;
       }
 
-      emit(AndroidDeviceInfoLoaded(
-        deviceInfoModel: currentState.deviceInfoModel,
-        advertisingId: currentState.advertisingId,
-        androidId: currentState.androidId,
-        isDeveloper: currentState.isDeveloper,
-        wifiIp: currentState.wifiIp,
-        connectivities: currentState.connectivities,
-        batteryInfoModel: currentState.batteryInfoModel,
-        storageInfoModel: currentState.storageInfoModel,
-        networkInfoModel: currentState.networkInfoModel,
-        systemInfoModel: currentState.systemInfoModel,
-        cpuInfoModel: cpuInfo, // Update only CPU/Memory info
-      ));
+      if (!isClosed) {
+        emit(AndroidDeviceInfoLoaded(
+          deviceInfoModel: currentState.deviceInfoModel,
+          advertisingId: currentState.advertisingId,
+          androidId: currentState.androidId,
+          isDeveloper: currentState.isDeveloper,
+          wifiIp: currentState.wifiIp,
+          connectivities: currentState.connectivities,
+          batteryInfoModel: currentState.batteryInfoModel,
+          storageInfoModel: currentState.storageInfoModel,
+          networkInfoModel: currentState.networkInfoModel,
+          systemInfoModel: currentState.systemInfoModel,
+          cpuInfoModel: cpuInfo, // Update only CPU/Memory info
+        ));
+      }
     } catch (e) {
       // Silently fail to avoid disrupting the UI
       debugPrint('Failed to update memory info: $e');
@@ -194,19 +206,21 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
         return;
       }
 
-      emit(AndroidDeviceInfoLoaded(
-        deviceInfoModel: currentState.deviceInfoModel,
-        advertisingId: currentState.advertisingId,
-        androidId: currentState.androidId,
-        isDeveloper: currentState.isDeveloper,
-        wifiIp: currentState.wifiIp,
-        connectivities: currentState.connectivities,
-        batteryInfoModel: batteryInfo, // Update only battery info
-        storageInfoModel: currentState.storageInfoModel,
-        networkInfoModel: currentState.networkInfoModel,
-        systemInfoModel: currentState.systemInfoModel,
-        cpuInfoModel: currentState.cpuInfoModel,
-      ));
+      if (!isClosed) {
+        emit(AndroidDeviceInfoLoaded(
+          deviceInfoModel: currentState.deviceInfoModel,
+          advertisingId: currentState.advertisingId,
+          androidId: currentState.androidId,
+          isDeveloper: currentState.isDeveloper,
+          wifiIp: currentState.wifiIp,
+          connectivities: currentState.connectivities,
+          batteryInfoModel: batteryInfo, // Update only battery info
+          storageInfoModel: currentState.storageInfoModel,
+          networkInfoModel: currentState.networkInfoModel,
+          systemInfoModel: currentState.systemInfoModel,
+          cpuInfoModel: currentState.cpuInfoModel,
+        ));
+      }
     } catch (e) {
       // Silently fail to avoid disrupting the UI
       debugPrint('Failed to update battery info: $e');
