@@ -114,6 +114,7 @@ class _MyAppState extends State<MyApp> {
   var currentPageTitle = DefaultTitle;
   final DefaultPageProvider _defaultPageProvider = DefaultPageProvider();
   DefaultPageSettings? _currentDefaultPage;
+  final GlobalKey<IntentButtonsPageState> _intentButtonsPageKey = GlobalKey<IntentButtonsPageState>();
 
   @override
   void initState() {
@@ -150,7 +151,7 @@ class _MyAppState extends State<MyApp> {
         create: (context) => AndroidDeviceInfoCubit(),
         child: const AndroidDeviceInfoPage());
 
-    var androidIntentButtonScreen = IntentButtonsPage();
+    var androidIntentButtonScreen = IntentButtonsPage(key: _intentButtonsPageKey);
 
     var deepLinkScreen = BlocProvider(
         create: (context) => DeepLinkCubit(context.read<DatabaseProvider>()),
@@ -508,6 +509,7 @@ class _MyAppState extends State<MyApp> {
     return Scaffold(
       appBar: AppBar(
         title: Text(currentPageTitle),
+        actions: _buildAppBarActions(),
       ),
       drawer: Drawer(
         child: Column(
@@ -577,11 +579,39 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
+  List<Widget> _buildAppBarActions() {
+    // Show Reset Order button only when on Intent Actions page (index 1 on Android)
+    if (Platform.isAndroid && currentPageIndex == 1) {
+      return [
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          tooltip: 'Reset Order',
+          onPressed: () async {
+            final intentPage = _intentButtonsPageKey.currentState;
+            if (intentPage != null) {
+              await intentPage.resetOrder();
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Order reset to default'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
+            }
+          },
+        ),
+      ];
+    }
+    return [];
+  }
+
   void changePageByIndex(int index, String title) {
     setState(() {
       currentPageTitle = title;
       currentPageIndex = index;
       _tabController.index = index;
+      // Trigger AppBar rebuild to show/hide action buttons
     });
     Navigator.pop(context);
   }

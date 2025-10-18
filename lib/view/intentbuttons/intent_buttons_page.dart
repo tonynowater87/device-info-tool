@@ -1,84 +1,218 @@
+import 'package:device_info_tool/data/intent_order_provider.dart';
 import 'package:device_info_tool/theme.dart';
 import 'package:device_info_tool/view/intentbuttons/action_buttons_view.dart';
 import 'package:device_info_tool/view/intentbuttons/intent_action_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class IntentButtonsPage extends StatelessWidget {
-  List<IntentActionModel> actions = [
+class IntentButtonsPage extends StatefulWidget {
+  const IntentButtonsPage({Key? key}) : super(key: key);
+
+  @override
+  State<IntentButtonsPage> createState() => IntentButtonsPageState();
+}
+
+class IntentButtonsPageState extends State<IntentButtonsPage> {
+  final IntentOrderProvider _orderProvider = IntentOrderProvider();
+  List<IntentActionModel> _actions = [];
+  bool _isLoading = true;
+
+  // Default actions with expanded developer-useful options
+  List<IntentActionModel> get _defaultActions => [
     IntentActionModel(
-        buttonText: 'Settings Page', action: 'android.settings.SETTINGS'),
+        id: 'settings',
+        buttonText: 'Settings Page', 
+        action: 'android.settings.SETTINGS'),
     IntentActionModel(
+        id: 'developer_options',
         buttonText: 'Developer Options Page',
         action: 'android.settings.APPLICATION_DEVELOPMENT_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Locale Page', action: 'android.settings.LOCALE_SETTINGS'),
+        id: 'app_info',
+        buttonText: 'App Info & Permissions',
+        action: 'android.settings.APPLICATION_DETAILS_SETTINGS'),
     IntentActionModel(
-        buttonText: 'All Application Page',
+        id: 'usage_access',
+        buttonText: 'Usage Access Settings',
+        action: 'android.settings.USAGE_ACCESS_SETTINGS'),
+    IntentActionModel(
+        id: 'overlay_settings',
+        buttonText: 'Display Over Other Apps',
+        action: 'android.settings.action.MANAGE_OVERLAY_PERMISSION'),
+    IntentActionModel(
+        id: 'write_settings',
+        buttonText: 'Modify System Settings',
+        action: 'android.settings.action.MANAGE_WRITE_SETTINGS'),
+    IntentActionModel(
+        id: 'unknown_sources',
+        buttonText: 'Install Unknown Apps',
+        action: 'android.settings.MANAGE_UNKNOWN_APP_SOURCES'),
+    IntentActionModel(
+        id: 'notification_policy',
+        buttonText: 'Do Not Disturb Access',
+        action: 'android.settings.NOTIFICATION_POLICY_ACCESS_SETTINGS'),
+    IntentActionModel(
+        id: 'locale',
+        buttonText: 'Locale & Language', 
+        action: 'android.settings.LOCALE_SETTINGS'),
+    IntentActionModel(
+        id: 'all_apps',
+        buttonText: 'All Applications',
         action: 'android.settings.MANAGE_ALL_APPLICATIONS_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Wifi Page', action: 'android.settings.WIFI_SETTINGS'),
+        id: 'wifi',
+        buttonText: 'WiFi Settings', 
+        action: 'android.settings.WIFI_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Bluetooth Page',
+        id: 'bluetooth',
+        buttonText: 'Bluetooth Settings',
         action: 'android.settings.BLUETOOTH_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Date Time Page', action: 'android.settings.DATE_SETTINGS'),
+        id: 'date_time',
+        buttonText: 'Date & Time', 
+        action: 'android.settings.DATE_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Display Page',
+        id: 'display',
+        buttonText: 'Display Settings',
         action: 'android.settings.DISPLAY_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Accessibility Page',
+        id: 'accessibility',
+        buttonText: 'Accessibility Settings',
         action: 'android.settings.ACCESSIBILITY_SETTINGS'),
     IntentActionModel(
-        buttonText: 'About Page',
+        id: 'device_info',
+        buttonText: 'About Device',
         action: 'android.settings.DEVICE_INFO_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Notification Page',
+        id: 'notifications',
+        buttonText: 'Notification Settings',
         action: 'android.settings.NOTIFICATION_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Open By Default Page',
+        id: 'default_apps',
+        buttonText: 'Default Apps',
         action: 'android.settings.MANAGE_DEFAULT_APPS_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Sound Page', action: 'android.settings.SOUND_SETTINGS'),
+        id: 'sound',
+        buttonText: 'Sound Settings', 
+        action: 'android.settings.SOUND_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Storage Page',
+        id: 'storage',
+        buttonText: 'Storage Settings',
         action: 'android.settings.INTERNAL_STORAGE_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Battery Page',
+        id: 'battery',
+        buttonText: 'Battery & Power Saving',
         action: 'android.settings.BATTERY_SAVER_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Location Page',
+        id: 'location',
+        buttonText: 'Location Services',
         action: 'android.settings.LOCATION_SOURCE_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Security Page',
+        id: 'security',
+        buttonText: 'Security Settings',
         action: 'android.settings.SECURITY_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Privacy Page',
+        id: 'privacy',
+        buttonText: 'Privacy Settings',
         action: 'android.settings.PRIVACY_SETTINGS'),
     IntentActionModel(
-        buttonText: 'NFC Page', action: 'android.settings.NFC_SETTINGS'),
+        id: 'nfc',
+        buttonText: 'NFC Settings', 
+        action: 'android.settings.NFC_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Account Page', action: 'android.settings.SYNC_SETTINGS'),
+        id: 'accounts',
+        buttonText: 'Accounts & Sync', 
+        action: 'android.settings.SYNC_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Search Page',
+        id: 'search',
+        buttonText: 'Search Settings',
         action: 'android.search.action.SEARCH_SETTINGS'),
     IntentActionModel(
-        buttonText: 'System Update Page',
+        id: 'system_update',
+        buttonText: 'System Update',
         action: 'android.settings.SYSTEM_UPDATE_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Bio Metric Page',
+        id: 'biometric',
+        buttonText: 'Biometric Enrollment',
         action: 'android.settings.BIOMETRIC_ENROLL'),
     IntentActionModel(
-        buttonText: 'Cast Page', action: 'android.settings.CAST_SETTINGS'),
+        id: 'cast',
+        buttonText: 'Cast Settings', 
+        action: 'android.settings.CAST_SETTINGS'),
     IntentActionModel(
-        buttonText: 'Web View Page',
+        id: 'webview',
+        buttonText: 'WebView Implementation',
         action: 'android.settings.WEBVIEW_SETTINGS'),
   ];
 
-  IntentButtonsPage({Key? key}) : super(key: key);
+  @override
+  void initState() {
+    super.initState();
+    _loadActions();
+  }
+
+  Future<void> _loadActions() async {
+    final savedActions = await _orderProvider.getIntentOrder();
+    setState(() {
+      if (savedActions != null && savedActions.isNotEmpty) {
+        // Merge saved order with new default actions
+        _actions = _mergeActionsWithDefaults(savedActions);
+      } else {
+        _actions = List.from(_defaultActions);
+      }
+      _isLoading = false;
+    });
+  }
+
+  List<IntentActionModel> _mergeActionsWithDefaults(List<IntentActionModel> savedActions) {
+    final defaultActionMap = {for (var action in _defaultActions) action.id: action};
+    final savedActionIds = savedActions.map((action) => action.id).toSet();
+    
+    // Start with saved actions that still exist in defaults
+    final mergedActions = <IntentActionModel>[];
+    for (var savedAction in savedActions) {
+      if (defaultActionMap.containsKey(savedAction.id)) {
+        mergedActions.add(defaultActionMap[savedAction.id]!);
+      }
+    }
+    
+    // Add any new default actions that weren't in saved list
+    for (var defaultAction in _defaultActions) {
+      if (!savedActionIds.contains(defaultAction.id)) {
+        mergedActions.add(defaultAction);
+      }
+    }
+    
+    return mergedActions;
+  }
+
+  Future<void> _saveOrder() async {
+    await _orderProvider.saveIntentOrder(_actions);
+  }
+
+  void _onReorder(int oldIndex, int newIndex) {
+    setState(() {
+      if (newIndex > oldIndex) {
+        newIndex -= 1;
+      }
+      final item = _actions.removeAt(oldIndex);
+      _actions.insert(newIndex, item);
+    });
+    _saveOrder();
+  }
+
+  Future<void> resetOrder() async {
+    setState(() {
+      _actions = List.from(_defaultActions);
+    });
+    await _saveOrder();
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return Padding(
         padding: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
         child: Container(
@@ -90,7 +224,10 @@ class IntentButtonsPage extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ActionButtonsView(actions: actions),
+              child: ActionButtonsView(
+                actions: _actions,
+                onReorder: _onReorder,
+              ),
             )));
   }
 }
