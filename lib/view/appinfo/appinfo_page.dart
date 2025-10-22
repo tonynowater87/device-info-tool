@@ -74,12 +74,14 @@ class _AppInfoPageState extends State<AppInfoPage> {
             )),
         Align(
           alignment: Alignment.bottomCenter,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                OutlinedButton(
+          child: Padding(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  OutlinedButton(
                   onPressed: () {
                     Dialogs.materialDialog(
                         color: dialogBackgroundColor,
@@ -190,6 +192,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
                 ),
               ],
             ),
+          ),
           ),
         )
       ]),

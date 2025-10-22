@@ -1,6 +1,8 @@
 package com.tonynowater.mobileosversions.mobile_os_versions
 
 import android.content.Context
+import android.os.Build
+import androidx.core.view.WindowCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
@@ -15,6 +17,11 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+
+        // Enable edge-to-edge display
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+        }
 
         batteryInfoHandler = BatteryInfoHandler(this)
         deviceInfoHandler = DeviceInfoHandler(this)
