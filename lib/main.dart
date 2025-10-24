@@ -12,6 +12,7 @@ import 'package:device_info_tool/data/NetworkProviderGithub.dart';
 import 'package:device_info_tool/data/database_provider.dart';
 import 'package:device_info_tool/data/default_page_provider.dart';
 import 'package:device_info_tool/firebase_options.dart';
+import 'package:device_info_tool/l10n/app_localizations.dart';
 import 'package:device_info_tool/theme.dart';
 import 'package:device_info_tool/view/ad/banner_ad_cubit.dart';
 import 'package:device_info_tool/view/ad/banner_page.dart';
@@ -41,6 +42,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'view/android/android_version_page_cubit.dart';
@@ -95,6 +97,13 @@ Future<void> main() async {
       child: Builder(builder: (context) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
           theme: lightThemeData,
           darkTheme: darkThemeData,
           themeMode: EasyDynamicTheme.of(context).themeMode,
@@ -234,23 +243,24 @@ class _MyAppState extends State<MyApp> {
     );
 
     if (Platform.isAndroid) {
+      final l10n = AppLocalizations.of(context);
       pageNames = [
-        'Device Info',
-        'Intent Actions',
-        'Test Deep Link',
-        'Android OS Distribution',
-        'Android OS',
-        'Android WearOS',
-        'iOS Distribution',
-        'iOS',
-        'iPadOS',
-        'tvOS',
-        'watchOS',
-        'macOS',
+        l10n.deviceInfo,
+        l10n.intentActions,
+        l10n.testDeepLink,
+        l10n.androidOsDistribution,
+        l10n.androidOs,
+        l10n.androidWearOs,
+        l10n.iosDistribution,
+        l10n.iosTitle,
+        l10n.ipados,
+        l10n.tvos,
+        l10n.watchos,
+        l10n.macos,
       ];
 
       bottomNavBarItems = [
-        const DrawerDividerTile(title: 'Misc'),
+        DrawerDividerTile(title: l10n.misc),
         DrawerTile(
             selected: currentPageIndex == 0,
             icon: Image.asset(
@@ -277,7 +287,7 @@ class _MyAppState extends State<MyApp> {
             onTap: (title) {
               changePageByIndex(2, title);
             }),
-        const DrawerDividerTile(title: 'Android'),
+        DrawerDividerTile(title: l10n.android),
         DrawerTile(
             selected: currentPageIndex == 3,
             icon: Image.asset(
@@ -316,7 +326,7 @@ class _MyAppState extends State<MyApp> {
             changePageByIndex(5, title);
           },
         ),
-        const DrawerDividerTile(title: 'iOS'),
+        DrawerDividerTile(title: l10n.ios),
         DrawerTile(
             selected: currentPageIndex == 6,
             icon: Image.asset(
@@ -410,14 +420,15 @@ class _MyAppState extends State<MyApp> {
         macOSScreen,
       ];
     } else if (Platform.isIOS) {
+      final l10n = AppLocalizations.of(context);
       pageNames = [
-        'Device Info',
-        'iOS Distribution',
-        'iOS',
-        'iPadOS',
-        'tvOS',
-        'watchOS',
-        'macOS',
+        l10n.deviceInfo,
+        l10n.iosDistribution,
+        l10n.iosTitle,
+        l10n.ipados,
+        l10n.tvos,
+        l10n.watchos,
+        l10n.macos,
       ];
 
       bottomNavBarItems = [
@@ -537,7 +548,7 @@ class _MyAppState extends State<MyApp> {
             ),
             ListTile(
               leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
+              title: Text(AppLocalizations.of(context).settings),
               onTap: () async {
                 Navigator.pop(context);
                 await Navigator.push(
@@ -609,9 +620,9 @@ class _MyAppState extends State<MyApp> {
               await intentPage.resetOrder();
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Order reset to default'),
-                    duration: Duration(seconds: 2),
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context).orderResetToDefault),
+                    duration: const Duration(seconds: 2),
                   ),
                 );
               }

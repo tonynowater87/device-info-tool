@@ -1,5 +1,6 @@
 import 'package:device_info_tool/common/miscellaneous.dart';
 import 'package:device_info_tool/data/model/Distribution.dart';
+import 'package:device_info_tool/l10n/app_localizations.dart';
 import 'package:device_info_tool/theme.dart';
 import 'package:device_info_tool/view/androiddistribution/chart_type.dart';
 import 'package:device_info_tool/view/iosdistribution/ios_distribution_cubit.dart';
@@ -29,6 +30,7 @@ class _IOSDistributionPageState extends State<IOSDistributionPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final l10n = AppLocalizations.of(context);
     var state = context.watch<IosDistributionCubit>().state;
     switch (state.runtimeType) {
       case IosDistributionInitial:
@@ -85,7 +87,7 @@ class _IOSDistributionPageState extends State<IOSDistributionPage>
                 child: Padding(
                   padding: const EdgeInsets.only(left: 8.0),
                   child: Text(
-                      'Last updated: ${data.iOSDistributionModel.lastUpdated}\ndata from: https://gs.statcounter.com',
+                      '${l10n.lastUpdated}: ${data.iOSDistributionModel.lastUpdated}\n${l10n.dataFrom}: https://gs.statcounter.com',
                       style: Theme.of(context).textTheme.bodySmall),
                 ),
               ),
@@ -101,11 +103,11 @@ class _IOSDistributionPageState extends State<IOSDistributionPage>
               width: double.infinity,
               child: SegmentedButton(
                   showSelectedIcon: false,
-                  segments: const [
+                  segments: [
                     ButtonSegment(
-                        value: ChartType.cumulative, label: Text('Cumulative')),
+                        value: ChartType.cumulative, label: Text(l10n.cumulative)),
                     ButtonSegment(
-                        value: ChartType.individual, label: Text('Individual')),
+                        value: ChartType.individual, label: Text(l10n.individual)),
                   ],
                   selected: {_selectedSegment},
                   onSelectionChanged: (value) {
@@ -126,9 +128,9 @@ class _IOSDistributionPageState extends State<IOSDistributionPage>
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Oops, Something wrong!'),
+            Text(l10n.oopsSomethingWrong),
             OutlinedButton(
-              child: const Text('Retry'),
+              child: Text(l10n.retry),
               onPressed: () {
                 context.read<IosDistributionCubit>().load(_selectedSegment);
               },

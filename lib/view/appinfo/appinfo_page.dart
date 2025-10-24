@@ -1,3 +1,4 @@
+import 'package:device_info_tool/l10n/app_localizations.dart';
 import 'package:device_info_tool/theme.dart';
 import 'package:device_info_tool/view/appinfo/appinfo_cubit.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +54,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About'),
+        title: Text(AppLocalizations.of(context).about),
       ),
       body: Stack(alignment: Alignment.center, children: [
         Positioned(
@@ -83,17 +84,18 @@ class _AppInfoPageState extends State<AppInfoPage> {
                 children: <Widget>[
                   OutlinedButton(
                   onPressed: () {
+                    final l10n = AppLocalizations.of(context);
                     Dialogs.materialDialog(
                         color: dialogBackgroundColor,
                         context: context,
                         msg:
-                            'Are you sure to open the web-link?\n\n$githubLink',
+                            '${l10n.openWebLinkConfirm}\n\n$githubLink',
                         actions: [
                           IconsOutlineButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            text: 'Cancel',
+                            text: l10n.cancel,
                             iconData: Icons.cancel_outlined,
                             textStyle: dialogCancelTextStyle,
                             iconColor: dialogCancelIconColor,
@@ -103,7 +105,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
                               Navigator.of(context).pop();
                               context.read<AppInfoCubit>().openGithubUrl();
                             },
-                            text: 'Yes',
+                            text: l10n.yes,
                             iconData: Icons.open_in_browser_outlined,
                             color: dialogConfirmButtonBackgroundColor,
                             textStyle: dialogConfirmTextStyle,
@@ -111,7 +113,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
                           ),
                         ]);
                   },
-                  child: const Text('Github'),
+                  child: Text(AppLocalizations.of(context).github),
                 ),
                 const SizedBox(width: 10),
                 OutlinedButton(
@@ -120,8 +122,13 @@ class _AppInfoPageState extends State<AppInfoPage> {
                       return;
                     }
 
+                    final l10n = AppLocalizations.of(context);
                     final thirdPartyLibs =
                         await context.read<AppInfoCubit>().filterLicense();
+
+                    if (!mounted) {
+                      return;
+                    }
 
                     Dialogs.bottomMaterialDialog(
                         color: dialogBackgroundColor,
@@ -149,28 +156,29 @@ class _AppInfoPageState extends State<AppInfoPage> {
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            text: 'Dismiss',
+                            text: l10n.dismiss,
                             iconData: Icons.cancel_outlined,
                             textStyle: dialogCancelTextStyle,
                             iconColor: dialogCancelIconColor,
                           )
                         ]);
                   },
-                  child: const Text('Used Third-Party Packages'),
+                  child: Text(AppLocalizations.of(context).usedThirdPartyPackages),
                 ),
                 const SizedBox(width: 10),
                 OutlinedButton(
                   onPressed: () {
+                    final l10n = AppLocalizations.of(context);
                     Dialogs.materialDialog(
                         color: dialogBackgroundColor,
                         context: context,
-                        msg: 'Are you sure to show an interstitial ad?',
+                        msg: l10n.showInterstitialAdConfirm,
                         actions: [
                           IconsOutlineButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            text: 'Cancel',
+                            text: l10n.cancel,
                             textStyle: dialogCancelTextStyle,
                             iconColor: dialogCancelIconColor,
                             iconData: Icons.cancel_outlined,
@@ -180,7 +188,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
                               Navigator.of(context).pop();
                               context.read<AppInfoCubit>().loadAdAndShow();
                             },
-                            text: 'Yes',
+                            text: l10n.yes,
                             color: dialogConfirmButtonBackgroundColor,
                             textStyle: dialogConfirmTextStyle,
                             iconColor: dialogConfirmIconColor,
@@ -188,7 +196,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
                           ),
                         ]);
                   },
-                  child: const Text('Donate'),
+                  child: Text(AppLocalizations.of(context).donate),
                 ),
               ],
             ),

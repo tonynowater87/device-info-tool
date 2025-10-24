@@ -1,4 +1,6 @@
 import 'dart:async';
+
+import 'package:device_info_tool/l10n/app_localizations.dart';
 import 'package:device_info_tool/common/miscellaneous.dart';
 import 'package:device_info_tool/theme.dart';
 import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_cubit.dart';
@@ -56,6 +58,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final state = context.watch<AndroidDeviceInfoCubit>().state;
     if (state is AndroidDeviceInfoInitial) {
       return Container(
@@ -119,13 +122,13 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.end,
-                            children: const <Widget>[
-                              Text('Brand'),
-                              Text('Model'),
-                              Text('Android'),
-                              Text('API Level'),
-                              Text('Security Patch'),
-                              Text('Developer Options'),
+                            children: <Widget>[
+                              Text(l10n.brand),
+                              Text(l10n.model),
+                              Text(l10n.androidOsName),
+                              Text(l10n.apiLevel),
+                              Text(l10n.securityPatch),
+                              Text(l10n.developerOptions),
                             ],
                           ),
                         ),
@@ -148,7 +151,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                               Text(state.deviceInfoModel.androidVersion),
                               Text(state.deviceInfoModel.androidSDKInt),
                               Text(state.deviceInfoModel.securityPatch),
-                              Text(state.isDeveloper ? 'Enabled' : 'Disabled'),
+                              Text(state.isDeveloper ? l10n.enabled : l10n.disabled),
                             ],
                           ),
                         ),
@@ -171,18 +174,18 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        const Expanded(
+                        Expanded(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              Text('Screen Size (px)'),
-                              Text('Screen Size (dp)'),
-                              Text('Screen Size (inch)'),
-                              Text('Screen Aspect Ratio'),
-                              Text('xdpi'),
-                              Text('ydpi'),
-                              Text('Screen Density'),
+                            children: [
+                              Text(l10n.screenSizePx),
+                              Text(l10n.screenSizeDp),
+                              Text(l10n.screenSizeInch),
+                              Text(l10n.screenAspectRatio),
+                              Text(l10n.xdpi),
+                              Text(l10n.ydpi),
+                              Text(l10n.screenDensity),
                             ],
                           ),
                         ),
@@ -225,13 +228,13 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        const Expanded(
+                        Expanded(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              Text('IP Address'),
-                              Text('Connectivity'),
+                            children: [
+                              Text(l10n.ipAddress),
+                              Text(l10n.connectivity),
                             ],
                           ),
                         ),
@@ -251,9 +254,12 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                       ],
                     ),
                   )),
-              _buildCpuDetailsSection(state),
-              _buildStorageInfoSection(state),
-              _buildBatteryInfoSection(state),
+              _buildCpuDetailsSection(context, state),
+              _buildStorageInfoSection(context, state),
+              _buildBatteryInfoSection(context, state),
+              // 以下兩個資訊用戶較少關心，先註解掉
+              // _buildNetworkDetailsSection(context, state),
+              // _buildSystemDetailsSection(context, state),
               Padding(
                   padding:
                       const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
@@ -275,8 +281,8 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.end,
-                            children: const <Widget>[
-                              Text('AD ID'),
+                            children: [
+                              Text(l10n.adId),
                             ],
                           ),
                         ),
@@ -309,7 +315,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                                 .read<AndroidDeviceInfoCubit>()
                                 .copyAdvertisingId();
                           },
-                          child: Text('Copy',
+                          child: Text(l10n.copy,
                               style: Theme.of(context).textTheme.bodyMedium),
                         ),
                         const SizedBox(
@@ -339,8 +345,8 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.end,
-                            children: const <Widget>[
-                              Text('Android ID'),
+                            children: [
+                              Text(l10n.androidId),
                             ],
                           ),
                         ),
@@ -373,7 +379,7 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
                                 .read<AndroidDeviceInfoCubit>()
                                 .copyAndroidId();
                           },
-                          child: Text('Copy',
+                          child: Text(l10n.copy,
                               style: Theme.of(context).textTheme.bodyMedium),
                         ),
                         const SizedBox(
@@ -392,7 +398,8 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
     }
   }
 
-  Widget _buildBatteryInfoSection(AndroidDeviceInfoLoaded state) {
+  Widget _buildBatteryInfoSection(BuildContext context, AndroidDeviceInfoLoaded state) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
         padding: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
         child: Container(
@@ -408,16 +415,16 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Expanded(
+              Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Text('Capacity'),
-                    Text('Health'),
-                    Text('Charging Status'),
-                    Text('Temperature'),
-                    Text('Battery Level'),
+                    Text(l10n.capacity),
+                    Text(l10n.health),
+                    Text(l10n.chargingStatus),
+                    Text(l10n.temperature),
+                    Text(l10n.batteryLevel),
                   ],
                 ),
               ),
@@ -443,7 +450,8 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
         ));
   }
 
-  Widget _buildStorageInfoSection(AndroidDeviceInfoLoaded state) {
+  Widget _buildStorageInfoSection(BuildContext context, AndroidDeviceInfoLoaded state) {
+    final l10n = AppLocalizations.of(context);
     final storageModel = state.storageInfoModel;
     final usedPercentage = storageModel?.getUsedPercentage() ?? '';
     final availablePercentage = storageModel?.getAvailablePercentage() ?? '';
@@ -463,14 +471,14 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Expanded(
+              Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Text('Total Space'),
-                    Text('Used Space'),
-                    Text('Available Space'),
+                    Text(l10n.totalSpace),
+                    Text(l10n.usedSpace),
+                    Text(l10n.availableSpace),
                   ],
                 ),
               ),
@@ -491,7 +499,8 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
         ));
   }
 
-  Widget _buildNetworkDetailsSection(AndroidDeviceInfoLoaded state) {
+  Widget _buildNetworkDetailsSection(BuildContext context, AndroidDeviceInfoLoaded state) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
         padding: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
         child: Container(
@@ -507,15 +516,15 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Expanded(
+              Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Text('Network Type'),
-                    Text('Network Subtype'),
-                    Text('Network State'),
-                    Text('Is Roaming'),
+                    Text(l10n.networkType),
+                    Text(l10n.networkSubtype),
+                    Text(l10n.networkState),
+                    Text(l10n.isRoaming),
                   ],
                 ),
               ),
@@ -537,7 +546,8 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
         ));
   }
 
-  Widget _buildSystemDetailsSection(AndroidDeviceInfoLoaded state) {
+  Widget _buildSystemDetailsSection(BuildContext context, AndroidDeviceInfoLoaded state) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
         padding: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
         child: Container(
@@ -553,22 +563,22 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Expanded(
+              Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Text('Device Name'),
-                    Text('Product'),
-                    Text('Board'),
-                    Text('Hardware'),
-                    Text('Bootloader'),
-                    Text('Device Type'),
-                    Text('Radio Version'),
-                    Text('System Locale'),
-                    Text('Time Zone'),
-                    Text('Supported ABIs'),
-                    Text('64-bit Support'),
+                    Text(l10n.deviceName),
+                    Text(l10n.product),
+                    Text(l10n.board),
+                    Text(l10n.hardware),
+                    Text(l10n.bootloader),
+                    Text(l10n.deviceType),
+                    Text(l10n.radioVersion),
+                    Text(l10n.systemLocale),
+                    Text(l10n.timeZone),
+                    Text(l10n.supportedAbis),
+                    Text(l10n.support64Bit),
                   ],
                 ),
               ),
@@ -597,7 +607,8 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
         ));
   }
 
-  Widget _buildCpuDetailsSection(AndroidDeviceInfoLoaded state) {
+  Widget _buildCpuDetailsSection(BuildContext context, AndroidDeviceInfoLoaded state) {
+    final l10n = AppLocalizations.of(context);
     final cpuModel = state.cpuInfoModel;
     final usedMemoryPercentage = cpuModel?.getUsedMemoryPercentage() ?? '';
     final availableMemoryPercentage = cpuModel?.getAvailableMemoryPercentage() ?? '';
@@ -617,16 +628,16 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Expanded(
+              Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Text('Architecture'),
-                    Text('Core Count'),
-                    Text('Total Memory'),
-                    Text('Used Memory'),
-                    Text('Available Memory'),
+                    Text(l10n.architecture),
+                    Text(l10n.coreCount),
+                    Text(l10n.totalMemory),
+                    Text(l10n.usedMemory),
+                    Text(l10n.availableMemory),
                   ],
                 ),
               ),

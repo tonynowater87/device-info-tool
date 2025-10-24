@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:device_info_tool/data/AppVersionProvider.dart';
 import 'package:device_info_tool/data/default_page_provider.dart';
+import 'package:device_info_tool/l10n/app_localizations.dart';
 import 'package:device_info_tool/theme.dart';
 import 'package:device_info_tool/view/appinfo/appinfo_cubit.dart';
 import 'package:device_info_tool/view/appinfo/appinfo_page.dart';
@@ -49,6 +50,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final dialogBackgroundColor =
         Theme.of(context).dialogTheme.backgroundColor!;
     final dialogCancelTextStyle = Theme.of(context).dialogCancelTextStyle();
@@ -60,21 +62,21 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(l10n.settings),
       ),
       body: ListView(
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Text(
-              'General',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              l10n.general,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
           ),
           ListTile(
             leading: const Icon(Icons.home_outlined),
-            title: const Text('Default Start Page'),
-            subtitle: Text(_selectedPageTitle ?? 'None (First Page)'),
+            title: Text(l10n.defaultStartPage),
+            subtitle: Text(_selectedPageTitle ?? l10n.noneFirstPage),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               _showPageSelectionDialog(
@@ -89,16 +91,16 @@ class _SettingsPageState extends State<SettingsPage> {
             },
           ),
           const Divider(),
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Text(
-              'About',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              l10n.about,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
           ),
           ListTile(
             leading: const Icon(Icons.info_outline_rounded),
-            title: const Text('About App'),
+            title: Text(l10n.aboutApp),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               Navigator.push(
@@ -124,6 +126,7 @@ class _SettingsPageState extends State<SettingsPage> {
     Color dialogConfirmIconColor,
     Color dialogConfirmButtonBackgroundColor,
   ) {
+    final l10n = AppLocalizations.of(context);
     int? selectedIndex = widget.currentDefaultPage?.pageIndex;
 
     Dialogs.bottomMaterialDialog(
@@ -160,7 +163,7 @@ class _SettingsPageState extends State<SettingsPage> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          text: 'Cancel',
+          text: l10n.cancel,
           iconData: Icons.cancel_outlined,
           textStyle: dialogCancelTextStyle,
           iconColor: dialogCancelIconColor,
@@ -180,13 +183,13 @@ class _SettingsPageState extends State<SettingsPage> {
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Default page set to: $selectedTitle'),
+                  content: Text('${l10n.defaultPageSetTo}: $selectedTitle'),
                   backgroundColor: Theme.of(context).containerBorderColor(),
                 ),
               );
             }
           },
-          text: 'Confirm',
+          text: l10n.confirm,
           iconData: Icons.check,
           color: dialogConfirmButtonBackgroundColor,
           textStyle: dialogConfirmTextStyle,
