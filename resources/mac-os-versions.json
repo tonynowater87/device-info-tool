@@ -136,21 +136,21 @@
     "version": "14",
     "version_name": "Sonoma",
     "initial_release_date": "2023-09-26",
-    "latest_version": "14.8.1",
-    "latest_release_date": "2025-09-29"
+    "latest_version": "14.8.2",
+    "latest_release_date": "2025-11-3"
   },
   {
     "version": "15",
     "version_name": "Sequoia",
-    "latest_version": "15.7.1",
+    "latest_version": "15.7.2",
     "initial_release_date": "2024-09-16",
-    "latest_release_date": "2025-09-29"
+    "latest_release_date": "2025-11-3"
   },
   {
     "version": "26",
     "version_name": "Tahoe",
-    "latest_version": "26.0.1",
+    "latest_version": "26.1",
     "initial_release_date": "2025-09-15",
-    "latest_release_date": "2025-09-29"
+    "latest_release_date": "2025-11-3"
   }
 ]
