@@ -78,9 +78,9 @@
   },
   {
     "version": "26.0",
-    "latest_version": "26.1",
+    "latest_version": "26.2",
     "release_date": "2025-09-18",
-    "latest_release_date": "2025-11-3",
+    "latest_release_date": "2025-12-12",
     "based_on_ios_version": "2.0"
   }
 ]
