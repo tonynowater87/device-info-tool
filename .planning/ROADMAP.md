@@ -29,12 +29,13 @@
   5. 無藍牙裝置連接時，用戶看到清楚的空狀態提示訊息
   6. Android 12+ 用戶被正確引導完成 BLUETOOTH_CONNECT 權限請求
   7. Android 8.0 以下用戶看到不支援的提示訊息
-**計劃數**: 待定
+**計劃數**: 4 plans
 
 Plans:
-- [ ] 01-01: 待規劃
-- [ ] 01-02: 待規劃
-- [ ] 01-03: 待規劃
+- [ ] 01-01-PLAN.md — Android 端 Platform Channel Handler (BluetoothAudioHandler)
+- [ ] 01-02-PLAN.md — Flutter 權限與資料模型 (permission_handler, Model, Cubit)
+- [ ] 01-03-PLAN.md — UI 頁面與導航整合 (BluetoothAudioPage, main.dart)
+- [ ] 01-04-PLAN.md — 驗證與測試 (human-verify checkpoint)
 
 ### Phase 2: 支援清單與引導切換
 **目標**: 用戶可以查看裝置支援的 codec 清單，並透過引導流程切換 codec 參數
@@ -59,9 +60,10 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. 核心顯示功能 | 0/? | Not started | - |
+| 1. 核心顯示功能 | 0/4 | Planned | - |
 | 2. 支援清單與引導切換 | 0/? | Not started | - |
 
 ---
 *路線圖建立日期: 2026-02-08*
+*Phase 1 規劃完成: 2026-02-08*
 *設定深度: quick (2 個階段)*
