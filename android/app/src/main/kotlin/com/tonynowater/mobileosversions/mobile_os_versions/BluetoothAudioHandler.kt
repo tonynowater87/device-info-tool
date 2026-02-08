@@ -127,7 +127,7 @@ class BluetoothAudioHandler(private val activity: Activity) {
         } catch (e: Exception) {
             result.success(mapOf(
                 "error" to "unknown",
-                "reason" to e.message ?: "未知錯誤"
+                "reason" to (e.message ?: "未知錯誤")
             ))
         }
     }
