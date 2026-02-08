@@ -14,6 +14,7 @@ class MainActivity : FlutterActivity() {
 
     private lateinit var batteryInfoHandler: BatteryInfoHandler
     private lateinit var deviceInfoHandler: DeviceInfoHandler
+    private lateinit var bluetoothAudioHandler: BluetoothAudioHandler
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -25,6 +26,8 @@ class MainActivity : FlutterActivity() {
 
         batteryInfoHandler = BatteryInfoHandler(this)
         deviceInfoHandler = DeviceInfoHandler(this)
+        bluetoothAudioHandler = BluetoothAudioHandler(this)
+        bluetoothAudioHandler.init()
 
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, channelName)
             .setStreamHandler(object : EventChannel.StreamHandler {
@@ -51,10 +54,19 @@ class MainActivity : FlutterActivity() {
                     batteryInfoHandler.handle(call, result)
                 }
 
+                "getBluetoothAudioInfo" -> {
+                    bluetoothAudioHandler.handle(call, result)
+                }
+
                 else -> {
                     result.notImplemented()
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        bluetoothAudioHandler.release()
     }
 }
