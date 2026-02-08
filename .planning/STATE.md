@@ -10,27 +10,27 @@
 ## Current Position
 
 Phase: 1 of 2 (核心顯示功能)
-Plan: 2 completed in current phase
+Plan: 1 completed of ? in current phase
 Status: In progress
-Last activity: 2026-02-08 — 完成 01-02-PLAN.md (Flutter 資料層與狀態管理)
+Last activity: 2026-02-08 — 完成 01-01-PLAN.md (Android 端 Platform Channel Handler)
 
-Progress: [██░░░░░░░░] 20% (假設 Phase 1 共約 10 個計劃)
+Progress: [█░░░░░░░░░] 10% (假設 Phase 1 共約 10 個計劃)
 
 ## Performance Metrics
 
 **速度:**
 - 已完成計劃總數: 1
-- 平均持續時間: 2 min
-- 總執行時間: 0.03 小時
+- 平均持續時間: 13 min
+- 總執行時間: 0.22 小時
 
 **依階段分布:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-core-display | 1 | 2 min | 2 min |
+| 01-core-display | 1 | 13 min | 13 min |
 
 **近期趨勢:**
-- 最近 5 個計劃: 01-02 (2 min)
+- 最近 5 個計劃: 01-01 (13 min)
 - 趨勢: 剛開始執行
 
 *每次計劃完成後更新*
@@ -46,10 +46,11 @@ Progress: [██░░░░░░░░] 20% (假設 Phase 1 共約 10 個計�
 - 使用 Platform Channel — 維持現有架構一致性
 - 即時切換（非確認後切換） — 用戶期望的直覺操作
 
-**01-02 新增決策:**
-- 使用專案現有的 device_info_plus 進行版本檢查（無需額外依賴）
-- 藍牙版本欄位固定為「不支援」（Android API 限制，參考 RESEARCH.md）
-- 完整的狀態建模涵蓋所有錯誤情況（權限、版本、藍牙關閉、無裝置）
+**01-01 新增決策:**
+- 使用 reflection 存取 hidden API getCodecStatus() - 這是取得 codec 資訊的唯一途徑
+- 實作 pending result 機制處理 A2DP proxy 非同步就緒
+- 針對 LDAC codec 實作 bitrate 判斷邏輯（透過 getCodecSpecific1()）
+- 為其他 codec 類型提供已知規格的固定位元率或估算值
 
 ### Pending Todos
 
@@ -65,6 +66,6 @@ Progress: [██░░░░░░░░] 20% (假設 Phase 1 共約 10 個計�
 
 ## Session Continuity
 
-Last session: 2026-02-08 11:06 UTC
-Stopped at: 完成 01-02-PLAN.md (Flutter 資料層與狀態管理)
+Last session: 2026-02-08 11:17 UTC
+Stopped at: 完成 01-01-PLAN.md (Android 端 Platform Channel Handler)
 Resume file: None
