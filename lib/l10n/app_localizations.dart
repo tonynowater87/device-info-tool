@@ -154,7 +154,29 @@ class AppLocalizations {
       'data_from': 'data from',
       'oops_something_wrong': 'Oops, Something wrong!',
       'retry': 'Retry',
-      
+
+      // Bluetooth Audio
+      'bluetooth_audio': 'Bluetooth Audio',
+      'bluetooth_not_supported': 'Not Supported',
+      'bluetooth_permission_required': 'Bluetooth Permission Required',
+      'bluetooth_permission_denied': 'Please grant Bluetooth permission to view device information.',
+      'bluetooth_permission_permanently_denied': 'Bluetooth permission was denied. Please enable it in Settings.',
+      'bluetooth_disabled': 'Bluetooth is Disabled',
+      'bluetooth_disabled_hint': 'Please enable Bluetooth to view connected device information.',
+      'no_bluetooth_device': 'No Bluetooth Audio Device',
+      'no_bluetooth_device_hint': 'Please connect a Bluetooth headphone or speaker to view its information.',
+      'request_permission': 'Request Permission',
+      'open_settings': 'Open Settings',
+      'error': 'Error',
+      'mac_address': 'MAC Address',
+      'bluetooth_version': 'Bluetooth Version',
+      'codec_info': 'Codec Information',
+      'codec_type': 'Codec Type',
+      'sample_rate': 'Sample Rate',
+      'bits_per_sample': 'Bits Per Sample',
+      'channel_mode': 'Channel Mode',
+      'bitrate': 'Bitrate',
+
       // Intent Actions
       'intent_settings': 'Settings Page',
       'intent_developer_options': 'Developer Options Page',
@@ -300,9 +322,31 @@ class AppLocalizations {
       'individual': '個別',
       'last_updated': '最後更新',
       'data_from': '資料來源',
-      'oops_something_wrong': '糟糕，發生錯誤！',
+      'oops_something_wrong': '糟糕,發生錯誤！',
       'retry': '重試',
-      
+
+      // Bluetooth Audio
+      'bluetooth_audio': '藍牙音訊',
+      'bluetooth_not_supported': '不支援',
+      'bluetooth_permission_required': '需要藍牙權限',
+      'bluetooth_permission_denied': '請授予藍牙權限以查看裝置資訊。',
+      'bluetooth_permission_permanently_denied': '藍牙權限已被拒絕。請前往設定開啟權限。',
+      'bluetooth_disabled': '藍牙已關閉',
+      'bluetooth_disabled_hint': '請開啟藍牙以查看已連接裝置資訊。',
+      'no_bluetooth_device': '無藍牙音訊裝置',
+      'no_bluetooth_device_hint': '請連接藍牙耳機或喇叭以查看裝置資訊。',
+      'request_permission': '請求權限',
+      'open_settings': '開啟設定',
+      'error': '錯誤',
+      'mac_address': 'MAC 位址',
+      'bluetooth_version': '藍牙版本',
+      'codec_info': '編碼資訊',
+      'codec_type': 'Codec 類型',
+      'sample_rate': '取樣率',
+      'bits_per_sample': '位元深度',
+      'channel_mode': '聲道模式',
+      'bitrate': '位元率',
+
       // Intent Actions
       'intent_settings': '設定頁面',
       'intent_developer_options': '開發者選項頁面',
@@ -450,7 +494,29 @@ class AppLocalizations {
       'data_from': '数据来源',
       'oops_something_wrong': '糟糕，出错了！',
       'retry': '重试',
-      
+
+      // Bluetooth Audio
+      'bluetooth_audio': 'Bluetooth Audio',
+      'bluetooth_not_supported': 'Not Supported',
+      'bluetooth_permission_required': 'Bluetooth Permission Required',
+      'bluetooth_permission_denied': 'Please grant Bluetooth permission to view device information.',
+      'bluetooth_permission_permanently_denied': 'Bluetooth permission was denied. Please enable it in Settings.',
+      'bluetooth_disabled': 'Bluetooth is Disabled',
+      'bluetooth_disabled_hint': 'Please enable Bluetooth to view connected device information.',
+      'no_bluetooth_device': 'No Bluetooth Audio Device',
+      'no_bluetooth_device_hint': 'Please connect a Bluetooth headphone or speaker to view its information.',
+      'request_permission': 'Request Permission',
+      'open_settings': 'Open Settings',
+      'error': 'Error',
+      'mac_address': 'MAC Address',
+      'bluetooth_version': 'Bluetooth Version',
+      'codec_info': 'Codec Information',
+      'codec_type': 'Codec Type',
+      'sample_rate': 'Sample Rate',
+      'bits_per_sample': 'Bits Per Sample',
+      'channel_mode': 'Channel Mode',
+      'bitrate': 'Bitrate',
+
       // Intent Actions
       'intent_settings': '设置页面',
       'intent_developer_options': '开发者选项页面',
@@ -598,7 +664,29 @@ class AppLocalizations {
       'data_from': 'データソース',
       'oops_something_wrong': 'エラーが発生しました！',
       'retry': '再試行',
-      
+
+      // Bluetooth Audio
+      'bluetooth_audio': 'Bluetooth Audio',
+      'bluetooth_not_supported': 'Not Supported',
+      'bluetooth_permission_required': 'Bluetooth Permission Required',
+      'bluetooth_permission_denied': 'Please grant Bluetooth permission to view device information.',
+      'bluetooth_permission_permanently_denied': 'Bluetooth permission was denied. Please enable it in Settings.',
+      'bluetooth_disabled': 'Bluetooth is Disabled',
+      'bluetooth_disabled_hint': 'Please enable Bluetooth to view connected device information.',
+      'no_bluetooth_device': 'No Bluetooth Audio Device',
+      'no_bluetooth_device_hint': 'Please connect a Bluetooth headphone or speaker to view its information.',
+      'request_permission': 'Request Permission',
+      'open_settings': 'Open Settings',
+      'error': 'Error',
+      'mac_address': 'MAC Address',
+      'bluetooth_version': 'Bluetooth Version',
+      'codec_info': 'Codec Information',
+      'codec_type': 'Codec Type',
+      'sample_rate': 'Sample Rate',
+      'bits_per_sample': 'Bits Per Sample',
+      'channel_mode': 'Channel Mode',
+      'bitrate': 'Bitrate',
+
       // Intent Actions
       'intent_settings': '設定ページ',
       'intent_developer_options': '開発者向けオプション',
@@ -746,7 +834,29 @@ class AppLocalizations {
       'data_from': '데이터 출처',
       'oops_something_wrong': '오류가 발생했습니다!',
       'retry': '다시 시도',
-      
+
+      // Bluetooth Audio
+      'bluetooth_audio': 'Bluetooth Audio',
+      'bluetooth_not_supported': 'Not Supported',
+      'bluetooth_permission_required': 'Bluetooth Permission Required',
+      'bluetooth_permission_denied': 'Please grant Bluetooth permission to view device information.',
+      'bluetooth_permission_permanently_denied': 'Bluetooth permission was denied. Please enable it in Settings.',
+      'bluetooth_disabled': 'Bluetooth is Disabled',
+      'bluetooth_disabled_hint': 'Please enable Bluetooth to view connected device information.',
+      'no_bluetooth_device': 'No Bluetooth Audio Device',
+      'no_bluetooth_device_hint': 'Please connect a Bluetooth headphone or speaker to view its information.',
+      'request_permission': 'Request Permission',
+      'open_settings': 'Open Settings',
+      'error': 'Error',
+      'mac_address': 'MAC Address',
+      'bluetooth_version': 'Bluetooth Version',
+      'codec_info': 'Codec Information',
+      'codec_type': 'Codec Type',
+      'sample_rate': 'Sample Rate',
+      'bits_per_sample': 'Bits Per Sample',
+      'channel_mode': 'Channel Mode',
+      'bitrate': 'Bitrate',
+
       // Intent Actions
       'intent_settings': '설정 페이지',
       'intent_developer_options': '개발자 옵션 페이지',
@@ -894,7 +1004,29 @@ class AppLocalizations {
       'data_from': 'Datos de',
       'oops_something_wrong': '¡Ups, algo salió mal!',
       'retry': 'Reintentar',
-      
+
+      // Bluetooth Audio
+      'bluetooth_audio': 'Bluetooth Audio',
+      'bluetooth_not_supported': 'Not Supported',
+      'bluetooth_permission_required': 'Bluetooth Permission Required',
+      'bluetooth_permission_denied': 'Please grant Bluetooth permission to view device information.',
+      'bluetooth_permission_permanently_denied': 'Bluetooth permission was denied. Please enable it in Settings.',
+      'bluetooth_disabled': 'Bluetooth is Disabled',
+      'bluetooth_disabled_hint': 'Please enable Bluetooth to view connected device information.',
+      'no_bluetooth_device': 'No Bluetooth Audio Device',
+      'no_bluetooth_device_hint': 'Please connect a Bluetooth headphone or speaker to view its information.',
+      'request_permission': 'Request Permission',
+      'open_settings': 'Open Settings',
+      'error': 'Error',
+      'mac_address': 'MAC Address',
+      'bluetooth_version': 'Bluetooth Version',
+      'codec_info': 'Codec Information',
+      'codec_type': 'Codec Type',
+      'sample_rate': 'Sample Rate',
+      'bits_per_sample': 'Bits Per Sample',
+      'channel_mode': 'Channel Mode',
+      'bitrate': 'Bitrate',
+
       // Intent Actions  
       'intent_settings': 'Página de configuración',
       'intent_developer_options': 'Opciones de desarrollador',
@@ -1073,7 +1205,29 @@ class AppLocalizations {
       'data_from': 'Données de',
       'oops_something_wrong': 'Oups, quelque chose s\'est mal passé!',
       'retry': 'Réessayer',
-      
+
+      // Bluetooth Audio
+      'bluetooth_audio': 'Bluetooth Audio',
+      'bluetooth_not_supported': 'Not Supported',
+      'bluetooth_permission_required': 'Bluetooth Permission Required',
+      'bluetooth_permission_denied': 'Please grant Bluetooth permission to view device information.',
+      'bluetooth_permission_permanently_denied': 'Bluetooth permission was denied. Please enable it in Settings.',
+      'bluetooth_disabled': 'Bluetooth is Disabled',
+      'bluetooth_disabled_hint': 'Please enable Bluetooth to view connected device information.',
+      'no_bluetooth_device': 'No Bluetooth Audio Device',
+      'no_bluetooth_device_hint': 'Please connect a Bluetooth headphone or speaker to view its information.',
+      'request_permission': 'Request Permission',
+      'open_settings': 'Open Settings',
+      'error': 'Error',
+      'mac_address': 'MAC Address',
+      'bluetooth_version': 'Bluetooth Version',
+      'codec_info': 'Codec Information',
+      'codec_type': 'Codec Type',
+      'sample_rate': 'Sample Rate',
+      'bits_per_sample': 'Bits Per Sample',
+      'channel_mode': 'Channel Mode',
+      'bitrate': 'Bitrate',
+
       // Intent Actions
       'intent_settings': 'Page de paramètres',
       'intent_developer_options': 'Options développeur',
@@ -1221,7 +1375,29 @@ class AppLocalizations {
       'data_from': 'Daten von',
       'oops_something_wrong': 'Hoppla, etwas ist schief gelaufen!',
       'retry': 'Erneut versuchen',
-      
+
+      // Bluetooth Audio
+      'bluetooth_audio': 'Bluetooth Audio',
+      'bluetooth_not_supported': 'Not Supported',
+      'bluetooth_permission_required': 'Bluetooth Permission Required',
+      'bluetooth_permission_denied': 'Please grant Bluetooth permission to view device information.',
+      'bluetooth_permission_permanently_denied': 'Bluetooth permission was denied. Please enable it in Settings.',
+      'bluetooth_disabled': 'Bluetooth is Disabled',
+      'bluetooth_disabled_hint': 'Please enable Bluetooth to view connected device information.',
+      'no_bluetooth_device': 'No Bluetooth Audio Device',
+      'no_bluetooth_device_hint': 'Please connect a Bluetooth headphone or speaker to view its information.',
+      'request_permission': 'Request Permission',
+      'open_settings': 'Open Settings',
+      'error': 'Error',
+      'mac_address': 'MAC Address',
+      'bluetooth_version': 'Bluetooth Version',
+      'codec_info': 'Codec Information',
+      'codec_type': 'Codec Type',
+      'sample_rate': 'Sample Rate',
+      'bits_per_sample': 'Bits Per Sample',
+      'channel_mode': 'Channel Mode',
+      'bitrate': 'Bitrate',
+
       // Intent Actions
       'intent_settings': 'Einstellungsseite',
       'intent_developer_options': 'Entwickleroptionen',
@@ -1369,7 +1545,29 @@ class AppLocalizations {
       'data_from': 'البيانات من',
       'oops_something_wrong': 'عذرًا، حدث خطأ ما!',
       'retry': 'إعادة المحاولة',
-      
+
+      // Bluetooth Audio
+      'bluetooth_audio': 'Bluetooth Audio',
+      'bluetooth_not_supported': 'Not Supported',
+      'bluetooth_permission_required': 'Bluetooth Permission Required',
+      'bluetooth_permission_denied': 'Please grant Bluetooth permission to view device information.',
+      'bluetooth_permission_permanently_denied': 'Bluetooth permission was denied. Please enable it in Settings.',
+      'bluetooth_disabled': 'Bluetooth is Disabled',
+      'bluetooth_disabled_hint': 'Please enable Bluetooth to view connected device information.',
+      'no_bluetooth_device': 'No Bluetooth Audio Device',
+      'no_bluetooth_device_hint': 'Please connect a Bluetooth headphone or speaker to view its information.',
+      'request_permission': 'Request Permission',
+      'open_settings': 'Open Settings',
+      'error': 'Error',
+      'mac_address': 'MAC Address',
+      'bluetooth_version': 'Bluetooth Version',
+      'codec_info': 'Codec Information',
+      'codec_type': 'Codec Type',
+      'sample_rate': 'Sample Rate',
+      'bits_per_sample': 'Bits Per Sample',
+      'channel_mode': 'Channel Mode',
+      'bitrate': 'Bitrate',
+
       // Intent Actions
       'intent_settings': 'صفحة الإعدادات',
       'intent_developer_options': 'خيارات المطور',
@@ -1517,7 +1715,29 @@ class AppLocalizations {
       'data_from': 'Dados de',
       'oops_something_wrong': 'Ops, algo deu errado!',
       'retry': 'Tentar novamente',
-      
+
+      // Bluetooth Audio
+      'bluetooth_audio': 'Bluetooth Audio',
+      'bluetooth_not_supported': 'Not Supported',
+      'bluetooth_permission_required': 'Bluetooth Permission Required',
+      'bluetooth_permission_denied': 'Please grant Bluetooth permission to view device information.',
+      'bluetooth_permission_permanently_denied': 'Bluetooth permission was denied. Please enable it in Settings.',
+      'bluetooth_disabled': 'Bluetooth is Disabled',
+      'bluetooth_disabled_hint': 'Please enable Bluetooth to view connected device information.',
+      'no_bluetooth_device': 'No Bluetooth Audio Device',
+      'no_bluetooth_device_hint': 'Please connect a Bluetooth headphone or speaker to view its information.',
+      'request_permission': 'Request Permission',
+      'open_settings': 'Open Settings',
+      'error': 'Error',
+      'mac_address': 'MAC Address',
+      'bluetooth_version': 'Bluetooth Version',
+      'codec_info': 'Codec Information',
+      'codec_type': 'Codec Type',
+      'sample_rate': 'Sample Rate',
+      'bits_per_sample': 'Bits Per Sample',
+      'channel_mode': 'Channel Mode',
+      'bitrate': 'Bitrate',
+
       // Intent Actions
       'intent_settings': 'Página de configurações',
       'intent_developer_options': 'Opções do desenvolvedor',
@@ -1652,7 +1872,29 @@ class AppLocalizations {
   String get dataFrom => _localizedValues[locale.toString()]!['data_from']!;
   String get oopsSomethingWrong => _localizedValues[locale.toString()]!['oops_something_wrong']!;
   String get retry => _localizedValues[locale.toString()]!['retry']!;
-  
+
+  // Bluetooth Audio
+  String get bluetoothAudio => _localizedValues[locale.toString()]!['bluetooth_audio']!;
+  String get bluetoothNotSupported => _localizedValues[locale.toString()]!['bluetooth_not_supported']!;
+  String get bluetoothPermissionRequired => _localizedValues[locale.toString()]!['bluetooth_permission_required']!;
+  String get bluetoothPermissionDenied => _localizedValues[locale.toString()]!['bluetooth_permission_denied']!;
+  String get bluetoothPermissionPermanentlyDenied => _localizedValues[locale.toString()]!['bluetooth_permission_permanently_denied']!;
+  String get bluetoothDisabled => _localizedValues[locale.toString()]!['bluetooth_disabled']!;
+  String get bluetoothDisabledHint => _localizedValues[locale.toString()]!['bluetooth_disabled_hint']!;
+  String get noBluetoothDevice => _localizedValues[locale.toString()]!['no_bluetooth_device']!;
+  String get noBluetoothDeviceHint => _localizedValues[locale.toString()]!['no_bluetooth_device_hint']!;
+  String get requestPermission => _localizedValues[locale.toString()]!['request_permission']!;
+  String get openSettings => _localizedValues[locale.toString()]!['open_settings']!;
+  String get error => _localizedValues[locale.toString()]!['error']!;
+  String get macAddress => _localizedValues[locale.toString()]!['mac_address']!;
+  String get bluetoothVersion => _localizedValues[locale.toString()]!['bluetooth_version']!;
+  String get codecInfo => _localizedValues[locale.toString()]!['codec_info']!;
+  String get codecType => _localizedValues[locale.toString()]!['codec_type']!;
+  String get sampleRate => _localizedValues[locale.toString()]!['sample_rate']!;
+  String get bitsPerSample => _localizedValues[locale.toString()]!['bits_per_sample']!;
+  String get channelMode => _localizedValues[locale.toString()]!['channel_mode']!;
+  String get bitrate => _localizedValues[locale.toString()]!['bitrate']!;
+
   // Intent Actions
   String get intentSettings => _localizedValues[locale.toString()]!['intent_settings']!;
   String get intentDeveloperOptions => _localizedValues[locale.toString()]!['intent_developer_options']!;
