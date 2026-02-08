@@ -19,6 +19,8 @@ import 'package:device_info_tool/view/ad/banner_page.dart';
 import 'package:device_info_tool/view/android/android_version_page.dart';
 import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_cubit.dart';
 import 'package:device_info_tool/view/androiddeviceinfo/android_device_info_page.dart';
+import 'package:device_info_tool/view/bluetoothaudio/bluetooth_audio_page.dart';
+import 'package:device_info_tool/view/bluetoothaudio/bluetooth_audio_cubit.dart';
 import 'package:device_info_tool/view/androiddistribution/android_distribution_cubit.dart';
 import 'package:device_info_tool/view/androiddistribution/android_distribution_page.dart';
 import 'package:device_info_tool/view/appinfo/appinfo_cubit.dart';
@@ -246,6 +248,7 @@ class _MyAppState extends State<MyApp> {
       final l10n = AppLocalizations.of(context);
       pageNames = [
         l10n.deviceInfo,
+        l10n.bluetoothAudio,
         l10n.intentActions,
         l10n.testDeepLink,
         l10n.androidOsDistribution,
@@ -275,48 +278,42 @@ class _MyAppState extends State<MyApp> {
             }),
         DrawerTile(
             selected: currentPageIndex == 1,
-            icon: const Icon(Icons.open_in_new_rounded),
+            icon: const Icon(Icons.headphones),
             title: pageNames[1],
             onTap: (title) {
               changePageByIndex(1, title);
             }),
         DrawerTile(
             selected: currentPageIndex == 2,
-            icon: const Icon(Icons.link),
+            icon: const Icon(Icons.open_in_new_rounded),
             title: pageNames[2],
             onTap: (title) {
               changePageByIndex(2, title);
             }),
-        DrawerDividerTile(title: l10n.android),
         DrawerTile(
             selected: currentPageIndex == 3,
+            icon: const Icon(Icons.link),
+            title: pageNames[3],
+            onTap: (title) {
+              changePageByIndex(3, title);
+            }),
+        DrawerDividerTile(title: l10n.android),
+        DrawerTile(
+            selected: currentPageIndex == 4,
             icon: Image.asset(
               'assets/images/android-device-icon.png',
               fit: BoxFit.contain,
               width: 30,
               height: 30,
             ),
-            title: pageNames[3],
+            title: pageNames[4],
             onTap: (title) {
-              changePageByIndex(3, title);
+              changePageByIndex(4, title);
             }),
-        DrawerTile(
-          selected: currentPageIndex == 4,
-          icon: Image.asset(
-            'assets/images/android-device-icon.png',
-            fit: BoxFit.contain,
-            width: 30,
-            height: 30,
-          ),
-          title: pageNames[4],
-          onTap: (title) {
-            changePageByIndex(4, title);
-          },
-        ),
         DrawerTile(
           selected: currentPageIndex == 5,
           icon: Image.asset(
-            'assets/images/smart-device-icon.png',
+            'assets/images/android-device-icon.png',
             fit: BoxFit.contain,
             width: 30,
             height: 30,
@@ -326,36 +323,36 @@ class _MyAppState extends State<MyApp> {
             changePageByIndex(5, title);
           },
         ),
+        DrawerTile(
+          selected: currentPageIndex == 6,
+          icon: Image.asset(
+            'assets/images/smart-device-icon.png',
+            fit: BoxFit.contain,
+            width: 30,
+            height: 30,
+          ),
+          title: pageNames[6],
+          onTap: (title) {
+            changePageByIndex(6, title);
+          },
+        ),
         DrawerDividerTile(title: l10n.ios),
         DrawerTile(
-            selected: currentPageIndex == 6,
+            selected: currentPageIndex == 7,
             icon: Image.asset(
               'assets/images/iphone-device-icon.png',
               fit: BoxFit.contain,
               width: 30,
               height: 30,
             ),
-            title: pageNames[6],
+            title: pageNames[7],
             onTap: (title) {
-              changePageByIndex(6, title);
+              changePageByIndex(7, title);
             }),
-        DrawerTile(
-          selected: currentPageIndex == 7,
-          icon: Image.asset(
-            'assets/images/iphone-device-icon.png',
-            fit: BoxFit.contain,
-            width: 30,
-            height: 30,
-          ),
-          title: pageNames[7],
-          onTap: (title) {
-            changePageByIndex(7, title);
-          },
-        ),
         DrawerTile(
           selected: currentPageIndex == 8,
           icon: Image.asset(
-            'assets/images/ipad-device-icon.png',
+            'assets/images/iphone-device-icon.png',
             fit: BoxFit.contain,
             width: 30,
             height: 30,
@@ -368,7 +365,7 @@ class _MyAppState extends State<MyApp> {
         DrawerTile(
           selected: currentPageIndex == 9,
           icon: Image.asset(
-            'assets/images/apple-tv-device-icon.png',
+            'assets/images/ipad-device-icon.png',
             fit: BoxFit.contain,
             width: 30,
             height: 30,
@@ -381,7 +378,7 @@ class _MyAppState extends State<MyApp> {
         DrawerTile(
           selected: currentPageIndex == 10,
           icon: Image.asset(
-            'assets/images/apple-watch-device-icon.png',
+            'assets/images/apple-tv-device-icon.png',
             fit: BoxFit.contain,
             width: 30,
             height: 30,
@@ -394,7 +391,7 @@ class _MyAppState extends State<MyApp> {
         DrawerTile(
           selected: currentPageIndex == 11,
           icon: Image.asset(
-            'assets/images/mac-device-icon.png',
+            'assets/images/apple-watch-device-icon.png',
             fit: BoxFit.contain,
             width: 30,
             height: 30,
@@ -404,9 +401,26 @@ class _MyAppState extends State<MyApp> {
             changePageByIndex(11, title);
           },
         ),
+        DrawerTile(
+          selected: currentPageIndex == 12,
+          icon: Image.asset(
+            'assets/images/mac-device-icon.png',
+            fit: BoxFit.contain,
+            width: 30,
+            height: 30,
+          ),
+          title: pageNames[12],
+          onTap: (title) {
+            changePageByIndex(12, title);
+          },
+        ),
       ];
       screens = [
         androidDeviceInfoScreen,
+        BlocProvider(
+          create: (context) => BluetoothAudioCubit(),
+          child: const BluetoothAudioPage(),
+        ),
         androidIntentButtonScreen,
         deepLinkScreen,
         androidDistributionScreen,
@@ -608,8 +622,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   List<Widget> _buildAppBarActions() {
-    // Show Reset Order button only when on Intent Actions page (index 1 on Android)
-    if (Platform.isAndroid && currentPageIndex == 1) {
+    // Show Reset Order button only when on Intent Actions page (index 2 on Android)
+    if (Platform.isAndroid && currentPageIndex == 2) {
       return [
         IconButton(
           icon: const Icon(Icons.refresh),
