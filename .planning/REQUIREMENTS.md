@@ -72,6 +72,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
+| NAV-01 | Phase 1 | Pending |
+| PERM-01 | Phase 1 | Pending |
+| PERM-02 | Phase 1 | Pending |
+| PERM-03 | Phase 1 | Pending |
 | DEVICE-01 | Phase 1 | Pending |
 | DEVICE-02 | Phase 1 | Pending |
 | DEVICE-03 | Phase 1 | Pending |
@@ -83,14 +87,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CODEC-05 | Phase 1 | Pending |
 | SUPPORT-01 | Phase 2 | Pending |
 | SUPPORT-02 | Phase 2 | Pending |
-| SWITCH-01 | Phase 3 | Pending |
-| SWITCH-02 | Phase 3 | Pending |
-| SWITCH-03 | Phase 3 | Pending |
-| SWITCH-04 | Phase 3 | Pending |
-| PERM-01 | Phase 1 | Pending |
-| PERM-02 | Phase 1 | Pending |
-| PERM-03 | Phase 1 | Pending |
-| NAV-01 | Phase 1 | Pending |
+| SWITCH-01 | Phase 2 | Pending |
+| SWITCH-02 | Phase 2 | Pending |
+| SWITCH-03 | Phase 2 | Pending |
+| SWITCH-04 | Phase 2 | Pending |
 
 **Coverage:**
 - v1 requirements: 19 total
@@ -99,4 +99,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-02-08*
-*Last updated: 2026-02-08 after initial definition*
+*Last updated: 2026-02-08 after roadmap creation*
