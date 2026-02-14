@@ -56,6 +56,21 @@ class _BluetoothAudioPageState extends State<BluetoothAudioPage> {
       return _buildErrorView(context, state.message);
     }
 
+    if (state is BluetoothAudioSettingCodec) {
+      return _buildLoadedView(context, state.audioInfo, isSettingCodec: true);
+    }
+
+    if (state is BluetoothAudioCodecSetError) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+          );
+        }
+      });
+      return _buildLoadedView(context, state.audioInfo);
+    }
+
     if (state is BluetoothAudioLoaded) {
       return _buildLoadedView(context, state.audioInfo);
     }
@@ -235,31 +250,125 @@ class _BluetoothAudioPageState extends State<BluetoothAudioPage> {
     );
   }
 
-  Widget _buildLoadedView(BuildContext context, BluetoothAudioInfo audioInfo) {
+  Widget _buildLoadedView(BuildContext context, BluetoothAudioInfo audioInfo, {bool isSettingCodec = false}) {
     final l10n = AppLocalizations.of(context);
+    final cubit = context.read<BluetoothAudioCubit>();
+    final capabilities = audioInfo.capabilities;
+    final rawValues = audioInfo.rawValues;
+    final hasCapabilities = capabilities != null && rawValues != null;
+
     return RefreshIndicator(
-      onRefresh: () => context.read<BluetoothAudioCubit>().retry(),
-      child: ListView(
-        padding: const EdgeInsets.all(16.0),
+      onRefresh: () => cubit.retry(),
+      child: Stack(
         children: [
-          // 裝置資訊區塊
-          _buildSectionHeader(context, l10n.deviceInfo, Icons.headphones),
-          _buildInfoCard(context, [
-            _buildInfoRow(l10n.deviceName, audioInfo.deviceInfo.deviceName),
-            _buildInfoRow(l10n.macAddress, audioInfo.deviceInfo.deviceAddress),
-            _buildInfoRow(l10n.bluetoothVersion, audioInfo.deviceInfo.bluetoothVersion),
-            _buildInfoRow(l10n.batteryLevel, audioInfo.deviceInfo.formattedBatteryLevel),
-          ]),
-          const SizedBox(height: 16),
-          // Codec 資訊區塊
-          _buildSectionHeader(context, l10n.codecInfo, Icons.audiotrack),
-          _buildInfoCard(context, [
-            _buildInfoRow(l10n.codecType, audioInfo.codecInfo.codecType),
-            _buildInfoRow(l10n.sampleRate, audioInfo.codecInfo.sampleRate),
-            _buildInfoRow(l10n.bitsPerSample, audioInfo.codecInfo.bitsPerSample),
-            _buildInfoRow(l10n.channelMode, audioInfo.codecInfo.channelMode),
-            _buildInfoRow(l10n.bitrate, audioInfo.codecInfo.bitrate),
-          ]),
+          ListView(
+            padding: const EdgeInsets.all(16.0),
+            children: [
+              // 裝置資訊區塊
+              _buildSectionHeader(context, l10n.deviceInfo, Icons.headphones),
+              _buildInfoCard(context, [
+                _buildInfoRow(l10n.deviceName, audioInfo.deviceInfo.deviceName),
+                _buildInfoRow(l10n.macAddress, audioInfo.deviceInfo.deviceAddress),
+                _buildInfoRow(l10n.bluetoothVersion, audioInfo.deviceInfo.bluetoothVersion),
+                _buildInfoRow(l10n.batteryLevel, audioInfo.deviceInfo.formattedBatteryLevel),
+              ]),
+              const SizedBox(height: 16),
+              // Codec 資訊區塊
+              _buildSectionHeader(context, l10n.codecInfo, Icons.audiotrack),
+              _buildInfoCard(context, [
+                // codecType 永遠靜態顯示
+                _buildInfoRow(l10n.codecType, audioInfo.codecInfo.codecType),
+                // sampleRate
+                if (hasCapabilities && capabilities.sampleRates.length > 1)
+                  _buildDropdownRow(
+                    l10n.sampleRate,
+                    rawValues.sampleRate,
+                    capabilities.sampleRates,
+                    isSettingCodec ? null : (value) {
+                      if (value != null) {
+                        cubit.setCodecConfig(
+                          sampleRate: value,
+                          bitsPerSample: rawValues.bitsPerSample,
+                          channelMode: rawValues.channelMode,
+                          codecSpecific1: rawValues.codecSpecific1,
+                        );
+                      }
+                    },
+                  )
+                else
+                  _buildInfoRow(l10n.sampleRate, audioInfo.codecInfo.sampleRate),
+                // bitsPerSample
+                if (hasCapabilities && capabilities.bitsPerSample.length > 1)
+                  _buildDropdownRow(
+                    l10n.bitsPerSample,
+                    rawValues.bitsPerSample,
+                    capabilities.bitsPerSample,
+                    isSettingCodec ? null : (value) {
+                      if (value != null) {
+                        cubit.setCodecConfig(
+                          sampleRate: rawValues.sampleRate,
+                          bitsPerSample: value,
+                          channelMode: rawValues.channelMode,
+                          codecSpecific1: rawValues.codecSpecific1,
+                        );
+                      }
+                    },
+                  )
+                else
+                  _buildInfoRow(l10n.bitsPerSample, audioInfo.codecInfo.bitsPerSample),
+                // channelMode
+                if (hasCapabilities && capabilities.channelModes.length > 1)
+                  _buildDropdownRow(
+                    l10n.channelMode,
+                    rawValues.channelMode,
+                    capabilities.channelModes,
+                    isSettingCodec ? null : (value) {
+                      if (value != null) {
+                        cubit.setCodecConfig(
+                          sampleRate: rawValues.sampleRate,
+                          bitsPerSample: rawValues.bitsPerSample,
+                          channelMode: value,
+                          codecSpecific1: rawValues.codecSpecific1,
+                        );
+                      }
+                    },
+                  )
+                else
+                  _buildInfoRow(l10n.channelMode, audioInfo.codecInfo.channelMode),
+                // bitrate / LDAC quality
+                if (hasCapabilities && rawValues.codecType == 4) // LDAC
+                  _buildDropdownRow(
+                    l10n.bitrate,
+                    rawValues.codecSpecific1,
+                    [
+                      CodecOption(value: 1000, label: '990 kbps'),
+                      CodecOption(value: 660, label: '660 kbps'),
+                      CodecOption(value: 330, label: '330 kbps'),
+                      CodecOption(value: 0, label: 'ABR'),
+                    ],
+                    isSettingCodec ? null : (value) {
+                      if (value != null) {
+                        cubit.setCodecConfig(
+                          sampleRate: rawValues.sampleRate,
+                          bitsPerSample: rawValues.bitsPerSample,
+                          channelMode: rawValues.channelMode,
+                          codecSpecific1: value,
+                        );
+                      }
+                    },
+                  )
+                else
+                  _buildInfoRow(l10n.bitrate, audioInfo.codecInfo.bitrate),
+              ]),
+            ],
+          ),
+          if (isSettingCodec)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black26,
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+            ),
         ],
       ),
     );
@@ -288,6 +397,50 @@ class _BluetoothAudioPageState extends State<BluetoothAudioPage> {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(children: children),
+      ),
+    );
+  }
+
+  Widget _buildDropdownRow(String label, int currentValue, List<CodecOption> options, ValueChanged<int?>? onChanged) {
+    // Ensure currentValue exists in options; if not, add it as fallback
+    final hasCurrentValue = options.any((o) => o.value == currentValue);
+    final effectiveOptions = hasCurrentValue
+        ? options
+        : [CodecOption(value: currentValue, label: 'Current ($currentValue)'), ...options];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(label, style: const TextStyle(color: Colors.grey)),
+          ),
+          Expanded(
+            flex: 3,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: DropdownButton<int>(
+                value: currentValue,
+                isExpanded: true,
+                underline: const SizedBox.shrink(),
+                alignment: AlignmentDirectional.centerEnd,
+                items: effectiveOptions.map((option) {
+                  return DropdownMenuItem<int>(
+                    value: option.value,
+                    child: Text(
+                      option.label,
+                      textAlign: TextAlign.end,
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  );
+                }).toList(),
+                onChanged: onChanged,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

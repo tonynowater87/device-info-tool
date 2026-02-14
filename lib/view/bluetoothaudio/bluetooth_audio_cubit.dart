@@ -69,7 +69,9 @@ class BluetoothAudioCubit extends Cubit<BluetoothAudioState> {
             emit(BluetoothAudioNoDevice());
             break;
           default:
-            emit(BluetoothAudioError(message: error));
+            // 顯示詳細錯誤訊息（包含 reason）
+            final reason = map['reason'] as String?;
+            emit(BluetoothAudioError(message: reason ?? error));
         }
         return;
       }
@@ -81,6 +83,61 @@ class BluetoothAudioCubit extends Cubit<BluetoothAudioState> {
       emit(BluetoothAudioError(message: e.message ?? '未知錯誤'));
     } catch (e) {
       emit(BluetoothAudioError(message: e.toString()));
+    }
+  }
+
+  /// 設定 codec 參數
+  Future<void> setCodecConfig({
+    required int sampleRate,
+    required int bitsPerSample,
+    required int channelMode,
+    required int codecSpecific1,
+  }) async {
+    // 取得當前 audioInfo
+    BluetoothAudioInfo? currentAudioInfo;
+    if (state is BluetoothAudioLoaded) {
+      currentAudioInfo = (state as BluetoothAudioLoaded).audioInfo;
+    } else if (state is BluetoothAudioSettingCodec) {
+      currentAudioInfo = (state as BluetoothAudioSettingCodec).audioInfo;
+    } else if (state is BluetoothAudioCodecSetError) {
+      currentAudioInfo = (state as BluetoothAudioCodecSetError).audioInfo;
+    }
+
+    if (currentAudioInfo == null || currentAudioInfo.rawValues == null) return;
+
+    emit(BluetoothAudioSettingCodec(audioInfo: currentAudioInfo));
+
+    try {
+      final result = await _channel.invokeMethod('setBluetoothCodecConfig', {
+        'codecType': currentAudioInfo.rawValues!.codecType,
+        'sampleRate': sampleRate,
+        'bitsPerSample': bitsPerSample,
+        'channelMode': channelMode,
+        'codecSpecific1': codecSpecific1,
+      });
+
+      final map = Map<String, dynamic>.from(result as Map);
+      if (map['success'] == true) {
+        // 等待系統套用設定後重新載入
+        await Future.delayed(const Duration(milliseconds: 500));
+        await load();
+      } else {
+        final error = map['error'] as String? ?? '未知錯誤';
+        emit(BluetoothAudioCodecSetError(
+          message: error,
+          audioInfo: currentAudioInfo,
+        ));
+      }
+    } on PlatformException catch (e) {
+      emit(BluetoothAudioCodecSetError(
+        message: e.message ?? '未知錯誤',
+        audioInfo: currentAudioInfo,
+      ));
+    } catch (e) {
+      emit(BluetoothAudioCodecSetError(
+        message: e.toString(),
+        audioInfo: currentAudioInfo,
+      ));
     }
   }
 

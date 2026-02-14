@@ -36,6 +36,19 @@ class BluetoothAudioLoaded extends BluetoothAudioState {
   BluetoothAudioLoaded({required this.audioInfo});
 }
 
+/// 正在套用 codec 設定
+class BluetoothAudioSettingCodec extends BluetoothAudioState {
+  final BluetoothAudioInfo audioInfo;
+  BluetoothAudioSettingCodec({required this.audioInfo});
+}
+
+/// Codec 設定失敗
+class BluetoothAudioCodecSetError extends BluetoothAudioState {
+  final String message;
+  final BluetoothAudioInfo audioInfo;
+  BluetoothAudioCodecSetError({required this.message, required this.audioInfo});
+}
+
 /// 載入失敗
 class BluetoothAudioError extends BluetoothAudioState {
   final String message;
