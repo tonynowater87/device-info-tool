@@ -13,6 +13,9 @@
     <!-- Android 12+ -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
+    <!-- Companion Device Manager (Android 16+ CDM association for codec access) -->
+    <uses-feature android:name="android.software.companion_device_setup" android:required="false" />
+
    <application
         android:label="Device Info Tool"
         android:name="${applicationName}"
