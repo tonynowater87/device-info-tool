@@ -31,15 +31,15 @@
   },
   {
     "version": "18",
-    "latest_version": "18.7.4",
+    "latest_version": "18.7.5",
     "release_date": "2024-09-16",
-    "latest_date": "2026-01-26"
+    "latest_date": "2026-02-11"
   },
   {
     "version": "26",
-    "latest_version": "26.2.1",
+    "latest_version": "26.3",
     "release_date": "2025-09-15",
-    "latest_date": "2026-01-26"
+    "latest_date": "2026-02-11"
   },
   {
     "version": "12",
