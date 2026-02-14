@@ -1,6 +1,7 @@
 package com.tonynowater.mobileosversions.mobile_os_versions
 
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.core.view.WindowCompat
 import io.flutter.embedding.android.FlutterActivity
@@ -62,6 +63,13 @@ class MainActivity : FlutterActivity() {
                     result.notImplemented()
                 }
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == BluetoothAudioHandler.REQUEST_CODE_CDM_ASSOCIATION) {
+            bluetoothAudioHandler.onCdmAssociationResult(resultCode)
         }
     }
 

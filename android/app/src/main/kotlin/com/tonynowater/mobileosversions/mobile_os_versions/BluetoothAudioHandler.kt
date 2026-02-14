@@ -5,7 +5,15 @@ import android.bluetooth.BluetoothA2dp
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothProfile
+import android.companion.AssociationRequest
+import android.companion.BluetoothDeviceFilter
+import android.companion.CompanionDeviceManager
+import android.content.Context
+import android.content.IntentSender
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
@@ -13,6 +21,14 @@ class BluetoothAudioHandler(private val activity: Activity) {
     private var bluetoothA2dp: BluetoothA2dp? = null
     private val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
     private var pendingResult: MethodChannel.Result? = null
+
+    companion object {
+        private const val TAG = "BluetoothAudioHandler"
+        const val REQUEST_CODE_CDM_ASSOCIATION = 1001
+    }
+
+    // Callback for CDM association result
+    private var cdmAssociationCallback: ((Boolean) -> Unit)? = null
 
     private val profileListener = object : BluetoothProfile.ServiceListener {
         override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
@@ -45,6 +61,120 @@ class BluetoothAudioHandler(private val activity: Activity) {
         when (call.method) {
             "getBluetoothAudioInfo" -> getBluetoothAudioInfo(result)
             else -> result.notImplemented()
+        }
+    }
+
+    /**
+     * Handle the result from CDM association intent.
+     * Called from MainActivity.onActivityResult().
+     */
+    fun onCdmAssociationResult(resultCode: Int) {
+        val success = resultCode == Activity.RESULT_OK
+        Log.d(TAG, "CDM association result: success=$success")
+        cdmAssociationCallback?.invoke(success)
+        cdmAssociationCallback = null
+    }
+
+    /**
+     * Ensure CDM association exists for the given device.
+     * Only runs on Android 16+ (API 36+) where CDM association is required for codec access.
+     *
+     * @param device The Bluetooth device to associate
+     * @param callback Called with true if association exists/succeeded, false otherwise
+     */
+    private fun ensureCdmAssociation(device: BluetoothDevice, callback: (Boolean) -> Unit) {
+        if (Build.VERSION.SDK_INT < 36) {
+            callback(true)
+            return
+        }
+
+        try {
+            val companionDeviceManager = activity.getSystemService(Context.COMPANION_DEVICE_SERVICE) as? CompanionDeviceManager
+            if (companionDeviceManager == null) {
+                Log.w(TAG, "CompanionDeviceManager not available")
+                callback(false)
+                return
+            }
+
+            // Check if association already exists
+            val existingAssociations = companionDeviceManager.associations
+            if (existingAssociations.any { it.equals(device.address, ignoreCase = true) }) {
+                Log.d(TAG, "CDM association already exists for ${device.address}")
+                callback(true)
+                return
+            }
+
+            // Build association request for the specific device
+            Log.d(TAG, "Requesting CDM association for ${device.address}")
+            val deviceFilter = BluetoothDeviceFilter.Builder()
+                .setAddress(device.address)
+                .build()
+            val pairingRequest = AssociationRequest.Builder()
+                .addDeviceFilter(deviceFilter)
+                .setSingleDevice(true)
+                .build()
+
+            cdmAssociationCallback = callback
+
+            if (Build.VERSION.SDK_INT >= 33) {
+                // API 33+ uses Executor-based callback
+                companionDeviceManager.associate(
+                    pairingRequest,
+                    activity.mainExecutor,
+                    object : CompanionDeviceManager.Callback() {
+                        override fun onDeviceFound(chooserLauncher: IntentSender) {
+                            try {
+                                activity.startIntentSenderForResult(
+                                    chooserLauncher,
+                                    REQUEST_CODE_CDM_ASSOCIATION,
+                                    null, 0, 0, 0
+                                )
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Failed to launch CDM chooser", e)
+                                cdmAssociationCallback?.invoke(false)
+                                cdmAssociationCallback = null
+                            }
+                        }
+
+                        override fun onFailure(error: CharSequence?) {
+                            Log.w(TAG, "CDM association failed: $error")
+                            cdmAssociationCallback?.invoke(false)
+                            cdmAssociationCallback = null
+                        }
+                    }
+                )
+            } else {
+                // API 26-32 uses Handler-based callback
+                @Suppress("DEPRECATION")
+                companionDeviceManager.associate(
+                    pairingRequest,
+                    object : CompanionDeviceManager.Callback() {
+                        override fun onDeviceFound(chooserLauncher: IntentSender) {
+                            try {
+                                activity.startIntentSenderForResult(
+                                    chooserLauncher,
+                                    REQUEST_CODE_CDM_ASSOCIATION,
+                                    null, 0, 0, 0
+                                )
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Failed to launch CDM chooser", e)
+                                cdmAssociationCallback?.invoke(false)
+                                cdmAssociationCallback = null
+                            }
+                        }
+
+                        override fun onFailure(error: CharSequence?) {
+                            Log.w(TAG, "CDM association failed: $error")
+                            cdmAssociationCallback?.invoke(false)
+                            cdmAssociationCallback = null
+                        }
+                    },
+                    Handler(Looper.getMainLooper())
+                )
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "CDM association error", e)
+            callback(false)
         }
     }
 
@@ -96,6 +226,16 @@ class BluetoothAudioHandler(private val activity: Activity) {
 
             // 使用第一個已連接的裝置
             val device = connectedDevices[0]
+
+            // Android 16+ (API 36): 嘗試建立 CDM association（非阻塞）
+            if (Build.VERSION.SDK_INT >= 36) {
+                ensureCdmAssociation(device) { success ->
+                    Log.d(TAG, "CDM association ensured: $success")
+                    // 無論成功與否都繼續取得 codec 資訊
+                    // 失敗時 getCodecInfo 會捕獲 SecurityException 並優雅降級
+                }
+            }
+
             val codecInfo = getCodecInfo(device)
 
             // 如果取得 codec 資訊時發生錯誤
@@ -187,9 +327,35 @@ class BluetoothAudioHandler(private val activity: Activity) {
         } catch (e: NoSuchMethodException) {
             result["error"] = "method_not_found"
             result["reason"] = "此裝置不支援 codec 資訊存取：${e.message}"
+        } catch (e: java.lang.reflect.InvocationTargetException) {
+            // Reflection 呼叫時目標方法拋出的異常
+            val cause = e.cause
+            // Android 16+ CDM SecurityException: 優雅降級為 Unknown 值
+            if (cause is SecurityException && (cause.message?.contains("CDM", ignoreCase = true) == true
+                        || cause.message?.contains("associate", ignoreCase = true) == true
+                        || Build.VERSION.SDK_INT >= 36)) {
+                Log.w(TAG, "CDM SecurityException on API ${Build.VERSION.SDK_INT}, degrading gracefully", cause)
+                result["codecType"] = "Unknown (需要裝置配對)"
+                result["sampleRate"] = "Unknown"
+                result["bitsPerSample"] = "Unknown"
+                result["channelMode"] = "Unknown"
+                result["bitrate"] = "Unknown"
+                // 不設定 error key，讓前端當作成功回應但 codec 值為 Unknown
+            } else {
+                result["error"] = "invocation_failed"
+                result["reason"] = "Codec API 呼叫失敗：${cause?.javaClass?.simpleName ?: "Unknown"} - ${cause?.message ?: e.message}"
+            }
+        } catch (e: SecurityException) {
+            // Android 9+ hidden API 存取限制
+            result["error"] = "security_exception"
+            result["reason"] = "API 存取被限制（Android ${Build.VERSION.SDK_INT}）：${e.message}"
+        } catch (e: IllegalAccessException) {
+            // Hidden API 存取權限問題
+            result["error"] = "access_denied"
+            result["reason"] = "無法存取 hidden API：${e.message}"
         } catch (e: Exception) {
             result["error"] = "reflection_failed"
-            result["reason"] = "取得 codec 資訊失敗：${e.message}"
+            result["reason"] = "取得 codec 資訊失敗（${e.javaClass.simpleName}）：${e.message}"
         }
 
         return result
