@@ -60,6 +60,7 @@ class BluetoothAudioHandler(private val activity: Activity) {
     fun handle(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "getBluetoothAudioInfo" -> getBluetoothAudioInfo(result)
+            "setBluetoothCodecConfig" -> setBluetoothCodecConfig(call, result)
             else -> result.notImplemented()
         }
     }
@@ -175,6 +176,86 @@ class BluetoothAudioHandler(private val activity: Activity) {
         } catch (e: Exception) {
             Log.e(TAG, "CDM association error", e)
             callback(false)
+        }
+    }
+
+    private fun setBluetoothCodecConfig(call: MethodCall, result: MethodChannel.Result) {
+        val codecType = call.argument<Int>("codecType") ?: run {
+            result.success(mapOf("success" to false, "error" to "Missing codecType"))
+            return
+        }
+        val sampleRate = call.argument<Int>("sampleRate") ?: run {
+            result.success(mapOf("success" to false, "error" to "Missing sampleRate"))
+            return
+        }
+        val bitsPerSample = call.argument<Int>("bitsPerSample") ?: run {
+            result.success(mapOf("success" to false, "error" to "Missing bitsPerSample"))
+            return
+        }
+        val channelMode = call.argument<Int>("channelMode") ?: run {
+            result.success(mapOf("success" to false, "error" to "Missing channelMode"))
+            return
+        }
+        val codecSpecific1 = call.argument<Number>("codecSpecific1")?.toLong() ?: 0L
+
+        try {
+            val a2dp = bluetoothA2dp
+            if (a2dp == null) {
+                result.success(mapOf("success" to false, "error" to "A2DP not connected"))
+                return
+            }
+
+            val connectedDevices = a2dp.connectedDevices
+            if (connectedDevices.isEmpty()) {
+                result.success(mapOf("success" to false, "error" to "No connected device"))
+                return
+            }
+
+            val device = connectedDevices[0]
+
+            // Android 16+: ensure CDM association
+            if (Build.VERSION.SDK_INT >= 36) {
+                ensureCdmAssociation(device) { _ -> }
+            }
+
+            // Build BluetoothCodecConfig via reflection
+            val codecConfig: Any = if (Build.VERSION.SDK_INT >= 33) {
+                // API 33+: use BluetoothCodecConfig.Builder
+                val builderClass = Class.forName("android.bluetooth.BluetoothCodecConfig\$Builder")
+                val builder = builderClass.getConstructor().newInstance()
+                builderClass.getMethod("setCodecType", Int::class.java).invoke(builder, codecType)
+                builderClass.getMethod("setSampleRate", Int::class.java).invoke(builder, sampleRate)
+                builderClass.getMethod("setBitsPerSample", Int::class.java).invoke(builder, bitsPerSample)
+                builderClass.getMethod("setChannelMode", Int::class.java).invoke(builder, channelMode)
+                builderClass.getMethod("setCodecSpecific1", Long::class.java).invoke(builder, codecSpecific1)
+                builderClass.getMethod("build").invoke(builder)!!
+            } else {
+                // API 26-32: use constructor
+                val configClass = Class.forName("android.bluetooth.BluetoothCodecConfig")
+                val constructor = configClass.getConstructor(
+                    Int::class.java, Int::class.java, Int::class.java, Int::class.java, Int::class.java,
+                    Long::class.java, Long::class.java, Long::class.java, Long::class.java
+                )
+                constructor.newInstance(
+                    codecType, 1000000 /*CODEC_PRIORITY_HIGHEST*/, sampleRate, bitsPerSample, channelMode,
+                    codecSpecific1, 0L, 0L, 0L
+                )!!
+            }
+
+            // Call setCodecConfigPreference via reflection
+            val setMethod = BluetoothA2dp::class.java.getMethod(
+                "setCodecConfigPreference",
+                BluetoothDevice::class.java,
+                Class.forName("android.bluetooth.BluetoothCodecConfig")
+            )
+            setMethod.invoke(a2dp, device, codecConfig)
+
+            result.success(mapOf("success" to true))
+
+        } catch (e: Exception) {
+            val cause = if (e is java.lang.reflect.InvocationTargetException) e.cause else e
+            Log.e(TAG, "setBluetoothCodecConfig failed", cause ?: e)
+            result.success(mapOf("success" to false, "error" to (cause?.message ?: e.message ?: "Unknown error")))
         }
     }
 
@@ -324,6 +405,39 @@ class BluetoothAudioHandler(private val activity: Activity) {
             result["channelMode"] = BluetoothCodecConstants.channelModeToString(channelMode)
             result["bitrate"] = BluetoothCodecConstants.bitrateToString(codecType, codecSpecific1)
 
+            // 回傳原始 int 值，供 Flutter 端建構 setCodecConfig 請求
+            result["currentCodecType"] = codecType
+            result["currentSampleRate"] = sampleRate
+            result["currentBitsPerSample"] = bitsPerSample
+            result["currentChannelMode"] = channelMode
+            result["currentCodecSpecific1"] = codecSpecific1
+
+            // 嘗試取得 selectable capabilities
+            try {
+                val getSelectableMethod = codecStatus.javaClass.getMethod("getCodecsSelectableCapabilities")
+                val selectableCapabilities = getSelectableMethod.invoke(codecStatus) as? Array<*>
+                if (selectableCapabilities != null) {
+                    // 找出與當前 codecType 相同的 selectable capability
+                    for (cap in selectableCapabilities) {
+                        if (cap == null) continue
+                        val capCodecType = cap.javaClass.getMethod("getCodecType").invoke(cap) as Int
+                        if (capCodecType == codecType) {
+                            val capSampleRate = cap.javaClass.getMethod("getSampleRate").invoke(cap) as Int
+                            val capBitsPerSample = cap.javaClass.getMethod("getBitsPerSample").invoke(cap) as Int
+                            val capChannelMode = cap.javaClass.getMethod("getChannelMode").invoke(cap) as Int
+
+                            result["selectableSampleRates"] = BluetoothCodecConstants.parseSampleRateBitmask(capSampleRate)
+                            result["selectableBitsPerSample"] = BluetoothCodecConstants.parseBitsPerSampleBitmask(capBitsPerSample)
+                            result["selectableChannelModes"] = BluetoothCodecConstants.parseChannelModeBitmask(capChannelMode)
+                            break
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to get selectable capabilities: ${e.message}")
+                // 不影響原有功能，只是不回傳 selectable 欄位
+            }
+
         } catch (e: NoSuchMethodException) {
             result["error"] = "method_not_found"
             result["reason"] = "此裝置不支援 codec 資訊存取：${e.message}"
@@ -436,6 +550,32 @@ object BluetoothCodecConstants {
         CHANNEL_MODE_MONO -> "Mono"
         CHANNEL_MODE_STEREO -> "Stereo"
         else -> "Unknown"
+    }
+
+    fun parseSampleRateBitmask(bitmask: Int): List<Map<String, Any>> {
+        val rates = mutableListOf<Map<String, Any>>()
+        if (bitmask and SAMPLE_RATE_44100 != 0) rates.add(mapOf("value" to SAMPLE_RATE_44100, "label" to "44.1 kHz"))
+        if (bitmask and SAMPLE_RATE_48000 != 0) rates.add(mapOf("value" to SAMPLE_RATE_48000, "label" to "48 kHz"))
+        if (bitmask and SAMPLE_RATE_88200 != 0) rates.add(mapOf("value" to SAMPLE_RATE_88200, "label" to "88.2 kHz"))
+        if (bitmask and SAMPLE_RATE_96000 != 0) rates.add(mapOf("value" to SAMPLE_RATE_96000, "label" to "96 kHz"))
+        if (bitmask and SAMPLE_RATE_176400 != 0) rates.add(mapOf("value" to SAMPLE_RATE_176400, "label" to "176.4 kHz"))
+        if (bitmask and SAMPLE_RATE_192000 != 0) rates.add(mapOf("value" to SAMPLE_RATE_192000, "label" to "192 kHz"))
+        return rates
+    }
+
+    fun parseBitsPerSampleBitmask(bitmask: Int): List<Map<String, Any>> {
+        val bits = mutableListOf<Map<String, Any>>()
+        if (bitmask and BITS_PER_SAMPLE_16 != 0) bits.add(mapOf("value" to BITS_PER_SAMPLE_16, "label" to "16 bit"))
+        if (bitmask and BITS_PER_SAMPLE_24 != 0) bits.add(mapOf("value" to BITS_PER_SAMPLE_24, "label" to "24 bit"))
+        if (bitmask and BITS_PER_SAMPLE_32 != 0) bits.add(mapOf("value" to BITS_PER_SAMPLE_32, "label" to "32 bit"))
+        return bits
+    }
+
+    fun parseChannelModeBitmask(bitmask: Int): List<Map<String, Any>> {
+        val modes = mutableListOf<Map<String, Any>>()
+        if (bitmask and CHANNEL_MODE_MONO != 0) modes.add(mapOf("value" to CHANNEL_MODE_MONO, "label" to "Mono"))
+        if (bitmask and CHANNEL_MODE_STEREO != 0) modes.add(mapOf("value" to CHANNEL_MODE_STEREO, "label" to "Stereo"))
+        return modes
     }
 
     fun bitrateToString(codecType: Int, codecSpecific1: Long): String {
