@@ -12,7 +12,7 @@
 Phase: 1 of 2 (核心顯示功能)
 Plan: 3 completed of 4 in current phase
 Status: In progress
-Last activity: 2026-02-14 - Completed quick task 1: 修復 Android 16 藍牙 CDM association SecurityException 錯誤
+Last activity: 2026-02-15 - Completed quick task 2: App 內藍牙 codec 參數即時切換功能
 
 Progress: [███░░░░░░░] 30%
 
@@ -69,9 +69,10 @@ Progress: [███░░░░░░░] 30%
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 1 | 修復 Android 16 藍牙 CDM association SecurityException 錯誤 | 2026-02-14 | cd0ad6a | [1-android-16-cdm-association-securityexcep](./quick/1-android-16-cdm-association-securityexcep/) |
+| 2 | App 內藍牙 codec 參數即時切換（取樣率/位元深度/聲道模式/LDAC品質） | 2026-02-15 | a8ac325 | [2-app-codec](./quick/2-app-codec/) |
 
 ## Session Continuity
 
-Last session: 2026-02-15 17:19 UTC
-Stopped at: 完成 quick-1 (Android 16 CDM SecurityException fix)
+Last session: 2026-02-15 17:36 UTC
+Stopped at: 完成 quick-2 (App 內藍牙 codec 參數切換)
 Resume file: None
