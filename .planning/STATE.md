@@ -70,6 +70,7 @@ Progress: [███░░░░░░░] 30%
 |---|-------------|------|--------|-----------|
 | 1 | 修復 Android 16 藍牙 CDM association SecurityException 錯誤 | 2026-02-14 | cd0ad6a | [1-android-16-cdm-association-securityexcep](./quick/1-android-16-cdm-association-securityexcep/) |
 | 2 | App 內藍牙 codec 參數即時切換（取樣率/位元深度/聲道模式/LDAC品質） | 2026-02-15 | a8ac325 | [2-app-codec](./quick/2-app-codec/) |
+| 3 | 修復 getCodecsSelectableCapabilities 型別轉換錯誤 (Array->List) | 2026-02-15 | 1be0280 | [3-getcodecsselectablecapabilities-array-li](./quick/3-getcodecsselectablecapabilities-array-li/) |
 
 ## Session Continuity
 
