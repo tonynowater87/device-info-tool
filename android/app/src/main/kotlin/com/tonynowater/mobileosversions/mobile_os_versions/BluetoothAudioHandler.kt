@@ -415,7 +415,7 @@ class BluetoothAudioHandler(private val activity: Activity) {
             // 嘗試取得 selectable capabilities
             try {
                 val getSelectableMethod = codecStatus.javaClass.getMethod("getCodecsSelectableCapabilities")
-                val selectableCapabilities = getSelectableMethod.invoke(codecStatus) as? Array<*>
+                val selectableCapabilities = getSelectableMethod.invoke(codecStatus) as? List<*>
                 if (selectableCapabilities != null) {
                     // 找出與當前 codecType 相同的 selectable capability
                     for (cap in selectableCapabilities) {
