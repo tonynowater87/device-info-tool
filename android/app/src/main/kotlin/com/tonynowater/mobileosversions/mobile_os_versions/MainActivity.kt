@@ -55,7 +55,8 @@ class MainActivity : FlutterActivity() {
                     batteryInfoHandler.handle(call, result)
                 }
 
-                "getBluetoothAudioInfo" -> {
+                "getBluetoothAudioInfo",
+                "setBluetoothCodecConfig" -> {
                     bluetoothAudioHandler.handle(call, result)
                 }
 
