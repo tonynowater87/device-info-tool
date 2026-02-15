@@ -224,6 +224,7 @@ class BluetoothAudioHandler(private val activity: Activity) {
                 val builderClass = Class.forName("android.bluetooth.BluetoothCodecConfig\$Builder")
                 val builder = builderClass.getConstructor().newInstance()
                 builderClass.getMethod("setCodecType", Int::class.java).invoke(builder, codecType)
+                builderClass.getMethod("setCodecPriority", Int::class.java).invoke(builder, 1000000 /*CODEC_PRIORITY_HIGHEST*/)
                 builderClass.getMethod("setSampleRate", Int::class.java).invoke(builder, sampleRate)
                 builderClass.getMethod("setBitsPerSample", Int::class.java).invoke(builder, bitsPerSample)
                 builderClass.getMethod("setChannelMode", Int::class.java).invoke(builder, channelMode)
