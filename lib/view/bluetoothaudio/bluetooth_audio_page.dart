@@ -342,9 +342,9 @@ class _BluetoothAudioPageState extends State<BluetoothAudioPage> {
                     rawValues.codecSpecific1,
                     [
                       CodecOption(value: 1000, label: '990 kbps'),
-                      CodecOption(value: 660, label: '660 kbps'),
-                      CodecOption(value: 330, label: '330 kbps'),
-                      CodecOption(value: 0, label: 'ABR'),
+                      CodecOption(value: 1001, label: '660 kbps'),
+                      CodecOption(value: 1002, label: '330 kbps'),
+                      CodecOption(value: 1003, label: 'ABR'),
                     ],
                     isSettingCodec ? null : (value) {
                       if (value != null) {

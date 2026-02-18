@@ -72,7 +72,7 @@ class BluetoothDeviceInfo {
   final String deviceName;
   final String deviceAddress;
   final int? batteryLevel; // -1 表示不支援
-  final String bluetoothVersion; // 手機藍牙版本（由於 API 限制，固定為「不支援」）
+  final String bluetoothVersion; // 手機藍牙版本（透過 API 能力推斷）
 
   BluetoothDeviceInfo({
     required this.deviceName,
@@ -86,9 +86,7 @@ class BluetoothDeviceInfo {
       deviceName: map['deviceName'] as String? ?? 'Unknown',
       deviceAddress: map['deviceAddress'] as String? ?? 'Unknown',
       batteryLevel: map['batteryLevel'] as int?,
-      // 藍牙版本無法透過 Android API 取得，固定為「不支援」
-      // 參考 RESEARCH.md: "Android 沒有公開 API 取得藍牙版本號"
-      bluetoothVersion: '不支援',
+      bluetoothVersion: map['bluetoothVersion'] as String? ?? '不支援',
     );
   }
 

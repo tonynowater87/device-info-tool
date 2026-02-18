@@ -336,6 +336,9 @@ class BluetoothAudioHandler(private val activity: Activity) {
             val batteryLevel = getBatteryLevel(device)
             deviceInfo["batteryLevel"] = batteryLevel
 
+            // 推斷藍牙版本
+            deviceInfo["bluetoothVersion"] = inferBluetoothVersion()
+
             // 合併 codec 資訊
             deviceInfo.putAll(codecInfo)
 
@@ -476,6 +479,30 @@ class BluetoothAudioHandler(private val activity: Activity) {
         return result
     }
 
+    private fun inferBluetoothVersion(): String {
+        val adapter = bluetoothAdapter ?: return "Unknown"
+        return try {
+            // API 33+: 檢查 LE Audio 支援 → BT 5.2+
+            if (Build.VERSION.SDK_INT >= 33) {
+                val leAudioSupported = adapter.isLeAudioSupported
+                // BluetoothStatusCodes.FEATURE_SUPPORTED = 1
+                if (leAudioSupported == 1) {
+                    return "5.2+"
+                }
+            }
+            // API 26+: 檢查 LE 2M PHY 或 LE Coded PHY 支援 → BT 5.0+
+            if (adapter.isLe2MPhySupported || adapter.isLeCodedPhySupported ||
+                adapter.isLeExtendedAdvertisingSupported) {
+                return "5.0+"
+            }
+            // Android 8.0+ 基本需要 BT 4.2
+            "4.2+"
+        } catch (e: Exception) {
+            Log.w(TAG, "inferBluetoothVersion failed: ${e.message}")
+            "Unknown"
+        }
+    }
+
     private fun getBatteryLevel(device: BluetoothDevice): Int {
         return try {
             // 嘗試透過 reflection 存取 getBatteryLevel (hidden API)
@@ -585,9 +612,9 @@ object BluetoothCodecConstants {
                 // LDAC bitrate 根據 codecSpecific1 判斷
                 when (codecSpecific1) {
                     1000L -> "990 kbps (最高品質)"
-                    660L -> "660 kbps (標準)"
-                    330L -> "330 kbps (連接優先)"
-                    0L, -1L -> "ABR (自適應)"
+                    1001L -> "660 kbps (標準)"
+                    1002L -> "330 kbps (連接優先)"
+                    1003L -> "ABR (自適應)"
                     else -> "ABR (自適應)"
                 }
             }
