@@ -16,7 +16,9 @@ class AndroidDeviceInfoPage extends StatefulWidget {
 }
 
 class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   final adidContainerKey = GlobalKey();
   final androidIdContainerKey = GlobalKey();
   AnimationController? _animationController;
@@ -46,18 +48,20 @@ class _AndroidDeviceInfoPageState extends State<AndroidDeviceInfoPage>
   }
 
   @override
-  void deactivate() {
+  void dispose() {
     _scrollEndTimer?.cancel();
     _animationController
       ?..removeStatusListener(snackbarAnimationStatusListener!)
       ..dispose();
     _overlayEntry?.remove();
+    _overlayEntry = null;
     context.read<AndroidDeviceInfoCubit>().release();
-    super.deactivate();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final l10n = AppLocalizations.of(context);
     final state = context.watch<AndroidDeviceInfoCubit>().state;
     if (state is AndroidDeviceInfoInitial) {

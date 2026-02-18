@@ -142,6 +142,7 @@ class _MyAppState extends State<MyApp> {
   final DefaultPageProvider _defaultPageProvider = DefaultPageProvider();
   DefaultPageSettings? _currentDefaultPage;
   final GlobalKey<IntentButtonsPageState> _intentButtonsPageKey = GlobalKey<IntentButtonsPageState>();
+  Widget? _androidDeviceInfoScreen;
 
   @override
   void initState() {
@@ -174,7 +175,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    var androidDeviceInfoScreen = BlocProvider(
+    _androidDeviceInfoScreen ??= BlocProvider(
         create: (context) => AndroidDeviceInfoCubit(),
         child: const AndroidDeviceInfoPage());
 
@@ -416,7 +417,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ];
       screens = [
-        androidDeviceInfoScreen,
+        _androidDeviceInfoScreen!,
         BlocProvider(
           create: (context) => BluetoothAudioCubit(),
           child: const BluetoothAudioPage(),
