@@ -26,8 +26,7 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
   final _memoryInfoPlugin = MemoryInfoPlugin();
   final _connectivityPlugin = Connectivity();
 
-  Timer? _timerUpdateMemory;
-  Timer? _timerUpdateBattery;
+  Timer? _updateTimer;
   StreamSubscription<FGBGType>? _foregroundEventStream;
 
   bool _isScrolling = false;
@@ -70,11 +69,8 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
           cpuInfoModel: cpuInfo));
     }
 
-    // Start memory update timer
-    _startMemoryUpdateTimer();
-
-    // Start battery update timer
-    _startBatteryUpdateTimer();
+    // Start consolidated update timer
+    _startUpdateTimer();
   }
 
   void copyAdvertisingId() {
@@ -102,21 +98,30 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
     _hasPendingUpdate = false;
   }
 
+  void pauseTimers() {
+    _updateTimer?.cancel();
+    _updateTimer = null;
+  }
+
+  void resumeTimers() {
+    // Trigger one immediate update, then restart periodic timer
+    _updateDynamicInfo();
+    _startUpdateTimer();
+  }
+
   void release() {
-    _timerUpdateMemory?.cancel();
-    _timerUpdateBattery?.cancel();
+    _updateTimer?.cancel();
     _foregroundEventStream?.cancel();
   }
 
   @override
   Future<void> close() {
-    _timerUpdateMemory?.cancel();
-    _timerUpdateBattery?.cancel();
+    _updateTimer?.cancel();
     _foregroundEventStream?.cancel();
     return super.close();
   }
 
-  Future<void> _updateMemoryInfo() async {
+  Future<void> _updateDynamicInfo() async {
     if (state is! AndroidDeviceInfoLoaded) return;
 
     // Skip update if user is scrolling, but mark as pending
@@ -129,19 +134,28 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
       var channel = const MethodChannel('com.tonynowater.mobileosversions');
       var deviceInfoMap = await channel.invokeMethod("getDeviceInfo");
 
-      // Only update CPU info (which contains memory info)
+      // Parse both CPU/memory and battery from the same platform channel call
       final cpuInfo = AndroidCpuInfoModel.fromMap(deviceInfoMap);
+      final batteryInfo = AndroidBatteryInfoModel.fromMap(deviceInfoMap);
 
       final currentState = state as AndroidDeviceInfoLoaded;
 
-      // Only emit if memory data actually changed (to avoid unnecessary UI rebuilds)
+      // Check if memory data changed
       final currentCpu = currentState.cpuInfoModel;
-      if (currentCpu != null &&
-          currentCpu.availableMemory == cpuInfo.availableMemory &&
-          currentCpu.usedMemory == cpuInfo.usedMemory) {
-        // Data hasn't changed significantly, skip emit
-        return;
-      }
+      bool cpuChanged = currentCpu == null ||
+          currentCpu.availableMemory != cpuInfo.availableMemory ||
+          currentCpu.usedMemory != cpuInfo.usedMemory;
+
+      // Check if battery data changed
+      final currentBattery = currentState.batteryInfoModel;
+      bool batteryChanged = currentBattery == null ||
+          currentBattery.chargingStatus != batteryInfo.chargingStatus ||
+          currentBattery.batteryLevel != batteryInfo.batteryLevel ||
+          currentBattery.temperature != batteryInfo.temperature ||
+          currentBattery.voltage != batteryInfo.voltage;
+
+      // Only emit if either changed (to avoid unnecessary UI rebuilds)
+      if (!cpuChanged && !batteryChanged) return;
 
       // Check again if user started scrolling during data fetch
       if (_isScrolling) {
@@ -157,80 +171,23 @@ class AndroidDeviceInfoCubit extends Cubit<AndroidDeviceInfoState> {
           isDeveloper: currentState.isDeveloper,
           wifiIp: currentState.wifiIp,
           connectivities: currentState.connectivities,
-          batteryInfoModel: currentState.batteryInfoModel,
+          batteryInfoModel: batteryInfo,
           storageInfoModel: currentState.storageInfoModel,
           networkInfoModel: currentState.networkInfoModel,
           systemInfoModel: currentState.systemInfoModel,
-          cpuInfoModel: cpuInfo, // Update only CPU/Memory info
+          cpuInfoModel: cpuInfo,
         ));
       }
     } catch (e) {
       // Silently fail to avoid disrupting the UI
-      debugPrint('Failed to update memory info: $e');
+      debugPrint('Failed to update dynamic info: $e');
     }
   }
 
-  void _startMemoryUpdateTimer() {
-    _timerUpdateMemory?.cancel();
-    _timerUpdateMemory = Timer.periodic(const Duration(seconds: 1), (timer) {
-      _updateMemoryInfo();
-    });
-  }
-
-  Future<void> _updateBatteryInfo() async {
-    if (state is! AndroidDeviceInfoLoaded) return;
-
-    // Skip update if user is scrolling, but mark as pending
-    if (_isScrolling) {
-      _hasPendingUpdate = true;
-      return;
-    }
-
-    try {
-      var channel = const MethodChannel('com.tonynowater.mobileosversions');
-      var deviceInfoMap = await channel.invokeMethod("getDeviceInfo");
-
-      // Only update battery info
-      final batteryInfo = AndroidBatteryInfoModel.fromMap(deviceInfoMap);
-
-      final currentState = state as AndroidDeviceInfoLoaded;
-
-      // Only emit if battery data actually changed (to avoid unnecessary UI rebuilds)
-      final currentBattery = currentState.batteryInfoModel;
-      if (currentBattery != null &&
-          currentBattery.chargingStatus == batteryInfo.chargingStatus &&
-          currentBattery.batteryLevel == batteryInfo.batteryLevel &&
-          currentBattery.temperature == batteryInfo.temperature &&
-          currentBattery.voltage == batteryInfo.voltage) {
-        // Data hasn't changed, skip emit
-        return;
-      }
-
-      if (!isClosed) {
-        emit(AndroidDeviceInfoLoaded(
-          deviceInfoModel: currentState.deviceInfoModel,
-          advertisingId: currentState.advertisingId,
-          androidId: currentState.androidId,
-          isDeveloper: currentState.isDeveloper,
-          wifiIp: currentState.wifiIp,
-          connectivities: currentState.connectivities,
-          batteryInfoModel: batteryInfo, // Update only battery info
-          storageInfoModel: currentState.storageInfoModel,
-          networkInfoModel: currentState.networkInfoModel,
-          systemInfoModel: currentState.systemInfoModel,
-          cpuInfoModel: currentState.cpuInfoModel,
-        ));
-      }
-    } catch (e) {
-      // Silently fail to avoid disrupting the UI
-      debugPrint('Failed to update battery info: $e');
-    }
-  }
-
-  void _startBatteryUpdateTimer() {
-    _timerUpdateBattery?.cancel();
-    _timerUpdateBattery = Timer.periodic(const Duration(seconds: 1), (timer) {
-      _updateBatteryInfo();
+  void _startUpdateTimer() {
+    _updateTimer?.cancel();
+    _updateTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      _updateDynamicInfo();
     });
   }
 
