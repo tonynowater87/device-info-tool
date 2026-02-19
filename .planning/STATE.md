@@ -12,7 +12,7 @@
 Phase: 1 of 2 (核心顯示功能)
 Plan: 3 completed of 4 in current phase
 Status: In progress
-Last activity: 2026-02-19 - Completed quick task 5: 修復 LDAC bitrate 顯示 "Current (0)" 及 spinner 無法選取問題
+Last activity: 2026-02-19 - Completed quick task 6: TWS 耳機左耳/右耳/充電盒電量拆分顯示
 
 Progress: [███░░░░░░░] 30%
 
@@ -73,9 +73,10 @@ Progress: [███░░░░░░░] 30%
 | 3 | 修復 getCodecsSelectableCapabilities 型別轉換錯誤 (Array->List) | 2026-02-15 | 1be0280 | [3-getcodecsselectablecapabilities-array-li](./quick/3-getcodecsselectablecapabilities-array-li/) |
 | 4 | 修復裝置資訊頁面切換卡頓（合併定時器、修正生命週期、快取 BlocProvider） | 2026-02-18 | 485552c | [4-fix-device-info-page-stuttering-jank](./quick/4-fix-device-info-page-stuttering-jank/) |
 | 5 | 修復 LDAC bitrate 顯示 "Current (0)" 及 spinner 無法選取（codecSpecific1=0 正規化為 1003） | 2026-02-19 | 8dfc471 | [5-ldac-current-0-spinner](./quick/5-ldac-current-0-spinner/) |
+| 6 | TWS 耳機左耳/右耳/充電盒電量拆分顯示（getMetadata reflection，條件式 UI） | 2026-02-19 | b5db8a4 | [6-bt-battery-left-right-case](./quick/6-bt-battery-left-right-case/) |
 
 ## Session Continuity
 
 Last session: 2026-02-19 UTC
-Stopped at: 完成 quick-5 (修復 LDAC bitrate Current(0) 及 spinner 無法選取)
+Stopped at: 完成 quick-6 (TWS 耳機左耳/右耳/充電盒電量拆分顯示)
 Resume file: None
