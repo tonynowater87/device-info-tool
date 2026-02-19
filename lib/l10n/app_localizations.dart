@@ -113,10 +113,7 @@ class AppLocalizations {
       'charging_status': 'Charging Status',
       'temperature': 'Temperature',
       'battery_level': 'Battery Level',
-      'battery_left': 'Left Ear',
-      'battery_right': 'Right Ear',
-      'battery_case': 'Case',
-
+      
       // Device Info - Storage
       'total_space': 'Total Space',
       'used_space': 'Used Space',
@@ -286,10 +283,7 @@ class AppLocalizations {
       'charging_status': '充電狀態',
       'temperature': '溫度',
       'battery_level': '電量',
-      'battery_left': '左耳',
-      'battery_right': '右耳',
-      'battery_case': '充電盒',
-
+      
       // Device Info - Storage
       'total_space': '總空間',
       'used_space': '已使用空間',
@@ -459,10 +453,7 @@ class AppLocalizations {
       'charging_status': '充电状态',
       'temperature': '温度',
       'battery_level': '电量',
-      'battery_left': '左耳',
-      'battery_right': '右耳',
-      'battery_case': '充电盒',
-
+      
       // Device Info - Storage
       'total_space': '总空间',
       'used_space': '已用空间',
@@ -632,10 +623,7 @@ class AppLocalizations {
       'charging_status': '充電状態',
       'temperature': '温度',
       'battery_level': 'バッテリーレベル',
-      'battery_left': '左耳',
-      'battery_right': '右耳',
-      'battery_case': 'ケース',
-
+      
       // Device Info - Storage
       'total_space': '総容量',
       'used_space': '使用容量',
@@ -805,10 +793,7 @@ class AppLocalizations {
       'charging_status': '충전 상태',
       'temperature': '온도',
       'battery_level': '배터리 레벨',
-      'battery_left': '왼쪽',
-      'battery_right': '오른쪽',
-      'battery_case': '케이스',
-
+      
       // Device Info - Storage
       'total_space': '총 공간',
       'used_space': '사용 공간',
@@ -978,10 +963,7 @@ class AppLocalizations {
       'charging_status': 'Estado de carga',
       'temperature': 'Temperatura',
       'battery_level': 'Nivel de batería',
-      'battery_left': 'Izquierdo',
-      'battery_right': 'Derecho',
-      'battery_case': 'Estuche',
-
+      
       // Device Info - Storage
       'total_space': 'Espacio total',
       'used_space': 'Espacio usado',
@@ -1182,10 +1164,7 @@ class AppLocalizations {
       'charging_status': 'État de charge',
       'temperature': 'Température',
       'battery_level': 'Niveau de batterie',
-      'battery_left': 'Gauche',
-      'battery_right': 'Droite',
-      'battery_case': 'Boîtier',
-
+      
       // Device Info - Storage
       'total_space': 'Espace total',
       'used_space': 'Espace utilisé',
@@ -1355,10 +1334,7 @@ class AppLocalizations {
       'charging_status': 'Ladestatus',
       'temperature': 'Temperatur',
       'battery_level': 'Akkustand',
-      'battery_left': 'Links',
-      'battery_right': 'Rechts',
-      'battery_case': 'Etui',
-
+      
       // Device Info - Storage
       'total_space': 'Gesamtspeicher',
       'used_space': 'Verwendeter Speicher',
@@ -1528,10 +1504,7 @@ class AppLocalizations {
       'charging_status': 'حالة الشحن',
       'temperature': 'درجة الحرارة',
       'battery_level': 'مستوى البطارية',
-      'battery_left': 'اليسرى',
-      'battery_right': 'اليمنى',
-      'battery_case': 'العلبة',
-
+      
       // Device Info - Storage
       'total_space': 'المساحة الإجمالية',
       'used_space': 'المساحة المستخدمة',
@@ -1701,10 +1674,7 @@ class AppLocalizations {
       'charging_status': 'Status de carregamento',
       'temperature': 'Temperatura',
       'battery_level': 'Nível da bateria',
-      'battery_left': 'Esquerdo',
-      'battery_right': 'Direito',
-      'battery_case': 'Estojo',
-
+      
       // Device Info - Storage
       'total_space': 'Espaço total',
       'used_space': 'Espaço usado',
@@ -1866,10 +1836,7 @@ class AppLocalizations {
   String get chargingStatus => _localizedValues[locale.toString()]!['charging_status']!;
   String get temperature => _localizedValues[locale.toString()]!['temperature']!;
   String get batteryLevel => _localizedValues[locale.toString()]!['battery_level']!;
-  String get batteryLeft => _localizedValues[locale.toString()]!['battery_left']!;
-  String get batteryRight => _localizedValues[locale.toString()]!['battery_right']!;
-  String get batteryCase => _localizedValues[locale.toString()]!['battery_case']!;
-
+  
   String get totalSpace => _localizedValues[locale.toString()]!['total_space']!;
   String get usedSpace => _localizedValues[locale.toString()]!['used_space']!;
   String get availableSpace => _localizedValues[locale.toString()]!['available_space']!;
