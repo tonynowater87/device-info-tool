@@ -8,7 +8,10 @@ import android.bluetooth.BluetoothProfile
 import android.companion.AssociationRequest
 import android.companion.BluetoothDeviceFilter
 import android.companion.CompanionDeviceManager
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.IntentSender
 import android.os.Build
 import android.os.Handler
@@ -22,6 +25,9 @@ class BluetoothAudioHandler(private val activity: Activity) {
     private val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
     private var pendingResult: MethodChannel.Result? = null
 
+    // TWS 電量快取: key = device MAC address, value = {batteryLeft, batteryRight, batteryCase}
+    private val twsBatteryCache = mutableMapOf<String, MutableMap<String, Int>>()
+
     companion object {
         private const val TAG = "BluetoothAudioHandler"
         const val REQUEST_CODE_CDM_ASSOCIATION = 1001
@@ -29,6 +35,57 @@ class BluetoothAudioHandler(private val activity: Activity) {
 
     // Callback for CDM association result
     private var cdmAssociationCallback: ((Boolean) -> Unit)? = null
+
+    // BroadcastReceiver for battery level changes (Strategy 3)
+    private val batteryLevelReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent == null) return
+            val action = intent.action ?: return
+
+            val device = if (Build.VERSION.SDK_INT >= 33) {
+                intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+            } ?: return
+
+            val address = device.address ?: return
+            Log.d(TAG, "BatteryReceiver: action=$action, device=$address")
+
+            val cache = twsBatteryCache.getOrPut(address) {
+                mutableMapOf("batteryLeft" to -1, "batteryRight" to -1, "batteryCase" to -1)
+            }
+
+            when (action) {
+                "android.bluetooth.device.action.BATTERY_LEVEL_CHANGED" -> {
+                    // 標準 ACTION_BATTERY_LEVEL_CHANGED 只含整體電量
+                    // 嘗試讀取 OEM 自訂的 untethered extras
+                    val left = intent.getIntExtra("android.bluetooth.device.extra.HEADSET_BATTERY_LEFT", -1)
+                    val right = intent.getIntExtra("android.bluetooth.device.extra.HEADSET_BATTERY_RIGHT", -1)
+                    val case_ = intent.getIntExtra("android.bluetooth.device.extra.HEADSET_BATTERY_CASE", -1)
+                    if (left != -1 || right != -1 || case_ != -1) {
+                        cache["batteryLeft"] = left
+                        cache["batteryRight"] = right
+                        cache["batteryCase"] = case_
+                        Log.d(TAG, "BatteryReceiver: TWS levels cached from extras: L=$left R=$right C=$case_")
+                    }
+                }
+                // Samsung / Google Pixel OEM TWS battery action
+                "android.bluetooth.headset.action.HF_INDICATORS_VALUE_CHANGED",
+                "android.bluetooth.headset.profile.action.HF_INDICATORS_VALUE_CHANGED" -> {
+                    val left = intent.getIntExtra("android.bluetooth.device.extra.HEADSET_BATTERY_LEFT", -1)
+                    val right = intent.getIntExtra("android.bluetooth.device.extra.HEADSET_BATTERY_RIGHT", -1)
+                    val case_ = intent.getIntExtra("android.bluetooth.device.extra.HEADSET_BATTERY_CASE", -1)
+                    if (left != -1 || right != -1 || case_ != -1) {
+                        cache["batteryLeft"] = left
+                        cache["batteryRight"] = right
+                        cache["batteryCase"] = case_
+                        Log.d(TAG, "BatteryReceiver: TWS levels cached from HF_INDICATORS: L=$left R=$right C=$case_")
+                    }
+                }
+            }
+        }
+    }
 
     private val profileListener = object : BluetoothProfile.ServiceListener {
         override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
@@ -51,10 +108,35 @@ class BluetoothAudioHandler(private val activity: Activity) {
 
     fun init() {
         bluetoothAdapter?.getProfileProxy(activity, profileListener, BluetoothProfile.A2DP)
+
+        // 策略 3: 註冊 BroadcastReceiver 監聽電量變化
+        val filter = IntentFilter().apply {
+            addAction("android.bluetooth.device.action.BATTERY_LEVEL_CHANGED")
+            addAction("android.bluetooth.headset.action.HF_INDICATORS_VALUE_CHANGED")
+            addAction("android.bluetooth.headset.profile.action.HF_INDICATORS_VALUE_CHANGED")
+        }
+        try {
+            if (Build.VERSION.SDK_INT >= 33) {
+                activity.registerReceiver(batteryLevelReceiver, filter, Context.RECEIVER_EXPORTED)
+            } else {
+                activity.registerReceiver(batteryLevelReceiver, filter)
+            }
+            Log.d(TAG, "BatteryLevelReceiver registered")
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to register BatteryLevelReceiver: ${e.message}")
+        }
     }
 
     fun release() {
         bluetoothAdapter?.closeProfileProxy(BluetoothProfile.A2DP, bluetoothA2dp)
+
+        // 取消註冊 BroadcastReceiver
+        try {
+            activity.unregisterReceiver(batteryLevelReceiver)
+            Log.d(TAG, "BatteryLevelReceiver unregistered")
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to unregister BatteryLevelReceiver: ${e.message}")
+        }
     }
 
     fun handle(call: MethodCall, result: MethodChannel.Result) {
@@ -517,32 +599,109 @@ class BluetoothAudioHandler(private val activity: Activity) {
         }
     }
 
+    /**
+     * 判斷 TWS 電量 map 是否全為 -1（即未能取得任何資料）
+     */
+    private fun allNegative(map: Map<String, Int>): Boolean {
+        return map["batteryLeft"] == -1 && map["batteryRight"] == -1 && map["batteryCase"] == -1
+    }
+
+    /**
+     * 取得 TWS 耳機的左耳/右耳/充電盒電量，採用三層 fallback 策略：
+     *
+     * 策略 1: getMetadata() reflection（部分自訂 ROM 可能成功）
+     * 策略 2: ContentProvider 查詢 content://com.android.bluetooth/device_meta_data
+     * 策略 3: BroadcastReceiver 快取（從 ACTION_BATTERY_LEVEL_CHANGED 或 OEM broadcast 累積）
+     *
+     * 三層均失敗則回傳全 -1，UI 端判斷 -1 時不顯示拆分電量。
+     */
     private fun getUntetheredBatteryLevels(device: BluetoothDevice): Map<String, Int> {
-        val result = mutableMapOf<String, Int>()
+        val fallbackResult = mapOf("batteryLeft" to -1, "batteryRight" to -1, "batteryCase" to -1)
+
         if (Build.VERSION.SDK_INT < 28) {
-            result["batteryLeft"] = -1
-            result["batteryRight"] = -1
-            result["batteryCase"] = -1
-            return result
+            Log.d(TAG, "getUntetheredBatteryLevels: SDK < 28, skip all strategies")
+            return fallbackResult
         }
+
+        // ── 策略 1: getMetadata() reflection ────────────────────────────────
+        // METADATA_UNTETHERED_LEFT_BATTERY = 6
+        // METADATA_UNTETHERED_RIGHT_BATTERY = 7
+        // METADATA_UNTETHERED_CASE_BATTERY = 8
+        Log.d(TAG, "getUntetheredBatteryLevels: trying Strategy 1 (getMetadata reflection)")
         try {
             val getMetadata = BluetoothDevice::class.java.getMethod("getMetadata", Int::class.java)
-            // METADATA_UNTETHERED_LEFT_BATTERY = 6
-            // METADATA_UNTETHERED_RIGHT_BATTERY = 7
-            // METADATA_UNTETHERED_CASE_BATTERY = 8
-            result["batteryLeft"] = (getMetadata.invoke(device, 6) as? ByteArray)
-                ?.let { String(it).toIntOrNull() } ?: -1
-            result["batteryRight"] = (getMetadata.invoke(device, 7) as? ByteArray)
-                ?.let { String(it).toIntOrNull() } ?: -1
-            result["batteryCase"] = (getMetadata.invoke(device, 8) as? ByteArray)
-                ?.let { String(it).toIntOrNull() } ?: -1
+            val left = (getMetadata.invoke(device, 6) as? ByteArray)?.let { String(it).toIntOrNull() } ?: -1
+            val right = (getMetadata.invoke(device, 7) as? ByteArray)?.let { String(it).toIntOrNull() } ?: -1
+            val case_ = (getMetadata.invoke(device, 8) as? ByteArray)?.let { String(it).toIntOrNull() } ?: -1
+            Log.d(TAG, "Strategy 1 result: L=$left R=$right C=$case_")
+            val strategy1 = mutableMapOf("batteryLeft" to left, "batteryRight" to right, "batteryCase" to case_)
+            if (!allNegative(strategy1)) {
+                Log.d(TAG, "Strategy 1 succeeded")
+                return strategy1
+            }
+            Log.d(TAG, "Strategy 1 returned all -1, trying Strategy 2")
         } catch (e: Exception) {
-            Log.w(TAG, "getUntetheredBatteryLevels failed: ${e.message}")
-            result["batteryLeft"] = -1
-            result["batteryRight"] = -1
-            result["batteryCase"] = -1
+            Log.w(TAG, "Strategy 1 (getMetadata) failed: ${e.javaClass.simpleName} - ${e.message}")
         }
-        return result
+
+        // ── 策略 2: ContentProvider 查詢 ─────────────────────────────────────
+        // Android Bluetooth stack 將 device metadata 存放在 ContentProvider
+        // URI: content://com.android.bluetooth/device_meta_data
+        // 欄位: address, key, value (byte array)
+        Log.d(TAG, "getUntetheredBatteryLevels: trying Strategy 2 (ContentProvider)")
+        try {
+            val uri = android.net.Uri.parse("content://com.android.bluetooth/device_meta_data")
+            val cursor = activity.contentResolver.query(
+                uri,
+                arrayOf("key", "value"),
+                "address = ?",
+                arrayOf(device.address),
+                null
+            )
+            cursor?.use { c ->
+                val keyIdx = c.getColumnIndex("key")
+                val valIdx = c.getColumnIndex("value")
+                if (keyIdx >= 0 && valIdx >= 0) {
+                    val strategy2 = mutableMapOf("batteryLeft" to -1, "batteryRight" to -1, "batteryCase" to -1)
+                    while (c.moveToNext()) {
+                        val key = c.getInt(keyIdx)
+                        val valueBytes = c.getBlob(valIdx)
+                        val valueStr = valueBytes?.let { String(it).trim() }
+                        val valueInt = valueStr?.toIntOrNull() ?: -1
+                        Log.d(TAG, "Strategy 2 row: key=$key value=$valueStr")
+                        when (key) {
+                            6 -> strategy2["batteryLeft"] = valueInt
+                            7 -> strategy2["batteryRight"] = valueInt
+                            8 -> strategy2["batteryCase"] = valueInt
+                        }
+                    }
+                    if (!allNegative(strategy2)) {
+                        Log.d(TAG, "Strategy 2 succeeded: ${strategy2}")
+                        return strategy2
+                    }
+                    Log.d(TAG, "Strategy 2 returned all -1, trying Strategy 3")
+                } else {
+                    Log.d(TAG, "Strategy 2: cursor columns not found (key=$keyIdx, val=$valIdx)")
+                }
+            } ?: Log.d(TAG, "Strategy 2: cursor is null")
+        } catch (e: SecurityException) {
+            Log.w(TAG, "Strategy 2 (ContentProvider) SecurityException: ${e.message}")
+        } catch (e: Exception) {
+            Log.w(TAG, "Strategy 2 (ContentProvider) failed: ${e.javaClass.simpleName} - ${e.message}")
+        }
+
+        // ── 策略 3: BroadcastReceiver 快取 ───────────────────────────────────
+        Log.d(TAG, "getUntetheredBatteryLevels: trying Strategy 3 (BroadcastReceiver cache)")
+        val cached = twsBatteryCache[device.address]
+        if (cached != null && !allNegative(cached)) {
+            Log.d(TAG, "Strategy 3 succeeded (from cache): $cached")
+            return cached.toMap()
+        }
+        Log.d(TAG, "Strategy 3: no valid TWS cache for ${device.address}")
+
+        // 所有策略均失敗，gracefully 回傳 -1
+        Log.d(TAG, "getUntetheredBatteryLevels: all strategies failed, returning -1")
+        return fallbackResult
     }
 }
 
