@@ -611,6 +611,7 @@ object BluetoothCodecConstants {
             SOURCE_CODEC_TYPE_LDAC -> {
                 // LDAC bitrate 根據 codecSpecific1 判斷
                 when (codecSpecific1) {
+                    0L -> "ABR (自適應)"      // Android returns 0 for ABR/Best Effort mode
                     1000L -> "990 kbps (最高品質)"
                     1001L -> "660 kbps (標準)"
                     1002L -> "330 kbps (連接優先)"

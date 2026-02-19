@@ -339,7 +339,8 @@ class _BluetoothAudioPageState extends State<BluetoothAudioPage> {
                 if (hasCapabilities && rawValues.codecType == 4) // LDAC
                   _buildDropdownRow(
                     l10n.bitrate,
-                    rawValues.codecSpecific1,
+                    // Normalize: Android returns 0 for ABR default, map to 1003 (explicit ABR constant)
+                    rawValues.codecSpecific1 == 0 ? 1003 : rawValues.codecSpecific1,
                     [
                       CodecOption(value: 1000, label: '990 kbps'),
                       CodecOption(value: 1001, label: '660 kbps'),
