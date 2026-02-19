@@ -270,7 +270,12 @@ class _BluetoothAudioPageState extends State<BluetoothAudioPage> {
                 _buildInfoRow(l10n.deviceName, audioInfo.deviceInfo.deviceName),
                 _buildInfoRow(l10n.macAddress, audioInfo.deviceInfo.deviceAddress),
                 _buildInfoRow(l10n.bluetoothVersion, audioInfo.deviceInfo.bluetoothVersion),
-                _buildInfoRow(l10n.batteryLevel, audioInfo.deviceInfo.formattedBatteryLevel),
+                if (audioInfo.deviceInfo.hasUntetheredBattery) ...[
+                  _buildInfoRow(l10n.batteryLeft, audioInfo.deviceInfo.formattedBatteryLeft),
+                  _buildInfoRow(l10n.batteryRight, audioInfo.deviceInfo.formattedBatteryRight),
+                  _buildInfoRow(l10n.batteryCase, audioInfo.deviceInfo.formattedBatteryCase),
+                ] else
+                  _buildInfoRow(l10n.batteryLevel, audioInfo.deviceInfo.formattedBatteryLevel),
               ]),
               const SizedBox(height: 16),
               // Codec 資訊區塊

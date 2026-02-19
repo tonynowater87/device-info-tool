@@ -73,12 +73,18 @@ class BluetoothDeviceInfo {
   final String deviceAddress;
   final int? batteryLevel; // -1 表示不支援
   final String bluetoothVersion; // 手機藍牙版本（透過 API 能力推斷）
+  final int? batteryLeft;   // TWS 左耳電量，-1 表示不可用
+  final int? batteryRight;  // TWS 右耳電量，-1 表示不可用
+  final int? batteryCase;   // TWS 充電盒電量，-1 表示不可用
 
   BluetoothDeviceInfo({
     required this.deviceName,
     required this.deviceAddress,
     this.batteryLevel,
     this.bluetoothVersion = '不支援',
+    this.batteryLeft,
+    this.batteryRight,
+    this.batteryCase,
   });
 
   factory BluetoothDeviceInfo.fromMap(Map<String, dynamic> map) {
@@ -87,6 +93,9 @@ class BluetoothDeviceInfo {
       deviceAddress: map['deviceAddress'] as String? ?? 'Unknown',
       batteryLevel: map['batteryLevel'] as int?,
       bluetoothVersion: map['bluetoothVersion'] as String? ?? '不支援',
+      batteryLeft: map['batteryLeft'] as int?,
+      batteryRight: map['batteryRight'] as int?,
+      batteryCase: map['batteryCase'] as int?,
     );
   }
 
@@ -94,6 +103,20 @@ class BluetoothDeviceInfo {
     if (batteryLevel == null || batteryLevel! < 0) return '不支援';
     return '$batteryLevel%';
   }
+
+  bool get hasUntetheredBattery =>
+      (batteryLeft != null && batteryLeft! >= 0) ||
+      (batteryRight != null && batteryRight! >= 0) ||
+      (batteryCase != null && batteryCase! >= 0);
+
+  String _formatLevel(int? level) {
+    if (level == null || level < 0) return '--';
+    return '$level%';
+  }
+
+  String get formattedBatteryLeft => _formatLevel(batteryLeft);
+  String get formattedBatteryRight => _formatLevel(batteryRight);
+  String get formattedBatteryCase => _formatLevel(batteryCase);
 }
 
 /// 藍牙 Codec 資訊模型
