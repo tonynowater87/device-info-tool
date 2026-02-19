@@ -75,9 +75,10 @@ Progress: [███░░░░░░░] 30%
 | 5 | 修復 LDAC bitrate 顯示 "Current (0)" 及 spinner 無法選取（codecSpecific1=0 正規化為 1003） | 2026-02-19 | 8dfc471 | [5-ldac-current-0-spinner](./quick/5-ldac-current-0-spinner/) |
 | 6 | ~~TWS 電量拆分~~ (已還原 - BLUETOOTH_PRIVILEGED 系統權限限制) | 2026-02-19 | 3f72869 | [6-bt-battery-left-right-case](./quick/6-bt-battery-left-right-case/) |
 | 7 | ~~TWS 三層 fallback~~ (已還原 - 所有策略均失敗) | 2026-02-19 | 3f72869 | [7-tws-getmetadata-bluetooth-privileged](./quick/7-tws-getmetadata-bluetooth-privileged/) |
+| 8 | Codec Type 切換 DropdownButton（多 codec 裝置可在 SBC/AAC/aptX/LDAC 間切換） | 2026-02-19 | edf9274 | [8-codec](./quick/8-codec/) |
 
 ## Session Continuity
 
 Last session: 2026-02-19 UTC
-Stopped at: 還原 quick-6/7 TWS 電量拆分實作
+Stopped at: 完成 quick-8 Codec Type DropdownButton 切換功能
 Resume file: None
