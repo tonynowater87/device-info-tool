@@ -276,8 +276,26 @@ class _BluetoothAudioPageState extends State<BluetoothAudioPage> {
               // Codec 資訊區塊
               _buildSectionHeader(context, l10n.codecInfo, Icons.audiotrack),
               _buildInfoCard(context, [
-                // codecType 永遠靜態顯示
-                _buildInfoRow(l10n.codecType, audioInfo.codecInfo.codecType),
+                // codecType - 可切換（當有多個可選 codec 時）
+                if (hasCapabilities && capabilities.codecTypes.length > 1)
+                  _buildDropdownRow(
+                    l10n.codecType,
+                    rawValues.codecType,
+                    capabilities.codecTypes,
+                    isSettingCodec ? null : (value) {
+                      if (value != null) {
+                        cubit.setCodecConfig(
+                          codecType: value,
+                          sampleRate: rawValues.sampleRate,
+                          bitsPerSample: rawValues.bitsPerSample,
+                          channelMode: rawValues.channelMode,
+                          codecSpecific1: rawValues.codecSpecific1,
+                        );
+                      }
+                    },
+                  )
+                else
+                  _buildInfoRow(l10n.codecType, audioInfo.codecInfo.codecType),
                 // sampleRate
                 if (hasCapabilities && capabilities.sampleRates.length > 1)
                   _buildDropdownRow(
