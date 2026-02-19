@@ -88,6 +88,7 @@ class BluetoothAudioCubit extends Cubit<BluetoothAudioState> {
 
   /// 設定 codec 參數
   Future<void> setCodecConfig({
+    int? codecType,
     required int sampleRate,
     required int bitsPerSample,
     required int channelMode,
@@ -109,7 +110,7 @@ class BluetoothAudioCubit extends Cubit<BluetoothAudioState> {
 
     try {
       final result = await _channel.invokeMethod('setBluetoothCodecConfig', {
-        'codecType': currentAudioInfo.rawValues!.codecType,
+        'codecType': codecType ?? currentAudioInfo.rawValues!.codecType,
         'sampleRate': sampleRate,
         'bitsPerSample': bitsPerSample,
         'channelMode': channelMode,

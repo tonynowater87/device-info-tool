@@ -421,10 +421,16 @@ class BluetoothAudioHandler(private val activity: Activity) {
                 val getSelectableMethod = codecStatus.javaClass.getMethod("getCodecsSelectableCapabilities")
                 val selectableCapabilities = getSelectableMethod.invoke(codecStatus) as? List<*>
                 if (selectableCapabilities != null) {
-                    // 找出與當前 codecType 相同的 selectable capability
+                    // 收集所有可選 codec types
+                    val selectableCodecTypes = mutableListOf<Map<String, Any>>()
                     for (cap in selectableCapabilities) {
                         if (cap == null) continue
                         val capCodecType = cap.javaClass.getMethod("getCodecType").invoke(cap) as Int
+                        selectableCodecTypes.add(mapOf(
+                            "value" to capCodecType,
+                            "label" to BluetoothCodecConstants.codecTypeToString(capCodecType)
+                        ))
+                        // 找出與當前 codecType 相同的 selectable capability，取得其 sampleRate/bitsPerSample/channelMode
                         if (capCodecType == codecType) {
                             val capSampleRate = cap.javaClass.getMethod("getSampleRate").invoke(cap) as Int
                             val capBitsPerSample = cap.javaClass.getMethod("getBitsPerSample").invoke(cap) as Int
@@ -433,9 +439,9 @@ class BluetoothAudioHandler(private val activity: Activity) {
                             result["selectableSampleRates"] = BluetoothCodecConstants.parseSampleRateBitmask(capSampleRate)
                             result["selectableBitsPerSample"] = BluetoothCodecConstants.parseBitsPerSampleBitmask(capBitsPerSample)
                             result["selectableChannelModes"] = BluetoothCodecConstants.parseChannelModeBitmask(capChannelMode)
-                            break
                         }
                     }
+                    result["selectableCodecTypes"] = selectableCodecTypes
                 }
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to get selectable capabilities: ${e.message}")

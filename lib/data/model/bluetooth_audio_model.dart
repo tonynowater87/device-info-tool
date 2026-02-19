@@ -18,24 +18,37 @@ class CodecCapabilities {
   final List<CodecOption> sampleRates;
   final List<CodecOption> bitsPerSample;
   final List<CodecOption> channelModes;
+  final List<CodecOption> codecTypes;
 
   CodecCapabilities({
     required this.sampleRates,
     required this.bitsPerSample,
     required this.channelModes,
+    required this.codecTypes,
   });
 
   factory CodecCapabilities.fromMap(Map<String, dynamic> map) {
     return CodecCapabilities(
-      sampleRates: (map['selectableSampleRates'] as List)
-          .map((e) => CodecOption.fromMap(Map<String, dynamic>.from(e as Map)))
-          .toList(),
-      bitsPerSample: (map['selectableBitsPerSample'] as List)
-          .map((e) => CodecOption.fromMap(Map<String, dynamic>.from(e as Map)))
-          .toList(),
-      channelModes: (map['selectableChannelModes'] as List)
-          .map((e) => CodecOption.fromMap(Map<String, dynamic>.from(e as Map)))
-          .toList(),
+      sampleRates: map.containsKey('selectableSampleRates')
+          ? (map['selectableSampleRates'] as List)
+              .map((e) => CodecOption.fromMap(Map<String, dynamic>.from(e as Map)))
+              .toList()
+          : [],
+      bitsPerSample: map.containsKey('selectableBitsPerSample')
+          ? (map['selectableBitsPerSample'] as List)
+              .map((e) => CodecOption.fromMap(Map<String, dynamic>.from(e as Map)))
+              .toList()
+          : [],
+      channelModes: map.containsKey('selectableChannelModes')
+          ? (map['selectableChannelModes'] as List)
+              .map((e) => CodecOption.fromMap(Map<String, dynamic>.from(e as Map)))
+              .toList()
+          : [],
+      codecTypes: map.containsKey('selectableCodecTypes')
+          ? (map['selectableCodecTypes'] as List)
+              .map((e) => CodecOption.fromMap(Map<String, dynamic>.from(e as Map)))
+              .toList()
+          : [],
     );
   }
 }
@@ -141,7 +154,7 @@ class BluetoothAudioInfo {
     CodecCapabilities? capabilities;
     CodecRawValues? rawValues;
 
-    if (map.containsKey('selectableSampleRates')) {
+    if (map.containsKey('selectableSampleRates') || map.containsKey('selectableCodecTypes')) {
       capabilities = CodecCapabilities.fromMap(map);
     }
     if (map.containsKey('currentCodecType')) {
