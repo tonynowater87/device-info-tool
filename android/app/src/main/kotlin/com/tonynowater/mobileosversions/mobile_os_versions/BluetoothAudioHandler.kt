@@ -336,6 +336,9 @@ class BluetoothAudioHandler(private val activity: Activity) {
             val batteryLevel = getBatteryLevel(device)
             deviceInfo["batteryLevel"] = batteryLevel
 
+            // 嘗試取得 TWS 分離電量
+            deviceInfo.putAll(getUntetheredBatteryLevels(device))
+
             // 推斷藍牙版本
             deviceInfo["bluetoothVersion"] = inferBluetoothVersion()
 
@@ -512,6 +515,34 @@ class BluetoothAudioHandler(private val activity: Activity) {
         } catch (e: Exception) {
             -1 // 不支援或取得失敗
         }
+    }
+
+    private fun getUntetheredBatteryLevels(device: BluetoothDevice): Map<String, Int> {
+        val result = mutableMapOf<String, Int>()
+        if (Build.VERSION.SDK_INT < 28) {
+            result["batteryLeft"] = -1
+            result["batteryRight"] = -1
+            result["batteryCase"] = -1
+            return result
+        }
+        try {
+            val getMetadata = BluetoothDevice::class.java.getMethod("getMetadata", Int::class.java)
+            // METADATA_UNTETHERED_LEFT_BATTERY = 6
+            // METADATA_UNTETHERED_RIGHT_BATTERY = 7
+            // METADATA_UNTETHERED_CASE_BATTERY = 8
+            result["batteryLeft"] = (getMetadata.invoke(device, 6) as? ByteArray)
+                ?.let { String(it).toIntOrNull() } ?: -1
+            result["batteryRight"] = (getMetadata.invoke(device, 7) as? ByteArray)
+                ?.let { String(it).toIntOrNull() } ?: -1
+            result["batteryCase"] = (getMetadata.invoke(device, 8) as? ByteArray)
+                ?.let { String(it).toIntOrNull() } ?: -1
+        } catch (e: Exception) {
+            Log.w(TAG, "getUntetheredBatteryLevels failed: ${e.message}")
+            result["batteryLeft"] = -1
+            result["batteryRight"] = -1
+            result["batteryCase"] = -1
+        }
+        return result
     }
 }
 
