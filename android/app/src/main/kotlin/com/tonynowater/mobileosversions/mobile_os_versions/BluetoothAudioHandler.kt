@@ -288,9 +288,10 @@ class BluetoothAudioHandler(private val activity: Activity) {
             return
         }
 
-        // 如果 A2DP proxy 尚未就緒，儲存請求稍後處理
+        // 如果 A2DP proxy 尚未就緒，重新觸發連線並儲存請求稍後處理
         if (bluetoothA2dp == null) {
             pendingResult = result
+            bluetoothAdapter?.getProfileProxy(activity, profileListener, BluetoothProfile.A2DP)
             return
         }
 

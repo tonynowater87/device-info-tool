@@ -11,11 +11,29 @@ class BluetoothAudioPage extends StatefulWidget {
   State<BluetoothAudioPage> createState() => _BluetoothAudioPageState();
 }
 
-class _BluetoothAudioPageState extends State<BluetoothAudioPage> {
+class _BluetoothAudioPageState extends State<BluetoothAudioPage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     context.read<BluetoothAudioCubit>().load();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      final cubitState = context.read<BluetoothAudioCubit>().state;
+      // 從設定頁返回時，若處於權限拒絕狀態則自動重新載入
+      if (cubitState is BluetoothAudioPermissionDenied) {
+        context.read<BluetoothAudioCubit>().load();
+      }
+    }
   }
 
   @override
