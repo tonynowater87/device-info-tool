@@ -33,6 +33,11 @@ class _BluetoothAudioPageState extends State<BluetoothAudioPage> with WidgetsBin
       if (cubitState is BluetoothAudioPermissionDenied) {
         context.read<BluetoothAudioCubit>().load();
       }
+      // CDM 配對對話框允許後返回，codec 資訊為 Unknown 時自動重新載入
+      if (cubitState is BluetoothAudioLoaded &&
+          cubitState.audioInfo.codecInfo.codecType.contains('Unknown')) {
+        context.read<BluetoothAudioCubit>().load();
+      }
     }
   }
 
