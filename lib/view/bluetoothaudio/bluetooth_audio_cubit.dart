@@ -119,8 +119,19 @@ class BluetoothAudioCubit extends Cubit<BluetoothAudioState> {
 
       final map = Map<String, dynamic>.from(result as Map);
       if (map['success'] == true) {
-        // 等待系統套用設定後重新載入
-        await Future.delayed(const Duration(milliseconds: 500));
+        final isCodecTypeChange = codecType != null &&
+            codecType != currentAudioInfo.rawValues!.codecType;
+        if (isCodecTypeChange) {
+          // codec type 切換需要重新協商，輪詢等待切換完成
+          for (var i = 0; i < 5; i++) {
+            await Future.delayed(const Duration(milliseconds: 500));
+            final check = await _channel.invokeMethod('getBluetoothAudioInfo');
+            final checkMap = Map<String, dynamic>.from(check as Map);
+            if (checkMap['currentCodecType'] == codecType) break;
+          }
+        } else {
+          await Future.delayed(const Duration(milliseconds: 500));
+        }
         await load();
       } else {
         final error = map['error'] as String? ?? '未知錯誤';

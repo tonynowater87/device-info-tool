@@ -284,12 +284,14 @@ class _BluetoothAudioPageState extends State<BluetoothAudioPage> {
                     capabilities.codecTypes,
                     isSettingCodec ? null : (value) {
                       if (value != null) {
+                        // 切換 codec type 時，其他參數設為 0 (NONE)
+                        // 讓 Android 自動選擇新 codec 的預設值
                         cubit.setCodecConfig(
                           codecType: value,
-                          sampleRate: rawValues.sampleRate,
-                          bitsPerSample: rawValues.bitsPerSample,
-                          channelMode: rawValues.channelMode,
-                          codecSpecific1: rawValues.codecSpecific1,
+                          sampleRate: 0,
+                          bitsPerSample: 0,
+                          channelMode: 0,
+                          codecSpecific1: 0,
                         );
                       }
                     },
