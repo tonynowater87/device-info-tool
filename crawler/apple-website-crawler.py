@@ -67,8 +67,10 @@ def parseMacOS(data):
     try:
         # 解析版本
         versionSplit = data[0].split(" ")
-        platforms = [versionSplit[0] + " " + versionSplit[1]]
-        version = versionSplit[2].split("\n")[0]
+        # 找第一個以數字開頭的 token 作為版本號（相容 "macOS Big Sur 11.x" 與 "macOS Ventura 13.x"）
+        version_idx = next(i for i, v in enumerate(versionSplit) if v and v[0].isdigit())
+        platforms = [" ".join(versionSplit[:version_idx])]
+        version = versionSplit[version_idx].split("\n")[0]
         if "This" in version:
             version = version.replace('This', '')
             

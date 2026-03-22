@@ -1,0 +1,156 @@
+[
+    [
+        {
+            "platform": [
+                "iOS",
+                "iPadOS"
+            ],
+            "version": "16.7.9",
+            "release_date": "2024-07-29"
+        },
+        {
+            "platform": [
+                "iOS",
+                "iPadOS"
+            ],
+            "version": "15.8.7",
+            "release_date": "2026-03-11"
+        },
+        {
+            "platform": [
+                "iOS",
+                "iPadOS"
+            ],
+            "version": "26.3.1",
+            "release_date": "2026-03-04"
+        },
+        {
+            "platform": [
+                "iOS",
+                "iPadOS"
+            ],
+            "version": "18.7.5",
+            "release_date": "2026-02-11"
+        },
+        {
+            "platform": [
+                "iOS",
+                "iPadOS"
+            ],
+            "version": "12.5.8",
+            "release_date": "2026-01-26"
+        },
+        {
+            "platform": [
+                "iOS",
+                "iPadOS"
+            ],
+            "version": "17.7.2",
+            "release_date": "2024-11-19"
+        }
+    ],
+    [
+        {
+            "platform": [
+                "macOS Tahoe"
+            ],
+            "version": "26.3.2",
+            "release_date": "2026-03-10"
+        },
+        {
+            "platform": [
+                "macOS Sequoia"
+            ],
+            "version": "15.7.4",
+            "release_date": "2026-02-11"
+        },
+        {
+            "platform": [
+                "macOS Sonoma"
+            ],
+            "version": "14.8.4",
+            "release_date": "2026-02-11"
+        },
+        {
+            "platform": [
+                "macOS Big Sur"
+            ],
+            "version": "11.7.11",
+            "release_date": "2026-02-02"
+        },
+        {
+            "platform": [
+                "macOS Ventura"
+            ],
+            "version": "13.7.8",
+            "release_date": "2025-08-20"
+        },
+        {
+            "platform": [
+                "macOS Monterey"
+            ],
+            "version": "12.7.6",
+            "release_date": "2024-07-29"
+        }
+    ],
+    [
+        {
+            "platform": [
+                "tvOS"
+            ],
+            "version": "26.3",
+            "release_date": "2026-02-11"
+        },
+        {
+            "platform": [
+                "tvOS"
+            ],
+            "version": "18.6",
+            "release_date": "2025-07-29"
+        },
+        {
+            "platform": [
+                "tvOS"
+            ],
+            "version": "17.6.1",
+            "release_date": "2024-08-19"
+        }
+    ],
+    [
+        {
+            "platform": [
+                "watchOS"
+            ],
+            "version": "26.3",
+            "release_date": "2026-02-11"
+        },
+        {
+            "platform": [
+                "watchOS"
+            ],
+            "version": "11.6.2",
+            "release_date": "2026-02-05"
+        },
+        {
+            "platform": [
+                "watchOS"
+            ],
+            "version": "10.6.2",
+            "release_date": "2026-02-02"
+        },
+        {
+            "platform": [
+                "watchOS"
+            ],
+            "version": "9.6.4",
+            "release_date": "2026-02-02"
+        },
+        {
+            "platform": [
+                "watchOS"
+            ],
+            "version": "6.3.1",
+            "release_date": "2026-02-02"
+        }
+    ]
+]
