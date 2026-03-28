@@ -30,8 +30,8 @@
   {
     "version": "5.0",
     "release_date": "2018-09-17",
-    "latest_version": "5.3.9",
-    "latest_release_date": "2020-11-05",
+    "latest_version": "5.3.10",
+    "latest_release_date": "2026-03-24",
     "based_on_ios_version": "12.4.9"
   },
   {
@@ -51,8 +51,8 @@
   {
     "version": "8.0",
     "release_date": "2021-09-20",
-    "latest_version": "8.8.1",
-    "latest_release_date": "2023-06-21",
+    "latest_version": "8.8.2",
+    "latest_release_date": "2026-03-24",
     "based_on_ios_version": "15.6.1"
   },
   {
@@ -78,9 +78,9 @@
   },
   {
     "version": "26.0",
-    "latest_version": "26.3",
+    "latest_version": "26.4",
     "release_date": "2025-09-18",
-    "latest_release_date": "2026-02-11",
+    "latest_release_date": "2026-03-24",
     "based_on_ios_version": "2.0"
   }
 ]
