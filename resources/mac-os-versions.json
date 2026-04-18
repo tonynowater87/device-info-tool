@@ -149,8 +149,8 @@
   {
     "version": "26",
     "version_name": "Tahoe",
-    "latest_version": "26.4",
+    "latest_version": "26.4.1",
     "initial_release_date": "2025-09-15",
-    "latest_release_date": "2026-03-24"
+    "latest_release_date": "2026-04-09"
   }
 ]
