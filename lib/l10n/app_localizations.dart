@@ -41,6 +41,7 @@ class AppLocalizations {
 
   static final Map<String, Map<String, String>> _localizedValues = {
     'en': {
+      'android_version_doc': 'Release notes',
       // Navigation & Menu
       'misc': 'Misc',
       'android': 'Android',
@@ -211,6 +212,7 @@ class AppLocalizations {
       'intent_webview': 'WebView Implementation',
     },
     'zh_TW': {
+      'android_version_doc': '版本更新內容',
       // Navigation & Menu
       'misc': '雜項',
       'android': 'Android',
@@ -381,6 +383,7 @@ class AppLocalizations {
       'intent_webview': 'WebView 實作',
     },
     'zh_CN': {
+      'android_version_doc': '版本更新内容',
       // Navigation & Menu
       'misc': '杂项',
       'android': 'Android',
@@ -551,6 +554,7 @@ class AppLocalizations {
       'intent_webview': 'WebView 实现',
     },
     'ja': {
+      'android_version_doc': 'リリースノート',
       // Navigation & Menu
       'misc': 'その他',
       'android': 'Android',
@@ -721,6 +725,7 @@ class AppLocalizations {
       'intent_webview': 'WebView実装',
     },
     'ko': {
+      'android_version_doc': '릴리스 노트',
       // Navigation & Menu
       'misc': '기타',
       'android': 'Android',
@@ -891,6 +896,7 @@ class AppLocalizations {
       'intent_webview': 'WebView 구현',
     },
     'es': {
+      'android_version_doc': 'Notas de la versión',
       // Navigation & Menu
       'misc': 'Varios',
       'android': 'Android',
@@ -1061,6 +1067,7 @@ class AppLocalizations {
       'intent_webview': 'Implementación de WebView',
     },
     'fr': {
+      'android_version_doc': 'Notes de version',
       // Navigation & Menu
       'misc': 'Divers',
       'intent_display_over_apps': 'Mostrar sobre otras apps',
@@ -1092,6 +1099,7 @@ class AppLocalizations {
       'intent_webview': 'Implementación de WebView',
     },
     'fr': {
+      'android_version_doc': 'Notes de version',
       // Navigation & Menu
       'misc': 'Divers',
       'android': 'Android',
@@ -1262,6 +1270,7 @@ class AppLocalizations {
       'intent_webview': 'Implémentation WebView',
     },
     'de': {
+      'android_version_doc': 'Versionshinweise',
       // Navigation & Menu
       'misc': 'Sonstiges',
       'android': 'Android',
@@ -1432,6 +1441,7 @@ class AppLocalizations {
       'intent_webview': 'WebView-Implementierung',
     },
     'ar': {
+      'android_version_doc': 'ملاحظات الإصدار',
       // Navigation & Menu
       'misc': 'متنوع',
       'android': 'Android',
@@ -1602,6 +1612,7 @@ class AppLocalizations {
       'intent_webview': 'تنفيذ WebView',
     },
     'pt': {
+      'android_version_doc': 'Notas da versão',
       // Navigation & Menu
       'misc': 'Diversos',
       'android': 'Android',
@@ -1790,7 +1801,14 @@ class AppLocalizations {
   String get tvos => _localizedValues[locale.toString()]!['tvos']!;
   String get watchos => _localizedValues[locale.toString()]!['watchos']!;
   String get macos => _localizedValues[locale.toString()]!['macos']!;
-  
+
+  // 若目前語系缺少此鍵，退回英文，避免 null 斷言造成崩潰。
+  String get androidVersionDoc {
+    final map = _localizedValues[locale.toString()] ?? _localizedValues['en']!;
+    return map['android_version_doc'] ??
+        _localizedValues['en']!['android_version_doc']!;
+  }
+
   String get general => _localizedValues[locale.toString()]!['general']!;
   String get defaultStartPage => _localizedValues[locale.toString()]!['default_start_page']!;
   String get noneFirstPage => _localizedValues[locale.toString()]!['none_first_page']!;
