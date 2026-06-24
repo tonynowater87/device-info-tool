@@ -12,6 +12,7 @@ PYTHON="${PYTHON:-python3}"
 "$PYTHON" crawler/update-version.py
 "$PYTHON" crawler/mobile-distribution-crawler.py
 "$PYTHON" crawler/android-os-version-crawler.py
+"$PYTHON" crawler/wear-os-version-crawler.py
 
 git add resources/
 if git diff --cached --quiet; then
