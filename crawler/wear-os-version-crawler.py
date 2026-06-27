@@ -10,6 +10,7 @@
 import requests
 import os
 import re
+import sys
 import json
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -89,6 +90,20 @@ def format_android_os(raw_cell, codenames):
     return f"{major}.0 {name}".strip()
 
 
+def version_tuple(value):
+    """把版本字串轉成可比較的數字 tuple："4" / "4.0" -> (4, 0)。"""
+    return tuple(int(x) for x in re.findall(r"\d+", str(value)))
+
+
+def same_version(a, b):
+    """寬鬆比較版本："4" 視為等同 "4.0"。"""
+    ta, tb = version_tuple(a), version_tuple(b)
+    n = max(len(ta), len(tb))
+    ta += (0,) * (n - len(ta))
+    tb += (0,) * (n - len(tb))
+    return ta == tb
+
+
 def find_column_index(headers, include, exclude=()):
     for idx, text in enumerate(headers):
         low = text.lower()
@@ -143,7 +158,23 @@ def fetch_source_rows():
     return best
 
 
+def _debug_dump():
+    """印出來源解析到的版本列，方便對照來源結構。"""
+    try:
+        rows = fetch_source_rows()
+    except Exception as error:
+        print("fetch failed:", error)
+        return
+    print(f"parsed {len(rows)} rows:")
+    for r in rows:
+        print("  ", r)
+
+
 def main():
+    if "--debug" in sys.argv:
+        _debug_dump()
+        return
+
     if not os.path.exists(OUTPUT_PATH):
         print(f"找不到既有檔案 {OUTPUT_PATH}，略過。")
         return
@@ -169,12 +200,16 @@ def main():
         print("來源沒有解析到版本（可能網站結構改變），保持既有資料不變。")
         return
 
-    # 在來源中找到「目前最後一個版本」當錨點，只追加其後的版本
-    anchor = next((i for i, r in enumerate(source_rows)
-                   if r["version"] == last_version), None)
+    # 在來源中找到「目前最後一個版本」當錨點（寬鬆比對、取最後一個符合的），
+    # 只追加其後的版本。
+    anchor = None
+    for i, r in enumerate(source_rows):
+        if same_version(r["version"], last_version):
+            anchor = i
     if anchor is None:
         print(f"來源中找不到目前最後版本 {last_version} 作為錨點，"
-              f"為避免重複保持不變。")
+              f"為避免重複保持不變。來源版本有："
+              f"{[r['version'] for r in source_rows]}")
         return
 
     new_rows = source_rows[anchor + 1:]

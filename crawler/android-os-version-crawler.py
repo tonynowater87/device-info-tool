@@ -9,6 +9,7 @@
 import requests
 import os
 import re
+import sys
 import json
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -29,12 +30,19 @@ def normalize_date(raw):
     """把來源的發布日期正規化成 YYYY-MM-DD，失敗則回傳空字串。"""
     if not raw:
         return ""
-    raw = raw.strip()
+    # 清掉註腳 [12]、不換行空白、多餘空白，並把 "Sept" 正規化成 "Sep"
+    raw = re.sub(r"\[[^\]]*\]", "", raw)
+    raw = raw.replace(" ", " ")
+    raw = re.sub(r"\s+", " ", raw).strip()
+    raw = re.sub(r"\bSept\b", "Sep", raw)
+    if not raw:
+        return ""
     # 已經是 ISO 格式
     if re.match(r"^\d{4}-\d{2}-\d{2}$", raw):
         return raw
-    # 常見格式，例如 "October 1, 2023" / "Oct 2023" / "September 2024"
-    for fmt in ("%B %d, %Y", "%b %d, %Y", "%B %Y", "%b %Y", "%Y-%m-%d"):
+    # 常見格式，例如 "October 1, 2023" / "1 October 2023" / "Oct 2023"
+    for fmt in ("%B %d, %Y", "%b %d, %Y", "%d %B %Y", "%d %b %Y",
+                "%B %d %Y", "%b %d %Y", "%B %Y", "%b %Y", "%Y-%m-%d"):
         try:
             dt = datetime.strptime(raw, fmt)
             return dt.strftime("%Y-%m-%d")
@@ -128,7 +136,46 @@ def fetch_source_rows():
     return parsed
 
 
+def _debug_dump():
+    """印出候選來源的表格結構，方便確認欄位（特別是有沒有 release date 欄）。"""
+    sources = {
+        "apilevels.com": SOURCE_URL,
+        "wikipedia android version history":
+            "https://en.wikipedia.org/wiki/Android_version_history",
+    }
+    for label, url in sources.items():
+        print("=" * 72)
+        print(label, "->", url)
+        try:
+            resp = requests.get(url, headers=HEADERS, timeout=30)
+            resp.raise_for_status()
+        except Exception as error:
+            print("  fetch failed:", error)
+            continue
+        soup = BeautifulSoup(resp.text, "html.parser")
+        tables = soup.find_all("table")
+        print("  tables found:", len(tables))
+        for ti, table in enumerate(tables):
+            headers = [c.get_text(" ", strip=True) for c in table.find_all("th")]
+            joined = " ".join(headers).lower()
+            if not headers or not any(
+                    k in joined for k in ("api", "version", "codename",
+                                          "code name", "released")):
+                continue
+            print(f"  -- table#{ti} headers: {headers[:12]}")
+            trs = table.find_all("tr")
+            for tr in trs[-5:]:
+                cells = [c.get_text(" ", strip=True)
+                         for c in tr.find_all(["td", "th"])]
+                if cells:
+                    print("        ", cells[:9])
+
+
 def main():
+    if "--debug" in sys.argv:
+        _debug_dump()
+        return
+
     if not os.path.exists(OUTPUT_PATH):
         print(f"找不到既有檔案 {OUTPUT_PATH}，略過。")
         return
