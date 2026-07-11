@@ -1,0 +1,63 @@
+name: Update OS versions
+
+# 自動更新 resources/ 底下的 Android / iOS 版本與市佔資料。
+# App（release 版）執行時會即時抓取這些 JSON，所以只要這裡 commit 到 main，
+# 不需要重新發版，用戶端就會看到最新版本。
+on:
+  schedule:
+    # 每天 06:00 UTC（台灣時間下午 2 點）跑一次
+    - cron: "0 6 * * *"
+  workflow_dispatch: {} # 允許在 GitHub 網頁手動觸發
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-os-versions
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      # 各來源彼此獨立，單一來源失效不應擋住其他更新，因此都用 continue-on-error。
+      - name: Crawl Apple OS versions
+        continue-on-error: true
+        run: |
+          python crawler/apple-website-crawler.py
+          python crawler/update-version.py
+
+      - name: Crawl Android / iOS market distribution
+        continue-on-error: true
+        run: python crawler/mobile-distribution-crawler.py
+
+      - name: Crawl Android OS version list
+        continue-on-error: true
+        run: python crawler/android-os-version-crawler.py
+
+      - name: Crawl Wear OS version list
+        continue-on-error: true
+        run: python crawler/wear-os-version-crawler.py
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add resources/
+          if git diff --cached --quiet; then
+            echo "資料沒有變動，不需要 commit。"
+          else
+            git commit -m "chore: auto-update OS versions"
+            git push
+          fi

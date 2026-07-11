@@ -424,5 +424,11 @@
     "version": "16",
     "code_name": "Baklava (QPR2)",
     "release_date": "2025-12-02"
+  },
+  {
+    "api_level": "37",
+    "version": "17",
+    "code_name": "CINNAMON_BUN",
+    "release_date": ""
   }
 ]

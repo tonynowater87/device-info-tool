@@ -130,7 +130,7 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   static String DefaultTitle = 'Device Info Tool';
 
   late TabController _tabController;
@@ -147,6 +147,9 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    // 頁面數固定（Android 13 / iOS 7），與 _buildScreensIfNeeded 建立的 screens 一致。
+    final pageCount = Platform.isAndroid ? 13 : 7;
+    _tabController = TabController(length: pageCount, vsync: this);
     _loadDefaultPage();
   }
 
@@ -161,7 +164,8 @@ class _MyAppState extends State<MyApp> {
       // Wait for the widget tree to be built before navigating
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          _tabController.animateTo(currentPageIndex);
+          // 直接跳到目標頁，避免逐頁動畫建立中間頁面。
+          _tabController.index = currentPageIndex;
         }
       });
     }
@@ -169,81 +173,14 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    super.dispose();
     _tabController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    _androidDeviceInfoScreen ??= BlocProvider(
-        create: (context) => AndroidDeviceInfoCubit(),
-        child: const AndroidDeviceInfoPage());
-
-    var androidIntentButtonScreen = IntentButtonsPage(key: _intentButtonsPageKey);
-
-    var deepLinkScreen = BlocProvider(
-        create: (context) => DeepLinkCubit(context.read<DatabaseProvider>()),
-        child: const DeepLinkPage());
-
-    var androidScreen = BlocProvider(
-      create: (context) => AndroidVersionPageCubit(
-          networkProvider: context.read<NetworkProvider>(),
-          deviceVersionProvider: context.read<DeviceVersionProvider>()),
-      child: const AndroidVersionPage(),
-    );
-    var androidWearOSScreen = BlocProvider(
-      create: (context) => AndroidWearOSVersionPageCubit(
-          networkProvider: context.read<NetworkProvider>()),
-      child: const AndroidWearOSVersionPage(),
-    );
-
-    var iOSScreen = BlocProvider(
-      create: (context) => IosVersionPageCubit(
-          networkProvider: context.read<NetworkProvider>(),
-          deviceVersionProvider: context.read<DeviceVersionProvider>()),
-      child: const IOSVersionPage(deviceType: DeviceType.iPhone),
-    );
-    var iPadOSScreen = BlocProvider(
-      create: (context) => IosVersionPageCubit(
-          networkProvider: context.read<NetworkProvider>(),
-          deviceVersionProvider: context.read<DeviceVersionProvider>()),
-      child: const IOSVersionPage(deviceType: DeviceType.iPad),
-    );
-    var tvOSScreen = BlocProvider(
-      create: (context) => IosVersionPageCubit(
-          networkProvider: context.read<NetworkProvider>(),
-          deviceVersionProvider: context.read<DeviceVersionProvider>()),
-      child: const IOSVersionPage(deviceType: DeviceType.appleTv),
-    );
-    var watchOSScreen = BlocProvider(
-      create: (context) => IosVersionPageCubit(
-          networkProvider: context.read<NetworkProvider>(),
-          deviceVersionProvider: context.read<DeviceVersionProvider>()),
-      child: const IOSVersionPage(deviceType: DeviceType.appleWatch),
-    );
-    var macOSScreen = BlocProvider(
-      create: (context) => IosVersionPageCubit(
-          networkProvider: context.read<NetworkProvider>(),
-          deviceVersionProvider: context.read<DeviceVersionProvider>()),
-      child: const IOSVersionPage(deviceType: DeviceType.mac),
-    );
-
-    var androidDistributionScreen = BlocProvider(
-      create: (context) => AndroidDistributionCubit(
-          networkProvider: context.read<NetworkProvider>()),
-      child: const AndroidDistributionPage(),
-    );
-
-    var iOSDistributionScreen = BlocProvider(
-      create: (context) => IosDistributionCubit(
-          networkProvider: context.read<NetworkProvider>()),
-      child: const IOSDistributionPage(),
-    );
-
-    var iOSDeviceInfoScreen = BlocProvider(
-      create: (context) => IosDeviceInfoCubit(),
-      child: const IosDeviceInfoPage(),
-    );
+    // 只建立一次頁面，避免每次切換 drawer 都重建整組頁面與 TabBarView 造成卡頓。
+    _buildScreensIfNeeded(context);
 
     if (Platform.isAndroid) {
       final l10n = AppLocalizations.of(context);
@@ -416,24 +353,6 @@ class _MyAppState extends State<MyApp> {
           },
         ),
       ];
-      screens = [
-        _androidDeviceInfoScreen!,
-        BlocProvider(
-          create: (context) => BluetoothAudioCubit(),
-          child: const BluetoothAudioPage(),
-        ),
-        androidIntentButtonScreen,
-        deepLinkScreen,
-        androidDistributionScreen,
-        androidScreen,
-        androidWearOSScreen,
-        iOSDistributionScreen,
-        iOSScreen,
-        iPadOSScreen,
-        tvOSScreen,
-        watchOSScreen,
-        macOSScreen,
-      ];
     } else if (Platform.isIOS) {
       final l10n = AppLocalizations.of(context);
       pageNames = [
@@ -537,15 +456,6 @@ class _MyAppState extends State<MyApp> {
           },
         )
       ];
-      screens = [
-        iOSDeviceInfoScreen,
-        iOSDistributionScreen,
-        iOSScreen,
-        iPadOSScreen,
-        tvOSScreen,
-        watchOSScreen,
-        macOSScreen,
-      ];
     }
 
     return Scaffold(
@@ -588,22 +498,10 @@ class _MyAppState extends State<MyApp> {
               child: SizedBox(
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
-                  child: DefaultTabController(
-                    initialIndex: currentPageIndex,
-                    length: screens.length,
-                    child: Builder(builder: (context) {
-                      _tabController = DefaultTabController.of(context);
-                      return Column(
-                        children: <Widget>[
-                          Expanded(
-                            child: TabBarView(
-                              physics: const NeverScrollableScrollPhysics(),
-                              children: screens,
-                            ),
-                          ),
-                        ],
-                      );
-                    }),
+                  child: TabBarView(
+                    controller: _tabController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: screens,
                   )),
             ),
             Visibility(
@@ -650,12 +548,118 @@ class _MyAppState extends State<MyApp> {
   }
 
   void changePageByIndex(int index, String title) {
+    // 先關閉抽屜，再做輕量的 setState（頁面實例已快取，不會重建整組頁面），
+    // 最後透過持久的 controller 切換頁面，避免沉重 rebuild 撞上抽屜關閉動畫。
+    Navigator.pop(context);
     setState(() {
       currentPageTitle = title;
       currentPageIndex = index;
-      _tabController.index = index;
       // Trigger AppBar rebuild to show/hide action buttons
     });
-    Navigator.pop(context);
+    _tabController.index = index;
+  }
+
+  /// 只在第一次建立所有頁面並快取，之後切換頁面共用同一組實例，
+  /// 讓 TabBarView 的 children 保持穩定、不再每次 rebuild。
+  void _buildScreensIfNeeded(BuildContext context) {
+    if (screens.isNotEmpty) {
+      return;
+    }
+
+    _androidDeviceInfoScreen ??= BlocProvider(
+        create: (context) => AndroidDeviceInfoCubit(),
+        child: const AndroidDeviceInfoPage());
+
+    final androidIntentButtonScreen =
+        IntentButtonsPage(key: _intentButtonsPageKey);
+    final deepLinkScreen = BlocProvider(
+        create: (context) => DeepLinkCubit(context.read<DatabaseProvider>()),
+        child: const DeepLinkPage());
+    final androidScreen = BlocProvider(
+      create: (context) => AndroidVersionPageCubit(
+          networkProvider: context.read<NetworkProvider>(),
+          deviceVersionProvider: context.read<DeviceVersionProvider>()),
+      child: const AndroidVersionPage(),
+    );
+    final androidWearOSScreen = BlocProvider(
+      create: (context) => AndroidWearOSVersionPageCubit(
+          networkProvider: context.read<NetworkProvider>()),
+      child: const AndroidWearOSVersionPage(),
+    );
+    final iOSScreen = BlocProvider(
+      create: (context) => IosVersionPageCubit(
+          networkProvider: context.read<NetworkProvider>(),
+          deviceVersionProvider: context.read<DeviceVersionProvider>()),
+      child: const IOSVersionPage(deviceType: DeviceType.iPhone),
+    );
+    final iPadOSScreen = BlocProvider(
+      create: (context) => IosVersionPageCubit(
+          networkProvider: context.read<NetworkProvider>(),
+          deviceVersionProvider: context.read<DeviceVersionProvider>()),
+      child: const IOSVersionPage(deviceType: DeviceType.iPad),
+    );
+    final tvOSScreen = BlocProvider(
+      create: (context) => IosVersionPageCubit(
+          networkProvider: context.read<NetworkProvider>(),
+          deviceVersionProvider: context.read<DeviceVersionProvider>()),
+      child: const IOSVersionPage(deviceType: DeviceType.appleTv),
+    );
+    final watchOSScreen = BlocProvider(
+      create: (context) => IosVersionPageCubit(
+          networkProvider: context.read<NetworkProvider>(),
+          deviceVersionProvider: context.read<DeviceVersionProvider>()),
+      child: const IOSVersionPage(deviceType: DeviceType.appleWatch),
+    );
+    final macOSScreen = BlocProvider(
+      create: (context) => IosVersionPageCubit(
+          networkProvider: context.read<NetworkProvider>(),
+          deviceVersionProvider: context.read<DeviceVersionProvider>()),
+      child: const IOSVersionPage(deviceType: DeviceType.mac),
+    );
+    final androidDistributionScreen = BlocProvider(
+      create: (context) => AndroidDistributionCubit(
+          networkProvider: context.read<NetworkProvider>()),
+      child: const AndroidDistributionPage(),
+    );
+    final iOSDistributionScreen = BlocProvider(
+      create: (context) => IosDistributionCubit(
+          networkProvider: context.read<NetworkProvider>()),
+      child: const IOSDistributionPage(),
+    );
+    final iOSDeviceInfoScreen = BlocProvider(
+      create: (context) => IosDeviceInfoCubit(),
+      child: const IosDeviceInfoPage(),
+    );
+
+    if (Platform.isAndroid) {
+      screens = [
+        _androidDeviceInfoScreen!,
+        BlocProvider(
+          create: (context) => BluetoothAudioCubit(),
+          child: const BluetoothAudioPage(),
+        ),
+        androidIntentButtonScreen,
+        deepLinkScreen,
+        androidDistributionScreen,
+        androidScreen,
+        androidWearOSScreen,
+        iOSDistributionScreen,
+        iOSScreen,
+        iPadOSScreen,
+        tvOSScreen,
+        watchOSScreen,
+        macOSScreen,
+      ];
+    } else if (Platform.isIOS) {
+      screens = [
+        iOSDeviceInfoScreen,
+        iOSDistributionScreen,
+        iOSScreen,
+        iPadOSScreen,
+        tvOSScreen,
+        watchOSScreen,
+        macOSScreen,
+      ];
+    }
   }
 }
