@@ -600,21 +600,31 @@ def fetch_and_process_ios_data(csv_url):
     processed_rows = []
     merged_percentage = 0.0
     versions_to_merge = []
+    row_index_by_version_number = {}  # 版本號 -> processed_rows 的索引，用來合併同版本號但標籤不同的資料（例如 "iOS 27" 與 "iOS 27.0"）
 
     for row in sorted_rows:
         market_share = float(row[market_share_key])
         version = row['iOS Version']
         pattern = r'iOS (\d+\.?\d*)'
         version_number_match = re.search(pattern, version)
-        
+
         if version_number_match:
             version_number = float(version_number_match.group(1))
             if 19.0 <= version_number <= 26.0:
                 merged_percentage += market_share
                 versions_to_merge.append(version)
                 continue
+        else:
+            version_number = None
+
+        if version_number is not None and version_number in row_index_by_version_number:
+            existing_row = processed_rows[row_index_by_version_number[version_number]]
+            existing_row[2] = formatFloat(float(existing_row[2]) + market_share)
+            continue
 
         processed_rows.append([version, version_number_match.group(1) if version_number_match else "-1", str(market_share)])
+        if version_number is not None:
+            row_index_by_version_number[version_number] = len(processed_rows) - 1
 
     if versions_to_merge:
         processed_rows.insert(0, ["iOS 26.0", "26.0", formatFloat(merged_percentage)])
