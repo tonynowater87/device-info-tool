@@ -37,9 +37,9 @@
   },
   {
     "version": "26",
-    "latest_version": "26.7",
+    "latest_version": "26.7.1",
     "release_date": "2025-09-15",
-    "latest_date": "2026-09-14"
+    "latest_date": "2026-09-28"
   },
   {
     "version": "12",
@@ -49,8 +49,8 @@
   },
   {
     "version": "27",
-    "latest_version": "27",
+    "latest_version": "27.0.1",
     "release_date": "2026-09-14",
-    "latest_date": "2026-09-14"
+    "latest_date": "2026-09-28"
   }
 ]
