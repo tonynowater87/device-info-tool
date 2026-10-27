@@ -109,14 +109,14 @@
   },
   {
     "version": "26",
-    "latest_version": "26.7.1",
+    "latest_version": "26.7.2",
     "release_date": "2025-09-15",
-    "latest_date": "2026-09-28"
+    "latest_date": "2026-10-26"
   },
   {
     "version": "27",
-    "latest_version": "27.0.1",
+    "latest_version": "27.2",
     "release_date": "2026-09-14",
-    "latest_date": "2026-09-28"
+    "latest_date": "2026-10-26"
   }
 ]
