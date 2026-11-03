@@ -174,8 +174,7 @@ def fetch_and_process_android_data(csv_url):
 
     # 依照版本號排序
     sorted_rows = sorted(filtered_rows, key=lambda x: android_sort_key(x), reverse=True)
-    len = sorted_rows.__len__()
-    print(f"Android Raw版本數量: {len}")
+    print(f"Android Raw版本數量: {len(sorted_rows)}")
 
     other_percentage = 0.0
     processed_rows = []
@@ -210,8 +209,7 @@ def fetch_and_process_android_data(csv_url):
 
     # 累積分佈使用版本號排序，最新的版本在前面
     cumulative_rows.sort(key=lambda x: float(x[1]) if x[1] != "-1" else -1, reverse=True)
-    len = cumulative_rows.__len__()
-    print(f"Android 累積分佈版本數量: {len}")
+    print(f"Android 累積分佈版本數量: {len(cumulative_rows)}")
     
     processed_rows = process_outer_array_final(rearrange_name(processed_rows))
     cumulative_rows = process_outer_cumulative_array_final(rearrange_name(cumulative_rows))
@@ -593,8 +591,7 @@ def fetch_and_process_ios_data(csv_url):
 
     # 依照版本號排序
     sorted_rows = sorted(rows, key=lambda x: ios_sort_key(x), reverse=False)
-    len = sorted_rows.__len__()
-    print(f"iOS Raw版本數量: {len}")
+    print(f"iOS Raw版本數量: {len(sorted_rows)}")
 
     other_percentage = 0.0
     processed_rows = []
@@ -638,8 +635,7 @@ def fetch_and_process_ios_data(csv_url):
         row[2] = formatFloat(cumulative_percentage)  # 更新累積市佔率
         cumulative_rows.append(row)  # 將修改後的 row 加入 cumulative_rows
 
-    len = cumulative_rows.__len__()
-    print(f"iOS 累積分佈版本數量: {len}")
+    print(f"iOS 累積分佈版本數量: {len(cumulative_rows)}")
     
     process_outer_array_final(processed_rows)
     process_outer_cumulative_array_final(cumulative_rows)
