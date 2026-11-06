@@ -94,7 +94,9 @@ class CellAndroidView extends StatelessWidget {
               Text(versionModelAndroid.version),
               Text(versionModelAndroid.apiLevel),
               Text(versionModelAndroid.codeName),
-              Text(versionModelAndroid.releaseDate),
+              Text(versionModelAndroid.releaseDate.isEmpty
+                  ? '-'
+                  : versionModelAndroid.releaseDate),
             ],
           ),
           if (canOpenDoc)

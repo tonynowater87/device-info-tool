@@ -200,6 +200,25 @@ def main():
         print("來源沒有解析到任何資料（可能網站結構改變），保持既有資料不變。")
         return
 
+    # Backfill release dates for existing entries that were added before the
+    # version was officially released (e.g. a preview with an empty date).
+    # Only empty dates are filled; existing non-empty data is never overwritten.
+    source_dates = {}
+    for row in source_rows:
+        if row["release_date"]:
+            source_dates.setdefault((to_int(row["api_level"]), row["version"]), row["release_date"])
+            source_dates.setdefault((to_int(row["api_level"]), None), row["release_date"])
+
+    backfilled = []
+    for item in existing:
+        if item.get("release_date"):
+            continue
+        api = to_int(item.get("api_level"))
+        date = source_dates.get((api, item.get("version"))) or source_dates.get((api, None))
+        if date:
+            item["release_date"] = date
+            backfilled.append(item)
+
     # 只挑出「API level 比現有最大值更新，且版本尚未存在」的項目
     additions = []
     for row in sorted(source_rows, key=lambda r: to_int(r["api_level"])):
@@ -207,8 +226,8 @@ def main():
             additions.append(row)
             existing_versions.add(row["version"])
 
-    if not additions:
-        print(f"沒有比 API level {max_api} 更新的版本，無需更新。")
+    if not additions and not backfilled:
+        print(f"No versions newer than API level {max_api} and no release dates to backfill.")
         return
 
     existing.extend(additions)
@@ -216,6 +235,9 @@ def main():
         json.dump(existing, f, ensure_ascii=False, indent=2)
         f.write("\n")
 
+    for item in backfilled:
+        print(f"Backfilled release date: API {item['api_level']} -> {item['version']} "
+              f"({item['release_date']})")
     for row in additions:
         print(f"新增 Android 版本：API {row['api_level']} -> {row['version']} "
               f"({row['code_name']}, {row['release_date']})")
