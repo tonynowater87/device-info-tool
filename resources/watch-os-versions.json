@@ -78,16 +78,16 @@
   },
   {
     "version": "26.0",
-    "latest_version": "26.6",
+    "latest_version": "26.6.1",
     "release_date": "2025-09-18",
-    "latest_release_date": "2026-07-27",
+    "latest_release_date": "2026-11-09",
     "based_on_ios_version": "2.0"
   },
   {
     "version": "27.0",
-    "latest_version": "27.2",
+    "latest_version": "27.2.1",
     "release_date": "2026-09-23",
-    "latest_release_date": "2026-10-26",
+    "latest_release_date": "2026-11-09",
     "based_on_ios_version": "2.0"
   }
 ]
