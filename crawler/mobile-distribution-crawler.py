@@ -624,7 +624,10 @@ def fetch_and_process_ios_data(csv_url):
             row_index_by_version_number[version_number] = len(processed_rows) - 1
 
     if versions_to_merge:
-        processed_rows.insert(0, ["iOS 26.0", "26.0", formatFloat(merged_percentage)])
+        processed_rows.append(["iOS 26.0", "26.0", formatFloat(merged_percentage)])
+
+    # Keep newest versions on top; rows without a version number (e.g. "Other") go last
+    processed_rows.sort(key=lambda r: float(r[1]) if r[1] != "-1" else float("-inf"), reverse=True)
 
     # 計算累積分佈
     cumulative_percentage = 0.0
